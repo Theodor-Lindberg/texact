@@ -60,6 +60,7 @@ For more information, run
    :maxdepth: 1
    :caption: Contents:
 
+   options
    integration
    checklist
    development

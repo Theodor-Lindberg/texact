@@ -45,6 +45,8 @@ def set_up_arg_parser() -> argparse.Namespace:
 def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
     with file_path.open("r", encoding="utf-8") as input_file:
         for line_no, line in enumerate(input_file):
+            if "% texact *" in line:
+                continue
             for reviewer in reviewers:
                 reviewer.process_line(line_no, line)
 
