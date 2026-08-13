@@ -1,0 +1,14 @@
+Options
+=======
+
+
+Per line suppressions
+---------------------
+
+To make TeXact ignore certain lines add the following as a :math:`\text{LaTeX}` comment in your source file:
+
+.. code-block:: tex
+
+    % texact *
+
+
