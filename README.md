@@ -10,7 +10,7 @@ complement and incorporate them.
 
 ## Documentation
 
-[https://theodor-lindberg.github.io/TeXact/](https://theodor-lindberg.github.io/TeXact/)
+[https://theodor-lindberg.github.io/texact/](https://theodor-lindberg.github.io/texact/)
 
 ## Features
 
@@ -27,7 +27,7 @@ settings.
 TeXact can be installed using pip directly from git:
 
 ```bash
-python -m pip install "git+ssh://git@github.com/Theodor-Lindberg/TeXact.git"
+python -m pip install "git+ssh://git@github.com/Theodor-Lindberg/texact.git"
 ```
 
 then run as
