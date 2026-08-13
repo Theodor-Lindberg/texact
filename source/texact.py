@@ -76,7 +76,8 @@ def main():
     max_ret_code = 0
 
     for file_name in args.files:
-        printer.print(f"=== Reviewing {file_name} ===")
+        name, extension = file_name[:-4], file_name[-3:]
+        printer.print(f"=== Reviewing {name}(.){extension} ===")
         file_path = Path(file_name)
 
         if not file_path.is_file():
