@@ -25,6 +25,9 @@ class Reviewer_Casing(Reviewer):
         "Verilog",
         "SystemVerilog",
         "VHDL",
+        "FIR",
+        "IIR",
+        "LWDF",
         # "AXI", # collides with the word axis
         "SRAM",
         "DSP",
@@ -47,11 +50,21 @@ class Reviewer_Casing(Reviewer):
         "Cadence",
         "Vivado",
         "Quartus",
+        "APyTypes",
         "URL",
+        "DNS",
         "BRAM",
+        "DRAM",
+        "NaN",
         "LUT",
         "LNS",
         "MNIST",
+        "MHz",
+        "kHz",
+        "GHz",
+        "Basys",
+        "Virtex",
+        "Spartan",
     )
     _PATTERN_LATEX_IGNORED_COMMANDS = re.compile(
         r"\\(?:cite|ref|label|url|usepackage)\{[^}]*\}"
