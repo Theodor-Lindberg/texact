@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 from PIL import Image
 
-from reviewer import Reviewer, Status
+from .reviewer import Reviewer, Status
 from printer import Printer
 
 

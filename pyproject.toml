@@ -15,16 +15,9 @@ texact = "texact:main"
 
 [tool.setuptools]
 package-dir = {"" = "source"}
-packages = ["texact_config"]
+packages = ["texact_config", "reviewers"]
 py-modules = [
   "printer",
-  "reviewer",
-  "reviewer_casing",
-  "reviewer_chktex",
-  "reviewer_figure",
-  "reviewer_inthis",
-  "reviewer_reflabel",
-  "reviewer_unsure",
   "template_check",
   "texact",
 ]

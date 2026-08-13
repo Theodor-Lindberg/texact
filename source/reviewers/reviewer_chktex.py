@@ -6,7 +6,7 @@ from importlib import resources
 from pathlib import Path
 
 from printer import Printer
-from reviewer import Reviewer, Status
+from .reviewer import Reviewer, Status
 from template_check import Template
 
 
@@ -21,7 +21,7 @@ class Reviewer_ChkTeX(Reviewer):
     ) -> None:
         self.printer = printer
         self.tex_file_path = tex_file_path.resolve()
-        self.repo_root = Path(__file__).resolve().parent.parent
+        self.repo_root = Path(__file__).resolve().parent.parent.parent
         self.template = template
 
         self.comments: list[tuple[int, str]] = []

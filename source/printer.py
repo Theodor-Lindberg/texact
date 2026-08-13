@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from colorama import Fore, Style, init as colorama_init
 
 if TYPE_CHECKING:  # Only for type hints
-    from reviewer import Status
+    from reviewers.reviewer import Status
 
 
 class Printer:

@@ -1,6 +1,6 @@
 import re
 
-from reviewer import Reviewer, Status
+from .reviewer import Reviewer, Status
 from printer import Printer
 
 

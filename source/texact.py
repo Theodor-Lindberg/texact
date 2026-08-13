@@ -3,13 +3,13 @@ import sys
 
 from pathlib import Path
 from printer import Printer
-from reviewer import Status
-from reviewer_unsure import Reviewer_Unsure
-from reviewer_inthis import Reviewer_Inthis
-from reviewer_reflabel import Reviewer_RefLabel
-from reviewer_casing import Reviewer_Casing
-from reviewer_figure import Reviewer_Figure
-from reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer import Status
+from reviewers.reviewer_unsure import Reviewer_Unsure
+from reviewers.reviewer_inthis import Reviewer_Inthis
+from reviewers.reviewer_reflabel import Reviewer_RefLabel
+from reviewers.reviewer_casing import Reviewer_Casing
+from reviewers.reviewer_figure import Reviewer_Figure
+from reviewers.reviewer_chktex import Reviewer_ChkTeX
 from template_check import get_template
 
 
