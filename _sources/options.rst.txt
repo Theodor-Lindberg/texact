@@ -10,5 +10,3 @@ To make TeXact ignore certain lines add the following as a :math:`\text{LaTeX}` 
 .. code-block:: tex
 
     % texact *
-
-
