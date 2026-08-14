@@ -17,6 +17,7 @@ texact = "texact:main"
 package-dir = {"" = "source"}
 packages = ["texact_config", "reviewers"]
 py-modules = [
+  "configuration",
   "printer",
   "template_check",
   "texact",

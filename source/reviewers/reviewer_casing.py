@@ -73,8 +73,15 @@ class Reviewer_Casing(Reviewer):
         r"\\(?:cite|ref|label|url|usepackage)\{[^}]*\}"
     )
 
-    def __init__(self, printer: Printer) -> None:
+    def __init__(
+        self,
+        printer: Printer,
+        additional_spellings: tuple[str, ...] = (),
+    ) -> None:
         self.printer = printer
+        self.correct_spellings = tuple(
+            dict.fromkeys((*self.CORRECT_SPELLINGS, *additional_spellings))
+        )
         self.comments: list[Diagnostic] = []
         self.mismatch_count = 0
 
@@ -90,7 +97,7 @@ class Reviewer_Casing(Reviewer):
         )
 
         # Check each word in the line
-        for correct_spelling in self.CORRECT_SPELLINGS:
+        for correct_spelling in self.correct_spellings:
             word_lower = correct_spelling.lower()
             # Create regex pattern to match the word with optional suffixes:
             # - plural 's': fpgas

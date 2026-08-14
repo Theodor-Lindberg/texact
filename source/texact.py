@@ -2,8 +2,9 @@ import argparse
 import sys
 
 from pathlib import Path
+from configuration import ConfigurationError, TexactConfig, load_config
 from printer import Printer
-from reviewers.reviewer import Diagnostic, Status
+from reviewers.reviewer import Diagnostic, Reviewer, Severity, Status
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.reviewer_inthis import Reviewer_Inthis
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
@@ -23,26 +24,38 @@ def set_up_arg_parser() -> argparse.Namespace:
         help="Path(s) to LaTeX files",
     )
     parser.add_argument(
+        "--config",
+        type=Path,
+        metavar="PATH",
+        help="Path to a TeXact TOML configuration file",
+    )
+    parser.add_argument(
         "--unsure",
-        default=True,
+        default=None,
         action=argparse.BooleanOptionalAction,
         help="Find should|would|could|might",
     )
     parser.add_argument(
         "--chktex",
-        default=True,
+        default=None,
         action=argparse.BooleanOptionalAction,
         help="Run chktex with config/chktexrc",
     )
     parser.add_argument(
         "--html-style",
-        action="store_true",
+        default=None,
+        action=argparse.BooleanOptionalAction,
         help="Output colors using HTML spans instead of ANSI escape codes",
     )
     return parser.parse_args()
 
 
-def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
+def process_file(
+    file_path: Path,
+    reviewers: tuple[Reviewer, ...],
+    printer: Printer,
+    config: TexactConfig,
+) -> int:
     with file_path.open("r", encoding="utf-8") as input_file:
         for line_no, line in enumerate(input_file):
             if "% texact *" in line:
@@ -50,11 +63,17 @@ def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
             for reviewer in reviewers:
                 reviewer.process_line(line_no, line)
 
+    reviewer_comments: list[tuple[Reviewer, list[Diagnostic]]] = []
     all_comments: list[Diagnostic] = []
     for reviewer in reviewers:
-        all_comments.extend(reviewer.get_comments())
+        comments = reviewer.get_comments()
+        reviewer_comments.append((reviewer, comments))
+        all_comments.extend(comments)
 
-    sourced_comments = [comment.with_source(file_path) for comment in all_comments]
+    visible_comments = [
+        comment for comment in all_comments if comment.code not in config.lint.ignore
+    ]
+    sourced_comments = [comment.with_source(file_path) for comment in visible_comments]
     for comment in sorted(
         sourced_comments,
         key=lambda diagnostic: (
@@ -65,19 +84,55 @@ def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
         printer.print_diagnostic(comment)
 
     printer.print("=== Summary ===")
-    for reviewer in reviewers:
+    configuration_path = (
+        str(config.source_path.resolve())
+        if config.source_path is not None
+        else "none (built-in defaults)"
+    )
+    printer.print(f"Configuration file: {configuration_path}")
+    for reviewer, comments in reviewer_comments:
+        visible_reviewer_comments = [
+            comment for comment in comments if comment.code not in config.lint.ignore
+        ]
+        status = _status_for_diagnostics(
+            reviewer,
+            comments,
+            visible_reviewer_comments,
+        )
         name = reviewer.get_name()
-        status = printer.status_str(reviewer.get_status())
-        summary = reviewer.get_summary()
-        printer.print(f"Reviewer {name}: {status}. {summary}")
+        summary = reviewer.get_summary() if visible_reviewer_comments else ""
+        printer.print(f"Reviewer {name}: {printer.status_str(status)}. {summary}")
 
-    any_failed = any(reviewer.get_status() == Status.FAILED for reviewer in reviewers)
+    any_failed = any(comment.severity == Severity.ERROR for comment in visible_comments)
     return 1 if any_failed else 0
+
+
+def _status_for_diagnostics(
+    reviewer: Reviewer,
+    all_comments: list[Diagnostic],
+    visible_comments: list[Diagnostic],
+) -> Status:
+    original_status = reviewer.get_status()
+    if not visible_comments and all_comments:
+        return Status.PASSED
+    if any(comment.severity == Severity.ERROR for comment in visible_comments):
+        return Status.FAILED
+    if any(comment.severity == Severity.WARNING for comment in visible_comments):
+        return Status.WARNING
+    return original_status
 
 
 def main():
     args = set_up_arg_parser()
-    printer = Printer(html_style=args.html_style)
+    try:
+        config = load_config(args.config)
+    except ConfigurationError as error:
+        raise SystemExit(f"Configuration error: {error}") from error
+
+    html_style = (
+        config.format.html_style if args.html_style is None else args.html_style
+    )
+    printer = Printer(html_style=html_style)
 
     if not args.files:
         raise SystemExit("Error: provide at least one LaTeX file.")
@@ -100,15 +155,22 @@ def main():
         reviewers = [
             Reviewer_Inthis(printer),
             Reviewer_RefLabel(printer),
-            Reviewer_Casing(printer),
+            Reviewer_Casing(printer, config.lint.casing),
             Reviewer_Figure(printer, file_path),
         ]
-        if args.unsure:
-            reviewers.append(Reviewer_Unsure(printer))
-        if args.chktex:
-            reviewers.append(Reviewer_ChkTeX(printer, file_path, template))
+        if args.unsure is not False:
+            reviewers.append(Reviewer_Unsure(printer, config.lint.we_count))
+        if args.chktex is not False:
+            reviewers.append(
+                Reviewer_ChkTeX(
+                    printer,
+                    file_path,
+                    template,
+                    config.tools.chktex_path,
+                )
+            )
 
-        ret_code = process_file(file_path, tuple(reviewers), printer)
+        ret_code = process_file(file_path, tuple(reviewers), printer, config)
         max_ret_code = max(max_ret_code, ret_code)
 
     sys.exit(max_ret_code)
