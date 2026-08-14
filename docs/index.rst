@@ -63,7 +63,6 @@ For more information, run
    options
    rules/index
    integration
-   checklist
    development
    licenses
 
