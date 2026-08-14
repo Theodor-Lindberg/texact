@@ -9,7 +9,6 @@
 project = "TeXact"
 copyright = "2026, Theodor Lindberg"
 author = "Theodor Lindberg"
-release = "0.1.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -30,7 +29,9 @@ exclude_patterns = []
 
 html_theme = "furo"
 html_static_path = ["_static"]
+html_css_files = ["custom.css"] # For scaling the logo over ToC
 html_favicon = "_static/texact.ico"
+html_logo = "_static/texactlogo.svg"
 
 
 def setup(app):
