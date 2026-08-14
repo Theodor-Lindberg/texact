@@ -5,10 +5,12 @@ from typing import TYPE_CHECKING
 from colorama import Fore, Style, init as colorama_init
 
 if TYPE_CHECKING:  # Only for type hints
-    from reviewers.reviewer import Status
+    from reviewers.reviewer import Diagnostic, Status
 
 
 class Printer:
+    """Formats TeXact output for terminal or HTML display."""
+
     GREEN = Fore.GREEN
     DARK_RED = Fore.RED
     YELLOW = Fore.YELLOW
@@ -17,8 +19,13 @@ class Printer:
     HTML_DARK_RED = "#800000"
     HTML_YELLOW = "#808000"
 
-    def __init__(self, html_style: bool = False) -> None:
+    def __init__(
+        self,
+        html_style: bool = False,
+        docs_base_url: str | None = None,
+    ) -> None:
         self.html_style = html_style
+        self.docs_base_url = docs_base_url
         if not self.html_style:
             colorama_init()
 
@@ -28,12 +35,24 @@ class Printer:
         else:
             print(message)
 
-    def print_no(self, line_no: int, message: str) -> None:
-        line_no = f"L{line_no + 1}:"
+    def print_no(self, line_no: int, warning_number: int, message: str) -> None:
+        line_label = f"L{line_no + 1}:"
+        warning_label = f"[{warning_number}]"
         if self.html_style:
-            print(f"{self.green(line_no)} {message}<br>")
+            print(
+                f"{self.green(line_label)} {self.yellow(warning_label)} {message}<br>"
+            )
         else:
-            print(f"{self.green(line_no)} {message}")
+            print(f"{self.green(line_label)} {self.yellow(warning_label)} {message}")
+
+    def print_diagnostic(self, diagnostic: "Diagnostic") -> None:
+        line_label = self.green(f"L{diagnostic.line}")
+        warning_label = self.dark_red(f"[{diagnostic.code}]")
+        message = f"{line_label} {warning_label}: {diagnostic.message}"
+        if self.html_style:
+            print(f"{message}<br>")
+        else:
+            print(message)
 
     def green(self, message: str) -> str:
         if self.html_style:

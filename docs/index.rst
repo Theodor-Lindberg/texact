@@ -61,6 +61,7 @@ For more information, run
    :caption: Contents:
 
    options
+   rules/index
    integration
    checklist
    development

@@ -6,11 +6,25 @@ from importlib import resources
 from pathlib import Path
 
 from printer import Printer
-from .reviewer import Reviewer, Status
+from .reviewer import (
+    Diagnostic,
+    Reviewer,
+    Status,
+)
+from .rules import (
+    RULES,
+    RULE_CHK901,
+    RULE_CHK902,
+    RULE_CHK903,
+    RULE_CHK904,
+    Severity,
+)
 from template_check import Template
 
 
 class Reviewer_ChkTeX(Reviewer):
+    """Runs ChkTeX and adapts its output for TeXact."""
+
     _PATTERN_VERSION = re.compile(r"^ChkTeX\s+v(?P<version>[\d.]+)")
     _PATTERN_DIAGNOSTIC = re.compile(
         r"^L(?P<line>\d+):\s+(?P<kind>Warning|Error)\s+(?P<code>\d+)\.\s+(?P<message>.*)$"
@@ -24,7 +38,7 @@ class Reviewer_ChkTeX(Reviewer):
         self.repo_root = Path(__file__).resolve().parent.parent.parent
         self.template = template
 
-        self.comments: list[tuple[int, str]] = []
+        self.comments: list[Diagnostic] = []
         self.version = "unknown"
         self.warning_count = 0
         self.error_count = 0
@@ -58,7 +72,7 @@ class Reviewer_ChkTeX(Reviewer):
     #     self.warning_count -= suppressed_count
     #     return filtered_comments
 
-    def get_comments(self) -> list[tuple[int, str]]:
+    def get_comments(self) -> list[Diagnostic]:
         if self._has_run:
             return self.comments
 
@@ -69,9 +83,10 @@ class Reviewer_ChkTeX(Reviewer):
             self.execution_failed = True
             self.chktex_not_installed = True
             self.comments.append(
-                (
+                Diagnostic(
                     0,
-                    "ChkTeX is not installed. Please install it to run this check.",
+                    RULE_CHK901,
+                    RULE_CHK901.render_message(),
                 )
             )
             return self.comments
@@ -80,9 +95,10 @@ class Reviewer_ChkTeX(Reviewer):
         if chktexrc_path is None:
             self.execution_failed = True
             self.comments.append(
-                (
+                Diagnostic(
                     0,
-                    "ChkTeX config file not found. Expected config/chktexrc or packaged texact_config/chktexrc.",
+                    RULE_CHK902,
+                    RULE_CHK902.render_message(),
                 )
             )
             return self.comments
@@ -115,9 +131,10 @@ class Reviewer_ChkTeX(Reviewer):
         except FileNotFoundError:
             self.execution_failed = True
             self.comments.append(
-                (
+                Diagnostic(
                     0,
-                    "ChkTeX command not found on PATH: chktex",
+                    RULE_CHK903,
+                    RULE_CHK903.render_message(),
                 )
             )
             return self.comments
@@ -140,6 +157,7 @@ class Reviewer_ChkTeX(Reviewer):
 
             line_no = int(diagnostic_match.group("line")) - 1
             kind = diagnostic_match.group("kind")
+            chktex_code = int(diagnostic_match.group("code"))
             if kind == "Warning":
                 self.warning_count += 1
             else:
@@ -148,6 +166,12 @@ class Reviewer_ChkTeX(Reviewer):
             detail_text = output_line.split(":", 1)[1].strip()
             colored_kind = self._color_kind_text(kind)
             message = detail_text.replace(kind, colored_kind, 1)
+            severity = Severity.WARNING if kind == "Warning" else Severity.ERROR
+            rule = RULES.get_or_register_chktex(
+                chktex_code,
+                severity,
+                message,
+            )
 
             context_lines, consumed_lines = self._collect_context_lines(
                 output_lines,
@@ -158,16 +182,27 @@ class Reviewer_ChkTeX(Reviewer):
                 message = f"{message}\n" + "\n".join(formatted_context)
                 index += consumed_lines
 
-            self.comments.append((line_no, message))
+            self.comments.append(
+                Diagnostic(
+                    line_no,
+                    rule,
+                    rule.render_message(message=message),
+                    severity_override=severity,
+                )
+            )
             index += 1
 
         if result.returncode != 0 and not self.comments:
             self.execution_failed = True
             stderr_text = result.stderr.strip()
-            message = "ChkTeX execution failed"
-            if stderr_text:
-                message = f"{message}: {stderr_text}"
-            self.comments.append((0, message))
+            details = stderr_text or "no diagnostic output"
+            self.comments.append(
+                Diagnostic(
+                    0,
+                    RULE_CHK904,
+                    RULE_CHK904.render_message(details=details),
+                )
+            )
 
         return self.comments
 

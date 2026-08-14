@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 class Template(Enum):
+    """Document templates recognized by TeXact."""
+
     IEEE = auto()
     LLNCS = auto()
     UNKNOWN = auto()

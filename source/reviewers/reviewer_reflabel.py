@@ -1,10 +1,13 @@
 import re
 
-from .reviewer import Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status
+from .rules import RULE_REF001, RULE_REF002, RULE_REF003
 from printer import Printer
 
 
 class Reviewer_RefLabel(Reviewer):
+    """Checks label names and references."""
+
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
     _PATTERN_REF = re.compile(r"\\ref\{([^}]+)\}")
 
@@ -14,7 +17,7 @@ class Reviewer_RefLabel(Reviewer):
         self.referenced_labels = set()
         self.label_line_map = {}  # Maps label name to first line number it was defined
         self.ref_line_map = {}  # Maps reference name to first line number it was referenced
-        self.underscore_comments = []
+        self.underscore_comments: list[Diagnostic] = []
 
     def process_line(self, line_no: int, line: str) -> None:
         # Remove comments (everything after %)
@@ -22,13 +25,17 @@ class Reviewer_RefLabel(Reviewer):
             line = line[: line.index("%")]
 
         # Extract all \label{...} patterns
-        label_matches = self._PATTERN_LABEL.findall(line)
-        for label_name in label_matches:
+        label_matches = self._PATTERN_LABEL.finditer(line)
+        for label_match in label_matches:
+            label_name = label_match.group(1)
             if "_" in label_name:
                 self.underscore_comments.append(
-                    (
+                    Diagnostic(
                         line_no,
-                        f"Label '{self.printer.dark_red(label_name)}' should use hyphens (-) instead of underscores (_).",
+                        RULE_REF001,
+                        RULE_REF001.render_message(
+                            label=self.printer.dark_red(label_name)
+                        ),
                     )
                 )
             if label_name not in self.defined_labels:
@@ -36,8 +43,9 @@ class Reviewer_RefLabel(Reviewer):
                 self.label_line_map[label_name] = line_no
 
         # Extract all \ref{...} patterns
-        ref_matches = self._PATTERN_REF.findall(line)
-        for ref_name in ref_matches:
+        ref_matches = self._PATTERN_REF.finditer(line)
+        for ref_match in ref_matches:
+            ref_name = ref_match.group(1)
             if ref_name not in self.referenced_labels:
                 self.referenced_labels.add(ref_name)
                 self.ref_line_map[ref_name] = line_no
@@ -59,26 +67,29 @@ class Reviewer_RefLabel(Reviewer):
 
         return " | ".join(messages) if messages else ""
 
-    def get_comments(self) -> list[tuple[int, str]]:
+    def get_comments(self) -> list[Diagnostic]:
         missing_labels = self.referenced_labels - self.defined_labels
         orphaned_labels = self.defined_labels - self.referenced_labels
 
-        comments: list[tuple[int, str]] = []
+        comments: list[Diagnostic] = []
         comments.extend(self.underscore_comments)
 
         for label in missing_labels:
-            line_no = self.ref_line_map[label]
             comments.append(
-                (
-                    line_no,
-                    f"Reference to undefined label: {self.printer.dark_red(label)}",
+                Diagnostic(
+                    self.ref_line_map[label],
+                    RULE_REF002,
+                    RULE_REF002.render_message(label=self.printer.dark_red(label)),
                 )
             )
 
         for label in orphaned_labels:
-            line_no = self.label_line_map[label]
             comments.append(
-                (line_no, f"Label never referenced: {self.printer.dark_red(label)}")
+                Diagnostic(
+                    self.label_line_map[label],
+                    RULE_REF003,
+                    RULE_REF003.render_message(label=self.printer.dark_red(label)),
+                )
             )
 
         return comments
