@@ -29,7 +29,8 @@ exclude_patterns = []
 
 html_theme = "furo"
 html_static_path = ["_static"]
-html_css_files = ["custom.css"]  # For scaling the logo over ToC
+html_css_files = ["custom.css", "try-it.css"]  # For scaling the logo over ToC
+html_js_files = ["try-it.js"]
 html_favicon = "_static/texact.ico"
 html_logo = "_static/texactlogo.svg"
 html_theme_options = {
