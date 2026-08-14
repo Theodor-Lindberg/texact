@@ -27,6 +27,8 @@ docs = [
     "sphinx>=7",
     "furo>=2025",
     "myst-parser>=4",
+    "m2r2",
+    "docutils<=0.20",
 ]
 
 [tool.setuptools.package-data]
