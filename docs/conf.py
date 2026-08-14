@@ -32,6 +32,18 @@ html_static_path = ["_static"]
 html_css_files = ["custom.css"] # For scaling the logo over ToC
 html_favicon = "_static/texact.ico"
 html_logo = "_static/texactlogo.svg"
+html_theme_options = {
+    "light_css_variables": {
+        "color-brand-primary": "#ff6442",
+        "color-brand-content": "#ff6442",
+        "color-brand-visited": "#d1a221",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#ff6442 ",
+        "color-brand-content": "#ff6442",
+        "color-brand-visited": "#d1a221",
+    },
+}
 
 
 def setup(app):
