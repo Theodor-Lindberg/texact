@@ -93,7 +93,7 @@ await micropip.install("texact")
 
     try {
       const pyodide = await loadTexact();
-      pyodide.FS.writeFile("/tmp/try-it.tex", editor.getValue());
+      pyodide.FS.writeFile("example.tex", editor.getValue());
       status.textContent = "Running TeXact...";
       const result = await pyodide.runPythonAsync(`
 import contextlib
@@ -102,7 +102,7 @@ import json
 import sys
 from texact import main
 
-sys.argv = ["texact", "--no-chktex", "--html-style", "/tmp/try-it.tex"]
+sys.argv = ["texact", "--no-chktex", "--html-style", "example.tex"]
 stdout = io.StringIO()
 stderr = io.StringIO()
 exit_code = 0
