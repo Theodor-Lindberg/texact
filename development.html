@@ -193,6 +193,7 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rules/index.html">TeXact Rules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checklist.html">Checklist</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Development</a></li>
@@ -242,22 +243,66 @@
 <p>The tool is implemented as a set of reviewers, each with its own
 focus. The reviewers keep track of their comments as the LaTeX file is
 processed line by line.
-Once the entire file has passed, all comments are printed to the
-console, referencing line numbers.
+Once the entire file has passed, all diagnostics are printed to the
+console, referencing the line number.
 A summary is also outputted at the end.
 As the reviewers are independent of one another, adding new ones
-shouldn’t break existing features.</p>
+does not break existing features.</p>
+<p>Reviewer implementations live in <code class="docutils literal notranslate"><span class="pre">source/reviewers/</span></code>. The shared
+reviewer contract is in <code class="docutils literal notranslate"><span class="pre">source/reviewers/reviewer.py</span></code> and the central
+rule registry is in <code class="docutils literal notranslate"><span class="pre">source/reviewers/rules.py</span></code>.</p>
+</section>
+<section id="rule-identity">
+<h2>Rule identity<a class="headerlink" href="#rule-identity" title="Link to this heading">¶</a></h2>
+<p>Every diagnostic refers to one immutable <code class="docutils literal notranslate"><span class="pre">Rule</span></code> in the central registry.
+The registry owns the stable code, kebab-case name, canonical message
+template, severity, and documentation path. A <code class="docutils literal notranslate"><span class="pre">Diagnostic</span></code> adds the
+context for one occurrence: source filename, line, and the rendered message.</p>
+<p>The command-line output follows this general shape:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">tex</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span> <span class="n">error</span><span class="p">:</span> <span class="n">CAS001</span> <span class="n">incorrect</span><span class="o">-</span><span class="n">casing</span><span class="p">:</span> <span class="n">Use</span> <span class="n">the</span> <span class="n">canonical</span> <span class="n">casing</span> <span class="k">for</span> <span class="n">this</span> <span class="n">technical</span> <span class="n">term</span><span class="o">.</span> <span class="p">[</span><span class="n">docs</span><span class="p">:</span> <span class="n">docs</span><span class="o">/</span><span class="n">rules</span><span class="o">/</span><span class="n">incorrect</span><span class="o">-</span><span class="n">casing</span><span class="o">.</span><span class="n">md</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The default documentation link is repository-relative. Pass
+<code class="docutils literal notranslate"><span class="pre">--docs-base-url</span></code> to generate links to a documentation website, for
+example <code class="docutils literal notranslate"><span class="pre">https://example.org/texact/rules/incorrect-casing.html</span></code>.</p>
+<p>Reviewer prefixes and rule ranges are stable:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_Inthis</span></code> uses <code class="docutils literal notranslate"><span class="pre">INT</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_Casing</span></code> uses <code class="docutils literal notranslate"><span class="pre">CAS</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_Unsure</span></code> uses <code class="docutils literal notranslate"><span class="pre">UNS</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_RefLabel</span></code> uses <code class="docutils literal notranslate"><span class="pre">REF</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_Figure</span></code> uses <code class="docutils literal notranslate"><span class="pre">FIG</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_ChkTeX</span></code> uses <code class="docutils literal notranslate"><span class="pre">CHK</span></code>.</p></li>
+</ul>
+<p>Each reviewer owns the numeric suffixes in its prefix. For example,
+<code class="docutils literal notranslate"><span class="pre">CAS001</span></code> is the casing rule and <code class="docutils literal notranslate"><span class="pre">FIG003</span></code> is the missing-figure-label
+rule. Native ChkTeX diagnostics use <code class="docutils literal notranslate"><span class="pre">CHK001</span></code> through <code class="docutils literal notranslate"><span class="pre">CHK899</span></code> with the
+Native ChkTeX diagnostics use <code class="docutils literal notranslate"><span class="pre">CHK001</span></code> through <code class="docutils literal notranslate"><span class="pre">CHK899</span></code> with the
+native ChkTeX number preserved. Native numbers at or above 900 are shifted
+into a disjoint range. TeXact’s ChkTeX lifecycle rules use <code class="docutils literal notranslate"><span class="pre">CHK901</span></code> through
+<code class="docutils literal notranslate"><span class="pre">CHK904</span></code> so the two sources cannot collide.</p>
+<p>Rule documentation is indexed at <code class="docutils literal notranslate"><span class="pre">docs/rules/index.md</span></code>. Each TeXact rule
+has its own Markdown page under <code class="docutils literal notranslate"><span class="pre">docs/rules/</span></code> with sections for what it
+detects, why the issue matters, and a LaTeX example. When adding a rule, add
+its registry entry, use the returned named rule handle when creating
+diagnostics, add its dedicated page to the hidden rule toctree, and add tests.
+Never reuse a published code.</p>
 </section>
 <section id="adding-features">
 <h2>Adding features<a class="headerlink" href="#adding-features" title="Link to this heading">¶</a></h2>
 <p>All reviewers inherit from the same base class, <em>Reviewer</em>, and
-implements a set of methods: <code class="docutils literal notranslate"><span class="pre">process_line</span></code>, <code class="docutils literal notranslate"><span class="pre">get_comments</span></code>,
-<code class="docutils literal notranslate"><span class="pre">get_summary</span></code>, <code class="docutils literal notranslate"><span class="pre">get_status</span></code>, and <code class="docutils literal notranslate"><span class="pre">get_name</span></code>.
+implement a set of methods: <code class="docutils literal notranslate"><span class="pre">process_line</span></code>, <code class="docutils literal notranslate"><span class="pre">get_comments</span></code>,
+<code class="docutils literal notranslate"><span class="pre">get_summary</span></code>, <code class="docutils literal notranslate"><span class="pre">get_status</span></code>, and <code class="docutils literal notranslate"><span class="pre">get_name</span></code>. <code class="docutils literal notranslate"><span class="pre">get_comments</span></code>
+returns <code class="docutils literal notranslate"><span class="pre">Diagnostic</span></code> objects linked to registry <code class="docutils literal notranslate"><span class="pre">Rule</span></code> objects.</p>
+<p>Use a named <code class="docutils literal notranslate"><span class="pre">Rule</span></code> handle from <code class="docutils literal notranslate"><span class="pre">source/reviewers/rules.py</span></code> and
+call its <code class="docutils literal notranslate"><span class="pre">render_message</span></code> method for dynamic values. Add a test that checks
+the registry metadata, the diagnostic location, and the rendered code in CLI
+output.
 Adding a feature involves either modifying an existing reviewer
 or adding a new one.
 The easiest way to get started is by studying one of the existing
-classes, e.g. <code class="docutils literal notranslate"><span class="pre">Reviewer_unsure</span></code>.
-The main file, <code class="docutils literal notranslate"><span class="pre">texact</span></code>, must be updated to include any new reviewer.
+classes, e.g. <code class="docutils literal notranslate"><span class="pre">Reviewer_Unsure</span></code>. The main file, <code class="docutils literal notranslate"><span class="pre">texact</span></code>, must be
+updated to include any new reviewer.
 Command-line arguments can be added as well, if necessary.</p>
 </section>
 </section>
@@ -319,6 +364,7 @@ Command-line arguments can be added as well, if necessary.</p>
             <ul>
 <li><a class="reference internal" href="#">Development</a><ul>
 <li><a class="reference internal" href="#code-structure">Code structure</a></li>
+<li><a class="reference internal" href="#rule-identity">Rule identity</a></li>
 <li><a class="reference internal" href="#adding-features">Adding features</a></li>
 </ul>
 </li>

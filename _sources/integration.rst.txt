@@ -28,7 +28,7 @@ To avoid running ChkTeX, add the additional flag:
         args: [--no-chktex]
 
 Continuous integration
----------------------
+----------------------
 
 TeXstudio
 ---------
