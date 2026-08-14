@@ -259,6 +259,38 @@
 </pre></div>
 </div>
 </section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<p>TeXact can load optional settings from a TOML file. It searches the current
+directory in this order and stops at the first TeXact configuration it finds:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.texact.toml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">texact.toml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> under <code class="docutils literal notranslate"><span class="pre">[tool.texact]</span></code></p></li>
+</ol>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">PATH</span></code> to select a configuration file explicitly. An explicit
+file takes precedence over automatic discovery. Command-line options take
+precedence over values loaded from TOML.</p>
+<p>The supported structure is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">lint</span><span class="p">]</span>
+<span class="n">ignore</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIG002&quot;</span><span class="p">,</span> <span class="s2">&quot;UNS001&quot;</span><span class="p">]</span>
+<span class="n">casing</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LaTeX&quot;</span><span class="p">]</span>
+<span class="n">we_count</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="p">[</span><span class="nb">format</span><span class="p">]</span>
+<span class="n">html</span><span class="o">-</span><span class="n">style</span> <span class="o">=</span> <span class="n">true</span>
+
+<span class="p">[</span><span class="n">tools</span><span class="p">]</span>
+<span class="n">chktex_path</span> <span class="o">=</span> <span class="s2">&quot;/usr/bin&quot;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lint.ignore</span></code> accepts rule codes to suppress. <code class="docutils literal notranslate"><span class="pre">lint.casing</span></code> adds
+spellings to the built-in casing list. <code class="docutils literal notranslate"><span class="pre">lint.we_count</span></code> changes the maximum
+allowed number of <code class="docutils literal notranslate"><span class="pre">we</span></code> occurrences. <code class="docutils literal notranslate"><span class="pre">format.html-style</span></code> enables HTML
+output by default, and <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a ChkTeX executable
+or directory.</p>
+<p>When no configuration file exists, TeXact uses its normal built-in defaults.</p>
+</section>
 </section>
 
         </article>
@@ -318,6 +350,7 @@
             <ul>
 <li><a class="reference internal" href="#">Options</a><ul>
 <li><a class="reference internal" href="#per-line-suppressions">Per line suppressions</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
 </ul>
 </li>
 </ul>
