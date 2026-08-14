@@ -47,14 +47,6 @@ class Rule:
     def render_message(self, **values: object) -> str:
         return self.message.format(**values)
 
-    def documentation_url(self, base_url: str | None = None) -> str:
-        path, separator, anchor = self.documentation_path.partition("#")
-        html_path = f"{path.removeprefix('docs/').removesuffix('.md')}.html"
-        anchor_suffix = f"#{anchor}" if separator else ""
-        if base_url:
-            return f"{base_url.rstrip('/')}/{html_path}{anchor_suffix}"
-        return self.documentation_path
-
 
 class RuleRegistry:
     """Registry that validates and resolves TeXact rules."""

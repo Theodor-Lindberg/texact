@@ -44,9 +44,6 @@ class Diagnostic:
             return None
         return str(self.source_path)
 
-    def documentation_url(self, base_url: str | None = None) -> str:
-        return self.rule.documentation_url(base_url)
-
     def with_source(self, source_path: Path) -> "Diagnostic":
         return replace(self, source_path=source_path)
 

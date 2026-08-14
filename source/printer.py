@@ -19,13 +19,8 @@ class Printer:
     HTML_DARK_RED = "#800000"
     HTML_YELLOW = "#808000"
 
-    def __init__(
-        self,
-        html_style: bool = False,
-        docs_base_url: str | None = None,
-    ) -> None:
+    def __init__(self, html_style: bool = False) -> None:
         self.html_style = html_style
-        self.docs_base_url = docs_base_url
         if not self.html_style:
             colorama_init()
 

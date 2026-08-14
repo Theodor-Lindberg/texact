@@ -39,10 +39,6 @@ def set_up_arg_parser() -> argparse.Namespace:
         action="store_true",
         help="Output colors using HTML spans instead of ANSI escape codes",
     )
-    parser.add_argument(
-        "--docs-base-url",
-        help="Base URL for rule documentation links",
-    )
     return parser.parse_args()
 
 
@@ -81,10 +77,7 @@ def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
 
 def main():
     args = set_up_arg_parser()
-    printer = Printer(
-        html_style=args.html_style,
-        docs_base_url=args.docs_base_url,
-    )
+    printer = Printer(html_style=args.html_style)
 
     if not args.files:
         raise SystemExit("Error: provide at least one LaTeX file.")

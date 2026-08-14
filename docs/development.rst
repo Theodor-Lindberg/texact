@@ -29,9 +29,7 @@ The command-line output follows this general shape::
 
 	path/to/file.tex:12:4: error: CAS001 incorrect-casing: Use the canonical casing for this technical term. [docs: docs/rules/incorrect-casing.md]
 
-The default documentation link is repository-relative. Pass
-``--docs-base-url`` to generate links to a documentation website, for
-example ``https://example.org/texact/rules/incorrect-casing.html``.
+Documentation links use repository-relative paths.
 
 Reviewer prefixes and rule ranges are stable:
 
