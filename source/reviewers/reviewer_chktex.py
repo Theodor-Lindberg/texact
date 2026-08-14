@@ -36,12 +36,14 @@ class Reviewer_ChkTeX(Reviewer):
         tex_file_path: Path,
         template: Template,
         chktex_path: str | None = None,
+        required: bool = False,
     ) -> None:
         self.printer = printer
         self.tex_file_path = tex_file_path.resolve()
         self.repo_root = Path(__file__).resolve().parent.parent.parent
         self.template = template
         self.chktex_path = chktex_path
+        self.required = required
 
         self.comments: list[Diagnostic] = []
         self.version = "unknown"
@@ -92,6 +94,9 @@ class Reviewer_ChkTeX(Reviewer):
                     0,
                     RULE_CHK901,
                     RULE_CHK901.render_message(),
+                    severity_override=(
+                        Severity.ERROR if self.required else Severity.WARNING
+                    ),
                 )
             )
             return self.comments

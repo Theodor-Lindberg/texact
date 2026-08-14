@@ -1,11 +1,14 @@
 from pathlib import Path
 import re
 import subprocess
+from unittest.mock import patch
 
-from reviewers.reviewer import Diagnostic
+from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
+from reviewers.reviewer_chktex import Reviewer_ChkTeX
 from reviewers.rules import RULES
 from printer import Printer
+from template_check import Template
 
 
 TEST_DIR = Path(__file__).resolve().parent
@@ -42,6 +45,24 @@ def test_diagnostic_has_one_based_location() -> None:
     assert diagnostic.code == "CAS001"
     assert diagnostic.line == 5
     assert diagnostic.filename == "sample.tex"
+
+
+def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:
+    for required, expected_severity in (
+        (False, Severity.WARNING),
+        (True, Severity.ERROR),
+    ):
+        reviewer = Reviewer_ChkTeX(
+            Printer(),
+            Path("missing.tex"),
+            Template.UNKNOWN,
+            required=required,
+        )
+        with patch.object(reviewer, "_resolve_chktex_command", return_value=None):
+            diagnostic = reviewer.get_comments()[0]
+
+        assert diagnostic.code == "CHK901"
+        assert diagnostic.severity == expected_severity
 
 
 def test_cli_prints_warning_number() -> None:

@@ -160,6 +160,7 @@ def main():
                     file_path,
                     template,
                     config.tools.chktex_path,
+                    required=args.chktex is True,
                 )
             )
 

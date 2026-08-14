@@ -61,7 +61,7 @@ come from ChkTeX, and they link to the shared
 
 | Code | Name | Message | Severity |
 | --- | --- | --- | --- |
-| CHK901 | [chktex-not-installed](chktex-not-installed.md) | Install ChkTeX to enable this reviewer. | warning |
+| CHK901 | [chktex-not-installed](chktex-not-installed.md) | ChkTeX not installed. | warning |
 | CHK902 | [chktex-config-not-found](chktex-config-not-found.md) | Provide `config/chktexrc` or a packaged ChkTeX configuration. | error |
 | CHK903 | [chktex-command-not-found](chktex-command-not-found.md) | Make the ChkTeX executable available on `PATH`. | error |
 | CHK904 | [chktex-execution-failed](chktex-execution-failed.md) | Fix the ChkTeX execution failure. | error |

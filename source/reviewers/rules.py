@@ -219,7 +219,7 @@ RULES = RuleRegistry(
             "CHK901",
             "chktex-not-installed",
             "Reviewer_ChkTeX",
-            "Install ChkTeX to enable this reviewer.",
+            "ChkTeX not installed.",
             Severity.WARNING,
         ),
         Rule(

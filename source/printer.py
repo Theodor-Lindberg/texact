@@ -42,7 +42,8 @@ class Printer:
 
     def print_diagnostic(self, diagnostic: "Diagnostic") -> None:
         line_label = self.green(f"L{diagnostic.line}")
-        warning_label = self.dark_red(f"[{diagnostic.code}]")
+        color = self.yellow if diagnostic.severity.value == "warning" else self.dark_red
+        warning_label = color(f"[{diagnostic.code}]")
         message = f"{line_label} {warning_label}: {diagnostic.message}"
         if self.html_style:
             print(f"{message}<br>")
