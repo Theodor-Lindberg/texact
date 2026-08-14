@@ -11,12 +11,10 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
-  build:
+  docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,18 +59,13 @@ jobs:
                   capture_output=True,
                   text=True,
               )
-              template = subprocess.run(
-                  ["git", "cat-file", "-e", f"{tag}:docs/_templates/versions.html"],
-                  check=False,
-                  stderr=subprocess.DEVNULL,
-              )
-              if conf.returncode == 0 and "sphinx_multiversion" in conf.stdout and template.returncode == 0:
+              if conf.returncode == 0:
                   compatible.append(tag)
               else:
                   skipped.append(tag)
 
           if skipped:
-              print("Skipping release tags without the multiversion configuration:")
+              print("Skipping release tags without docs/conf.py:")
               for tag in skipped:
                   print(f"  - {tag}")
           else:
@@ -87,10 +80,11 @@ jobs:
 
       - name: Build versioned documentation
         run: |
-          rm -rf docs/_build/html
-          sphinx-multiversion docs docs/_build/html
-          touch docs/_build/html/.nojekyll
-          cat > docs/_build/html/index.html <<'EOF'
+          cd docs
+          rm -rf _build/html
+          make multiversion
+          touch _build/html/.nojekyll
+          cat > _build/html/index.html <<'EOF'
           <!doctype html>
           <html lang="en">
             <head>
@@ -104,20 +98,10 @@ jobs:
             </body>
           </html>
           EOF
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/_build/html
-
-  deploy:
-    if: ${{ github.event_name == 'push' }}
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        if: ${{ github.event_name == 'push' }}
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build/html
