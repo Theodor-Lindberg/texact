@@ -57,6 +57,7 @@ For more information, run
         Information on how to use TeXact in pre-commit, TeXstudio, and more.
 
 .. toctree::
+    :maxdepth: 1
 
     try-it
     options
