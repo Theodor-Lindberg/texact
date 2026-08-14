@@ -159,13 +159,13 @@ RULES = RuleRegistry(
             "REF002",
             "undefined-label-reference",
             "Reviewer_RefLabel",
-            "Define the referenced label before using it: {label}.",
+            "Undefined label: {label}.",
         ),
         Rule(
             "REF003",
             "unreferenced-label",
             "Reviewer_RefLabel",
-            "Reference this label or remove it: {label}.",
+            "Unused label: {label}.",
         ),
         Rule(
             "FIG001",
@@ -232,7 +232,7 @@ RULES = RuleRegistry(
             "CHK903",
             "chktex-command-not-found",
             "Reviewer_ChkTeX",
-            "Make the ChkTeX executable available on PATH.",
+            "ChkTeX executable not found.",
         ),
         Rule(
             "CHK904",
