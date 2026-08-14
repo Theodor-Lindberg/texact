@@ -117,7 +117,6 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
             "--config",
             "custom.toml",
             "--no-html-style",
-            "--no-unsure",
             "file.tex",
         ],
     )
@@ -126,5 +125,4 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
 
     assert args.config == Path("custom.toml")
     assert args.html_style is False
-    assert args.unsure is False
     assert args.chktex is None

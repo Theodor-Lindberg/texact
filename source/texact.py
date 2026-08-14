@@ -30,12 +30,6 @@ def set_up_arg_parser() -> argparse.Namespace:
         help="Path to a TeXact TOML configuration file",
     )
     parser.add_argument(
-        "--unsure",
-        default=None,
-        action=argparse.BooleanOptionalAction,
-        help="Find should|would|could|might",
-    )
-    parser.add_argument(
         "--chktex",
         default=None,
         action=argparse.BooleanOptionalAction,
@@ -157,9 +151,8 @@ def main():
             Reviewer_RefLabel(printer),
             Reviewer_Casing(printer, config.lint.casing),
             Reviewer_Figure(printer, file_path),
+            Reviewer_Unsure(printer, config.lint.we_count),
         ]
-        if args.unsure is not False:
-            reviewers.append(Reviewer_Unsure(printer, config.lint.we_count))
         if args.chktex is not False:
             reviewers.append(
                 Reviewer_ChkTeX(
