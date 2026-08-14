@@ -18,6 +18,16 @@
   font-weight: 600;
 }
 
+.try-it-version {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-foreground-border);
+  border-radius: 0.25rem;
+  color: var(--color-foreground-muted);
+  font-family: var(--font-stack--monospace);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.45rem;
+}
+
 #try-it-run {
   background: var(--color-brand-primary);
   border: 0;
