@@ -31,12 +31,17 @@ class Reviewer_ChkTeX(Reviewer):
     )
 
     def __init__(
-        self, printer: Printer, tex_file_path: Path, template: Template
+        self,
+        printer: Printer,
+        tex_file_path: Path,
+        template: Template,
+        chktex_path: str | None = None,
     ) -> None:
         self.printer = printer
         self.tex_file_path = tex_file_path.resolve()
         self.repo_root = Path(__file__).resolve().parent.parent.parent
         self.template = template
+        self.chktex_path = chktex_path
 
         self.comments: list[Diagnostic] = []
         self.version = "unknown"
@@ -78,8 +83,8 @@ class Reviewer_ChkTeX(Reviewer):
 
         self._has_run = True
 
-        # Check if chktex is installed
-        if shutil.which("chktex") is None:
+        chktex_command = self._resolve_chktex_command()
+        if chktex_command is None:
             self.execution_failed = True
             self.chktex_not_installed = True
             self.comments.append(
@@ -104,7 +109,7 @@ class Reviewer_ChkTeX(Reviewer):
             return self.comments
 
         command = [
-            "chktex",
+            chktex_command,
             "-l",
             str(chktexrc_path),
             "-v7",
@@ -305,4 +310,15 @@ class Reviewer_ChkTeX(Reviewer):
         except (FileNotFoundError, ModuleNotFoundError):
             return None
 
+        return None
+
+    def _resolve_chktex_command(self) -> str | None:
+        if self.chktex_path is None:
+            return shutil.which("chktex")
+
+        configured_path = Path(os.path.expanduser(self.chktex_path))
+        if configured_path.is_file():
+            return str(configured_path)
+        if configured_path.is_dir():
+            return shutil.which("chktex", path=str(configured_path))
         return None

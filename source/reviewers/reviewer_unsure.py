@@ -12,8 +12,17 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_WE = re.compile(r"\bwe\b", re.IGNORECASE)
     _MAX_WE_OCCURRENCES = 5
 
-    def __init__(self, printer: Printer) -> None:
+    def __init__(
+        self,
+        printer: Printer,
+        max_we_occurrences: int | None = None,
+    ) -> None:
         self.printer = printer
+        self.max_we_occurrences = (
+            self._MAX_WE_OCCURRENCES
+            if max_we_occurrences is None
+            else max_we_occurrences
+        )
         self.match_count = 0
         self.we_count = 0
         self.we_limit_comment_added = False
@@ -43,7 +52,7 @@ class Reviewer_Unsure(Reviewer):
 
     def get_comments(self) -> list[Diagnostic]:
         if (
-            self.we_count > self._MAX_WE_OCCURRENCES
+            self.we_count > self.max_we_occurrences
             and not self.we_limit_comment_added
             and self.we_last_line is not None
         ):
@@ -53,7 +62,7 @@ class Reviewer_Unsure(Reviewer):
                     RULE_UNS002,
                     RULE_UNS002.render_message(
                         count=self.we_count,
-                        limit=self._MAX_WE_OCCURRENCES,
+                        limit=self.max_we_occurrences,
                     ),
                 )
             )
@@ -64,9 +73,9 @@ class Reviewer_Unsure(Reviewer):
         issues: list[str] = []
         if self.match_count:
             issues.append(f"Banned words: {self.match_count}")
-        if self.we_count > self._MAX_WE_OCCURRENCES:
+        if self.we_count > self.max_we_occurrences:
             issues.append(
-                f"Exceeded 'we' count: {self.we_count}/{self._MAX_WE_OCCURRENCES}"
+                f"Exceeded 'we' count: {self.we_count}/{self.max_we_occurrences}"
             )
 
         if not issues:
@@ -76,7 +85,7 @@ class Reviewer_Unsure(Reviewer):
     def get_status(self) -> Status:
         return (
             Status.PASSED
-            if self.match_count == 0 and self.we_count <= self._MAX_WE_OCCURRENCES
+            if self.match_count == 0 and self.we_count <= self.max_we_occurrences
             else Status.FAILED
         )
 
