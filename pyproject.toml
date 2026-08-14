@@ -1,14 +1,17 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "texact"
-version = "0.1.0"
-description = "Automated LaTeX reviewer checks"
+dynamic = ['version']
+description = "Automated article and LaTeX checks"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["Pillow>=10", "colorama>=0.4"]
+authors = [
+    { name = "Theodor Lindberg" },
+]
 
 [project.scripts]
 texact = "texact:main"
@@ -34,3 +37,9 @@ docs = [
 
 [tool.setuptools.package-data]
 texact_config = ["chktexrc"]
+
+[tool.setuptools_scm]
+version_scheme = "release-branch-semver"
+local_scheme = "node-and-date"
+parentdir_prefix_version = "texact-"
+fallback_version = "0.0+UNKNOWN"

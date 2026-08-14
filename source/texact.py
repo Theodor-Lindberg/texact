@@ -1,5 +1,6 @@
 import argparse
 import sys
+from importlib.metadata import PackageNotFoundError, version
 
 from pathlib import Path
 from configuration import ConfigurationError, TexactConfig, load_config
@@ -14,9 +15,22 @@ from reviewers.reviewer_chktex import Reviewer_ChkTeX
 from template_check import get_template
 
 
+def get_version() -> str:
+    try:
+        return version("texact")
+    except PackageNotFoundError:
+        return "unknown"
+
+
 def set_up_arg_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Automated LaTeX and article reviewer(s). Can you pass the judgement?"
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {get_version()}",
     )
     parser.add_argument(
         "files",

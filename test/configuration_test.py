@@ -1,6 +1,7 @@
 from dataclasses import FrozenInstanceError
 from pathlib import Path
 import sys
+import subprocess
 
 import pytest
 
@@ -126,3 +127,16 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
     assert args.config == Path("custom.toml")
     assert args.html_style is False
     assert args.chktex is None
+
+
+@pytest.mark.parametrize("version_option", ["-v", "--version"])
+def test_version_option_prints_version(version_option: str) -> None:
+    result = subprocess.run(
+        ["texact", version_option],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert result.stdout.startswith("texact ")
