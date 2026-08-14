@@ -24,7 +24,7 @@ def get_version() -> str:
 
 def set_up_arg_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Automated LaTeX and article reviewer(s). Can you pass the judgement?"
+        description="Automated LaTeX and article review. Can you pass the judgement?"
     )
     parser.add_argument(
         "-v",
