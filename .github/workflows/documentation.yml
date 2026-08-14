@@ -6,18 +6,24 @@ concurrency:
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  docs:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Setup Python
         uses: actions/setup-python@v7
@@ -28,16 +34,90 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -v .[docs]
-      - name: Sphinx build
+
+      - name: Select compatible release tags
+        shell: bash
         run: |
-          cd docs
-          make html
-          cd ..
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453  # v4.1.0
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          python - <<'PY'
+          import os
+          import re
+          import subprocess
+
+          semver = re.compile(r"^v\d+\.\d+\.\d+$")
+          tags = subprocess.run(
+              ["git", "tag", "--list", "v*"],
+              check=True,
+              capture_output=True,
+              text=True,
+          ).stdout.splitlines()
+          compatible = []
+          skipped = []
+          for tag in sorted(tags):
+              if not semver.fullmatch(tag):
+                  continue
+              conf = subprocess.run(
+                  ["git", "show", f"{tag}:docs/conf.py"],
+                  check=False,
+                  capture_output=True,
+                  text=True,
+              )
+              template = subprocess.run(
+                  ["git", "cat-file", "-e", f"{tag}:docs/_templates/versions.html"],
+                  check=False,
+                  stderr=subprocess.DEVNULL,
+              )
+              if conf.returncode == 0 and "sphinx_multiversion" in conf.stdout and template.returncode == 0:
+                  compatible.append(tag)
+              else:
+                  skipped.append(tag)
+
+          if skipped:
+              print("Skipping release tags without the multiversion configuration:")
+              for tag in skipped:
+                  print(f"  - {tag}")
+          else:
+              print("No incompatible semver release tags found.")
+
+          tag_pattern = r"^(?:" + "|".join(re.escape(tag) for tag in compatible) + r")$"
+          if not compatible:
+              tag_pattern = r"(?!)"
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write(f"SMV_TAG_WHITELIST={tag_pattern}\n")
+          PY
+
+      - name: Build versioned documentation
+        run: |
+          rm -rf docs/_build/html
+          sphinx-multiversion docs docs/_build/html
+          touch docs/_build/html/.nojekyll
+          cat > docs/_build/html/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="refresh" content="0; url=./main/index.html">
+              <link rel="canonical" href="./main/index.html">
+              <title>TeXact documentation</title>
+            </head>
+            <body>
+              <p>Redirecting to the <a href="./main/index.html">latest documentation</a>.</p>
+            </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html
-          keep_files: true
+          path: docs/_build/html
+
+  deploy:
+    if: ${{ github.event_name == 'push' }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

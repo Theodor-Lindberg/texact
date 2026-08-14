@@ -3,3 +3,26 @@
   max-width: 100%;
   height: auto;
 }
+
+.sidebar-version-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 1rem 1rem;
+}
+
+.sidebar-version-selector label {
+  color: var(--color-foreground-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sidebar-version-selector select {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-foreground-border);
+  border-radius: 0.25rem;
+  color: var(--color-foreground-primary);
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  width: 100%;
+}

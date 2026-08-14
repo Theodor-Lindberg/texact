@@ -1,0 +1,10 @@
+{% if versions %}
+<div class="sidebar-version-selector">
+  <label for="sidebar-version-select">Version</label>
+  <select id="sidebar-version-select" aria-label="Documentation version" onchange="window.location.href = this.value">
+    {% for item in versions %}
+    <option value="{{ item.url|e }}"{% if item.name == current_version.name %} selected{% endif %}>{{ item.name|e }}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endif %}

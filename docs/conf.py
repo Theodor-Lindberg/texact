@@ -1,3 +1,5 @@
+import os
+
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -13,7 +15,7 @@ author = "Theodor Lindberg"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["myst_parser"]
+extensions = ["myst_parser", "sphinx_multiversion"]
 source_suffix = {
     ".rst": "restructuredtext",
     ".md": "markdown",
@@ -22,6 +24,16 @@ myst_heading_anchors = 3
 
 templates_path = ["_templates"]
 exclude_patterns = []
+
+smv_remote_whitelist = r"^origin$"
+smv_branch_whitelist = r"^main$"
+smv_tag_whitelist = os.environ.get(
+    "SMV_TAG_WHITELIST",
+    r"^v\d+\.\d+\.\d+$",
+)
+smv_released_pattern = r"^refs/tags/v\d+\.\d+\.\d+$"
+smv_outputdir_format = "{ref.name}"
+smv_prefer_remote_refs = True
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -33,6 +45,17 @@ html_css_files = ["custom.css", "try-it.css"]  # For scaling the logo over ToC
 html_js_files = ["try-it.js"]
 html_favicon = "_static/texact.ico"
 html_logo = "_static/texactlogo.svg"
+html_sidebars = {
+    "**": [
+        "sidebar/brand.html",
+        "sidebar/search.html",
+        "sidebar/scroll-start.html",
+        "versions.html",
+        "sidebar/navigation.html",
+        "sidebar/scroll-end.html",
+        "sidebar/variant-selector.html",
+    ]
+}
 html_theme_options = {
     "light_css_variables": {
         "color-brand-primary": "#ff6442",

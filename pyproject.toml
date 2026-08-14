@@ -28,11 +28,12 @@ py-modules = [
 
 [project.optional-dependencies]
 docs = [
-    "sphinx>=7",
+    "sphinx>=7,<9",
     "furo>=2025",
     "myst-parser>=4",
     "m2r2",
     "docutils<=0.20",
+    "sphinx-multiversion==0.2.4",
 ]
 
 [tool.setuptools.package-data]
