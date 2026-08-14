@@ -46,6 +46,7 @@ def set_up_arg_parser() -> argparse.Namespace:
 
 def process_file(
     file_path: Path,
+    display_name: str,
     reviewers: tuple[Reviewer, ...],
     printer: Printer,
     config: TexactConfig,
@@ -77,7 +78,7 @@ def process_file(
     ):
         printer.print_diagnostic(comment)
 
-    printer.print("=== Summary ===")
+    printer.print(f"=== Summary of {display_name} ===")
     configuration_path = (
         str(config.source_path.resolve())
         if config.source_path is not None
@@ -164,7 +165,13 @@ def main():
                 )
             )
 
-        ret_code = process_file(file_path, tuple(reviewers), printer, config)
+        ret_code = process_file(
+            file_path,
+            f"{name}(.){extension}",
+            tuple(reviewers),
+            printer,
+            config,
+        )
         max_ret_code = max(max_ret_code, ret_code)
 
     sys.exit(max_ret_code)
