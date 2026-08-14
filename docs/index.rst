@@ -1,7 +1,7 @@
 .. TeXact documentation master file
 
-TeXact's documentation
-======================
+Welcome to TeXact's documentation!
+==================================
 
 TeXact is a tool for finding miscellaneous mistakes in LaTeX code and article writing.
 
@@ -67,7 +67,13 @@ For more information, run
    changelog
    licenses
 
+Platforms
+---------
 
+We strive to support the major platforms (macOS, Linux, and Windows) and
+Python versions that are still receiving active or security support.
+For details on Python version support lifecycles, see
+`Python End of Life <https://endoflife.date/python>`_.
 
 Indices and tables
 ==================
