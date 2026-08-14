@@ -12,7 +12,6 @@
       lineNumbers: true,
       lineWrapping: true,
       mode: "stex",
-      theme: "eclipse",
       viewportMargin: Infinity,
     },
   );
