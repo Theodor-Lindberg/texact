@@ -65,6 +65,27 @@ def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:
         assert diagnostic.severity == expected_severity
 
 
+def test_chktex_lookup_expands_tilde_in_path(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    chktex_directory = tmp_path / "bin"
+    chktex_directory.mkdir()
+    chktex_executable = chktex_directory / "chktex"
+    chktex_executable.write_text("#!/bin/sh\n", encoding="utf-8")
+    chktex_executable.chmod(0o755)
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("PATH", "~/bin")
+
+    reviewer = Reviewer_ChkTeX(
+        Printer(),
+        Path("missing.tex"),
+        Template.UNKNOWN,
+    )
+
+    assert reviewer._resolve_chktex_command() == str(chktex_executable)
+
+
 def test_cli_prints_warning_number() -> None:
     result = subprocess.run(
         ["texact", "--no-chktex", str(TEST_DIR / "casing_test.tex")],

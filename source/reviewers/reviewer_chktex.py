@@ -319,7 +319,8 @@ class Reviewer_ChkTeX(Reviewer):
 
     def _resolve_chktex_command(self) -> str | None:
         if self.chktex_path is None:
-            return shutil.which("chktex")
+            expanded_path = self._expand_path_entries(os.environ.get("PATH", ""))
+            return shutil.which("chktex", path=expanded_path)
 
         configured_path = Path(os.path.expanduser(self.chktex_path))
         if configured_path.is_file():
