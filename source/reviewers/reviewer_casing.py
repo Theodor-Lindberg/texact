@@ -1,10 +1,13 @@
 import re
 
-from .reviewer import Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status
+from .rules import RULE_CAS001
 from printer import Printer
 
 
 class Reviewer_Casing(Reviewer):
+    """Checks the casing of known terms."""
+
     # Canonical spellings to enforce
     CORRECT_SPELLINGS = (
         "ASIC",
@@ -72,7 +75,7 @@ class Reviewer_Casing(Reviewer):
 
     def __init__(self, printer: Printer) -> None:
         self.printer = printer
-        self.comments: list[tuple[int, str]] = []
+        self.comments: list[Diagnostic] = []
         self.mismatch_count = 0
 
     def process_line(self, line_no: int, line: str) -> None:
@@ -81,7 +84,10 @@ class Reviewer_Casing(Reviewer):
             line = line[: line.index("%")]
 
         # Ignore casing checks inside \cite{...}, \ref{...}, \label{...}, and \url{...}
-        line = self._PATTERN_LATEX_IGNORED_COMMANDS.sub("", line)
+        line = self._PATTERN_LATEX_IGNORED_COMMANDS.sub(
+            lambda match: " " * len(match.group(0)),
+            line,
+        )
 
         # Check each word in the line
         for correct_spelling in self.CORRECT_SPELLINGS:
@@ -106,14 +112,18 @@ class Reviewer_Casing(Reviewer):
                 expected_text = f"{correct_spelling}{normalized_suffix}"
                 if matched_base != correct_spelling:
                     self.comments.append(
-                        (
+                        Diagnostic(
                             line_no,
-                            f"Incorrect casing: {self.printer.dark_red(matched_text)} should be {self.printer.yellow(expected_text)}",
+                            RULE_CAS001,
+                            RULE_CAS001.render_message(
+                                actual=self.printer.dark_red(matched_text),
+                                expected=self.printer.yellow(expected_text),
+                            ),
                         )
                     )
                     self.mismatch_count += 1
 
-    def get_comments(self) -> list[tuple[int, str]]:
+    def get_comments(self) -> list[Diagnostic]:
         return self.comments
 
     def get_summary(self) -> str:

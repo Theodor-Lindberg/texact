@@ -26,6 +26,7 @@ py-modules = [
 docs = [
     "sphinx>=7",
     "furo>=2025",
+    "myst-parser>=4",
 ]
 
 [tool.setuptools.package-data]

@@ -1,10 +1,13 @@
 import re
 
-from .reviewer import Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status
+from .rules import RULE_UNS001, RULE_UNS002
 from printer import Printer
 
 
 class Reviewer_Unsure(Reviewer):
+    """Checks uncertain wording and repeated use of 'we'."""
+
     _PATTERN = re.compile(r"\b(?:should|would|could|might|very)\b", re.IGNORECASE)
     _PATTERN_WE = re.compile(r"\bwe\b", re.IGNORECASE)
     _MAX_WE_OCCURRENCES = 5
@@ -15,7 +18,7 @@ class Reviewer_Unsure(Reviewer):
         self.we_count = 0
         self.we_limit_comment_added = False
         self.we_last_line: int | None = None
-        self.comments: list[tuple[int, str]] = []
+        self.comments: list[Diagnostic] = []
 
     def process_line(self, line_no: int, line: str) -> None:
         we_matches = self.find_we(line)
@@ -29,22 +32,28 @@ class Reviewer_Unsure(Reviewer):
                 lambda match: self.printer.dark_red(match.group(0)),
                 line.rstrip("\n"),
             )
-            self.comments.append((line_no, message))
+            self.comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_UNS001,
+                    RULE_UNS001.render_message(line=message),
+                )
+            )
             self.match_count += len(matches)
 
-    def get_comments(self) -> list[tuple[int, str]]:
+    def get_comments(self) -> list[Diagnostic]:
         if (
             self.we_count > self._MAX_WE_OCCURRENCES
             and not self.we_limit_comment_added
             and self.we_last_line is not None
         ):
             self.comments.append(
-                (
+                Diagnostic(
                     self.we_last_line,
-                    (
-                        f"Word {self.printer.dark_red('we')} occurs "
-                        f"{self.we_count} times; maximum allowed is "
-                        f"{self._MAX_WE_OCCURRENCES}."
+                    RULE_UNS002,
+                    RULE_UNS002.render_message(
+                        count=self.we_count,
+                        limit=self._MAX_WE_OCCURRENCES,
                     ),
                 )
             )

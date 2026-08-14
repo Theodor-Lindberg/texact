@@ -1,10 +1,13 @@
 import re
 
-from .reviewer import Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status
+from .rules import RULE_INT001
 from printer import Printer
 
 
 class Reviewer_Inthis(Reviewer):
+    """Checks the opening wording of an abstract."""
+
     _PATTERN_ABSTRACT_START = re.compile(r"\\begin\{abstract\}")
     _PATTERN_THIS_WORK = re.compile(
         r"\bthis\s+(?:\w+\s+)*(work|brief|paper|manuscript)s?\b",
@@ -16,7 +19,7 @@ class Reviewer_Inthis(Reviewer):
         self.abstract_context_start = False
         self.check_abstract_first_line = False
         self.abstract_check = Status.UNCHECKED
-        self.comments: list[tuple[int, str]] = []
+        self.comments: list[Diagnostic] = []
 
     def process_line(self, line_no: int, line: str) -> None:
         if self.abstract_check == Status.UNCHECKED:
@@ -27,18 +30,20 @@ class Reviewer_Inthis(Reviewer):
         if self.check_abstract_first_line:
             if line and line[0] != "%":  # Skip empty lines and comments
                 self.check_abstract_first_line = False
-                if self._PATTERN_THIS_WORK.search(line):
+                match = self._PATTERN_THIS_WORK.search(line)
+                if match:
                     self.abstract_check = Status.FAILED
                     self.comments.append(
-                        (
+                        Diagnostic(
                             line_no,
-                            "First line in abstract should not contain 'in this work/brief/paper/manuscript' or 'this paper'.",
+                            RULE_INT001,
+                            RULE_INT001.render_message(),
                         )
                     )
                 else:
                     self.abstract_check = Status.PASSED
 
-    def get_comments(self) -> list[tuple[int, str]]:
+    def get_comments(self) -> list[Diagnostic]:
         return self.comments
 
     def get_summary(self) -> str:

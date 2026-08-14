@@ -3,7 +3,7 @@ import sys
 
 from pathlib import Path
 from printer import Printer
-from reviewers.reviewer import Status
+from reviewers.reviewer import Diagnostic, Status
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.reviewer_inthis import Reviewer_Inthis
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
@@ -39,6 +39,10 @@ def set_up_arg_parser() -> argparse.Namespace:
         action="store_true",
         help="Output colors using HTML spans instead of ANSI escape codes",
     )
+    parser.add_argument(
+        "--docs-base-url",
+        help="Base URL for rule documentation links",
+    )
     return parser.parse_args()
 
 
@@ -50,12 +54,19 @@ def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
             for reviewer in reviewers:
                 reviewer.process_line(line_no, line)
 
-    all_comments: list[tuple[int, str]] = []
+    all_comments: list[Diagnostic] = []
     for reviewer in reviewers:
         all_comments.extend(reviewer.get_comments())
 
-    for line_no, message in sorted(all_comments, key=lambda comment: comment[0]):
-        printer.print_no(line_no, message)
+    sourced_comments = [comment.with_source(file_path) for comment in all_comments]
+    for comment in sorted(
+        sourced_comments,
+        key=lambda diagnostic: (
+            diagnostic.line_no,
+            diagnostic.code,
+        ),
+    ):
+        printer.print_diagnostic(comment)
 
     printer.print("=== Summary ===")
     for reviewer in reviewers:
@@ -70,7 +81,10 @@ def process_file(file_path: Path, reviewers: tuple, printer: Printer) -> int:
 
 def main():
     args = set_up_arg_parser()
-    printer = Printer(html_style=args.html_style)
+    printer = Printer(
+        html_style=args.html_style,
+        docs_base_url=args.docs_base_url,
+    )
 
     if not args.files:
         raise SystemExit("Error: provide at least one LaTeX file.")

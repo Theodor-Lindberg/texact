@@ -2,11 +2,23 @@ import re
 from pathlib import Path
 from PIL import Image
 
-from .reviewer import Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status
+from .rules import (
+    RULE_FIG001,
+    RULE_FIG002,
+    RULE_FIG003,
+    RULE_FIG004,
+    RULE_FIG005,
+    RULE_FIG006,
+    RULE_FIG007,
+    RULE_FIG008,
+)
 from printer import Printer
 
 
 class Reviewer_Figure(Reviewer):
+    """Checks figure structure and biography images."""
+
     _PATTERN_BEGIN_FIGURE = re.compile(
         r"\\begin\{figure\*?\}(?:\[(?P<position>[^\]]+)\])?"
     )
@@ -66,7 +78,7 @@ class Reviewer_Figure(Reviewer):
     def __init__(self, printer: Printer, tex_file_path: Path) -> None:
         self.printer = printer
         self.tex_dir = tex_file_path.parent
-        self.comments: list[tuple[int, str]] = []
+        self.comments: list[Diagnostic] = []
         self.error_count = 0
 
         # Track figure environment state
@@ -110,9 +122,10 @@ class Reviewer_Figure(Reviewer):
             position = begin_match.group("position")
             if position is not None and position not in self._ALLOWED_POSITIONS:
                 self.comments.append(
-                    (
+                    Diagnostic(
                         line_no,
-                        "Figure position must be empty or one of [bt], [t], [b], [tb].",
+                        RULE_FIG001,
+                        RULE_FIG001.render_message(),
                     )
                 )
                 self.error_count += 1
@@ -149,9 +162,10 @@ class Reviewer_Figure(Reviewer):
                 if self._PATTERN_SCALE.search(line):
                     self.has_scaled_image_in_figure = True
                     self.comments.append(
-                        (
+                        Diagnostic(
                             line_no,
-                            f"Image should not be scaled: {self.printer.dark_red('remove scale/width/height')}",
+                            RULE_FIG002,
+                            RULE_FIG002.render_message(),
                         )
                     )
                     self.error_count += 1
@@ -164,18 +178,20 @@ class Reviewer_Figure(Reviewer):
                 # Report missing label if there's an image
                 if self.includegraphics_lines and not self.has_label_in_figure:
                     self.comments.append(
-                        (
+                        Diagnostic(
                             self.figure_start_line,
-                            f"Figure environment should contain a {self.printer.dark_red('\\\\label{{...}}')}",
+                            RULE_FIG003,
+                            RULE_FIG003.render_message(),
                         )
                     )
                     self.error_count += 1
 
                 if self.includegraphics_lines and not self.has_caption_in_figure:
                     self.comments.append(
-                        (
+                        Diagnostic(
                             self.figure_start_line,
-                            f"Figure environment should contain a {self.printer.dark_red('\\\\caption{{...}}')}",
+                            RULE_FIG004,
+                            RULE_FIG004.render_message(),
                         )
                     )
                     self.error_count += 1
@@ -186,9 +202,10 @@ class Reviewer_Figure(Reviewer):
                     and self.first_caption_line < self.first_includegraphics_line
                 ):
                     self.comments.append(
-                        (
+                        Diagnostic(
                             self.first_caption_line,
-                            "Figure caption should be below the graphics.",
+                            RULE_FIG005,
+                            RULE_FIG005.render_message(),
                         )
                     )
                     self.error_count += 1
@@ -202,7 +219,7 @@ class Reviewer_Figure(Reviewer):
             self.first_includegraphics_line = None
             self.includegraphics_lines = []
 
-    def get_comments(self) -> list[tuple[int, str]]:
+    def get_comments(self) -> list[Diagnostic]:
         if self.in_ieee_biography and self.ieee_biography_lines:
             self._finalize_ieee_biography_context()
         self._add_caption_period_consistency_issue()
@@ -220,16 +237,18 @@ class Reviewer_Figure(Reviewer):
             if self.caption_period_issue_line is not None
             else 0
         )
+        details = (
+            f"line {issue_line + 1} conflicts with line "
+            f"{self.caption_period_other_line + 1}; all figure captions should use "
+            "the same period style."
+            if self.caption_period_other_line is not None
+            else "all figure captions should use the same period style."
+        )
         self.comments.append(
-            (
+            Diagnostic(
                 issue_line,
-                (
-                    "Caption period style mismatch: "
-                    f"line {issue_line + 1} conflicts with line {self.caption_period_other_line + 1}; "
-                    "all figure captions should use the same period style."
-                    if self.caption_period_other_line is not None
-                    else "Caption period style mismatch: all figure captions should use the same period style."
-                ),
+                RULE_FIG006,
+                RULE_FIG006.render_message(details=details),
             )
         )
         self.error_count += 1
@@ -269,12 +288,10 @@ class Reviewer_Figure(Reviewer):
         resolved_path = self._resolve_graphics_path(graphics_path)
         if resolved_path is None:
             self.comments.append(
-                (
+                Diagnostic(
                     line_no,
-                    (
-                        "IEEEbiography image file not found relative to tex file: "
-                        f"{graphics_path}"
-                    ),
+                    RULE_FIG007,
+                    RULE_FIG007.render_message(path=graphics_path),
                 )
             )
             self.error_count += 1
@@ -285,12 +302,10 @@ class Reviewer_Figure(Reviewer):
         )
         if not is_valid_size:
             self.comments.append(
-                (
+                Diagnostic(
                     line_no,
-                    (
-                        "IEEEbiography image must have height/width ratio "
-                        f"{self._IEEE_BIO_REQUIRED_RATIO:.2f}; {size_message}"
-                    ),
+                    RULE_FIG008,
+                    RULE_FIG008.render_message(details=size_message),
                 )
             )
             self.error_count += 1
