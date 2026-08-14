@@ -18,6 +18,7 @@
   const output = document.querySelector("#try-it-output");
   const runButton = document.querySelector("#try-it-run");
   const status = document.querySelector("#try-it-status");
+  const versionLabel = document.querySelector("#try-it-version");
   let pyodidePromise;
 
   function loadTexact() {
@@ -34,9 +35,14 @@
 import micropip
 await micropip.install("texact")
         `);
+        const version = await pyodide.runPythonAsync(
+          "from texact import get_version\nget_version()",
+        );
+        versionLabel.textContent = `TeXact v${version}`;
         return pyodide;
       })().catch(function (error) {
         pyodidePromise = undefined;
+        versionLabel.textContent = "TeXact unavailable";
         throw error;
       });
     }
@@ -122,4 +128,17 @@ json.dumps({"output": stdout.getvalue() + stderr.getvalue(), "exit_code": exit_c
   }
 
   runButton.addEventListener("click", runTexact);
+  status.textContent = "Loading TeXact...";
+  loadTexact().then(
+    function () {
+      if (!runButton.disabled) {
+        status.textContent = "Ready to run";
+      }
+    },
+    function () {
+      if (!runButton.disabled) {
+        status.textContent = "Unable to load TeXact";
+      }
+    },
+  );
 })();

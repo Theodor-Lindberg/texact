@@ -14,6 +14,7 @@ disabled in browser mode.
     <div class="try-it">
         <div class="try-it-toolbar">
             <label for="try-it-editor">example.tex</label>
+            <span class="try-it-version" id="try-it-version">TeXact loading...</span>
             <button id="try-it-run" type="button">Run TeXact</button>
         </div>
         <textarea id="try-it-editor" spellcheck="false">
