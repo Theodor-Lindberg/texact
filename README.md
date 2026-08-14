@@ -1,5 +1,9 @@
 # TeXact
 
+[![PyPI Version](https://img.shields.io/pypi/v/texact)](https://pypi.org/project/texact/)
+[![Conda Version](https://img.shields.io/conda/v/conda-forge/texact)](https://anaconda.org/conda-forge/texact)
+[![License](https://img.shields.io/github/license/Theodor-Lindberg/texact)](LICENSE.txt)
+
 TeXact is a tool for finding miscellaneous mistakes in LaTeX code
 and article writing.
 It does not edit your files, so you can run it fearlessly.
