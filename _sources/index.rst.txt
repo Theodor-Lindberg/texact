@@ -1,7 +1,7 @@
 .. TeXact documentation master file
 
 TeXact's documentation
-==================================
+======================
 
 TeXact is a tool for finding miscellaneous mistakes in LaTeX code and article writing.
 
@@ -64,6 +64,7 @@ For more information, run
    rules/index
    integration
    development
+   changelog
    licenses
 
 
