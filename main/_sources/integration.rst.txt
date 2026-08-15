@@ -11,8 +11,8 @@ Add the following to your ``.pre-commit-config.yaml`` to run TeXact automaticall
 .. code-block:: yaml
 
     repos:
-    - repo: https://github.com/Theodor-Lindberg/TeXact
-        rev: main
+    - repo: https://github.com/Theodor-Lindberg/texact
+        rev: v0.1.0
         hooks:
         - id: texact-check
 
@@ -21,8 +21,8 @@ To avoid running ChkTeX, add the additional flag:
 .. code-block:: yaml
 
     repos:
-    - repo: https://github.com/Theodor-Lindberg/TeXact
-        rev: main
+    - repo: https://github.com/Theodor-Lindberg/texact
+        rev: v0.1.0
         hooks:
         - id: texact-check
         args: [--no-chktex]
