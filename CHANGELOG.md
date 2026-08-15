@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD024 -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -9,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.1.1] - 2026-08-15
+
+### Added
+
 - Option to ignore the rest of the file.
 - Option to ignore specific errors on a line.
 - Check possessive spelling of "author".
@@ -17,13 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Comments are now stripped and will not trigger errors.
 
-### Changed
-
-### Removed
-
 ## [0.1.0] - 2026-08-14
 
 Initial release.
 
-[unreleased]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.0...HEAD
+[unreleased]: https://github.com/Theodor-Lindberg/texact/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.1
 [0.1.0]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.0
