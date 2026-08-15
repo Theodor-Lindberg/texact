@@ -8,30 +8,24 @@ The tool is implemented as a set of reviewers, each with its own
 focus. The reviewers keep track of their comments as the LaTeX file is
 processed line by line.
 Once the entire file has passed, all diagnostics are printed to the
-console, referencing the line number.
+console, referencing line numbers.
 A summary is also outputted at the end.
 As the reviewers are independent of one another, adding new ones
 does not break existing features.
 
-Reviewer implementations live in ``source/reviewers/``. The shared
-reviewer contract is in ``source/reviewers/reviewer.py`` and the central
+Reviewer implementations are located in ``source/reviewers/``. All inherit
+from the base class in ``source/reviewers/reviewer.py``, and a central
 rule registry is in ``source/reviewers/rules.py``.
 
 Rule identity
 -------------
 
 Every diagnostic refers to one immutable ``Rule`` in the central registry.
-The registry owns the stable code, kebab-case name, canonical message
-template, severity, and documentation path. A ``Diagnostic`` adds the
-context for one occurrence: source filename, line, and the rendered message.
+The registry contains the error code, name, message template, severity,
+and documentation path. A ``Diagnostic`` adds the context for one
+occurrence: source filename, line, and the rendered message.
 
-The command-line output follows this general shape::
-
-	path/to/file.tex:12:4: error: CAS001 incorrect-casing: Use the canonical casing for this technical term. [docs: docs/rules/incorrect-casing.md]
-
-Documentation links use repository-relative paths.
-
-Reviewer prefixes and rule ranges are stable:
+Reviewer prefixes:
 
 * ``Reviewer_Inthis`` uses ``INT``.
 * ``Reviewer_Casing`` uses ``CAS``.
@@ -72,4 +66,5 @@ or adding a new one.
 The easiest way to get started is by studying one of the existing
 classes, e.g. ``Reviewer_Unsure``. The main file, ``texact``, must be
 updated to include any new reviewer.
-Command-line arguments can be added as well, if necessary.
+Options to the command-line interface and the parsing of the configuration
+file can be added as well.

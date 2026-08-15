@@ -40,8 +40,9 @@ either directly from Git or after cloning the repository.
 
         $ pip install .
 
-If TeXact has already been installed via pip Git, chances are a cached version will be used instead of the latest.
-To be sure the latest is installed, do the following:
+If TeXact has already been installed from Git via pip, chances are a cached
+version will be used instead of the latest. To be sure the latest is installed,
+do the following:
 
 .. admonition:: Install TeXact from git, avoiding caches
 
@@ -69,12 +70,10 @@ For more information, run
 .. seealso::
 
     :doc:`integration`
-        Information on how to use TeXact in pre-commit, TeXstudio, and more.
-
-.. seealso::
+        How to use TeXact in pre-commit, TeXstudio, and more.
 
     :doc:`options`
-        Information on the available options and how to configure TeXact.
+        Available options and how to configure TeXact.
 
 Platforms
 ---------
