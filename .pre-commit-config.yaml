@@ -10,18 +10,18 @@ repos:
     - id: check-toml
     - id: end-of-file-fixer
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.2
+    rev: v2.4.3
     hooks:
       - id: codespell
         additional_dependencies:
           - tomli
         exclude: ^(source/reviewers/reviewer_casing\.py|config/chktexrc|source/texact_config/chktexrc)$
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v22.1.2
+    rev: v22.1.8
     hooks:
     - id: clang-format
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.48.0
+    rev: v0.49.1
     hooks:
     - id: markdownlint
   - repo: https://github.com/pre-commit/pygrep-hooks
@@ -35,7 +35,7 @@ repos:
     - id: text-unicode-replacement-char
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.15.8
+    rev: v0.16.3
     hooks:
       # Run the linter.
       - id: ruff
