@@ -1,8 +1,9 @@
 import re
 
+from printer import Printer
+
 from .reviewer import Diagnostic, Reviewer, Status
 from .rules import RULE_REF001, RULE_REF002, RULE_REF003
-from printer import Printer
 
 
 class Reviewer_RefLabel(Reviewer):

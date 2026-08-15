@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, replace
-from pathlib import Path
 from enum import Enum, auto
+from pathlib import Path
 
 from printer import Printer
+
 from .rules import Rule, Severity
 
 

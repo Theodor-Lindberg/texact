@@ -1,8 +1,7 @@
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 import pytest
-
 
 TEST_DIR = Path(__file__).resolve().parent
 TEX_FILES = sorted(TEST_DIR.glob("*.tex"))

@@ -1,5 +1,5 @@
-from enum import Enum, auto
 import re
+from enum import Enum, auto
 from pathlib import Path
 
 

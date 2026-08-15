@@ -1,9 +1,8 @@
+import re
+import tomllib
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-import re
-import tomllib
-
 
 _CONFIG_FILENAMES = (".texact.toml", "texact.toml", "pyproject.toml")
 _RULE_CODE_PATTERN = re.compile(r"[A-Z]{2,3}\d{3,}")

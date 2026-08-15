@@ -1,7 +1,7 @@
+import re
+from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import StrEnum
-import re
-from typing import Iterator
 
 
 class Severity(StrEnum):

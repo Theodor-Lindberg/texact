@@ -1,8 +1,9 @@
 import re
 
+from printer import Printer
+
 from .reviewer import Diagnostic, Reviewer, Status
 from .rules import RULE_CAS001
-from printer import Printer
 
 
 class Reviewer_Casing(Reviewer):

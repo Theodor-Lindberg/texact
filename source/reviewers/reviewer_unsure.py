@@ -1,8 +1,9 @@
 import re
 
+from printer import Printer
+
 from .reviewer import Diagnostic, Reviewer, Status
 from .rules import RULE_UNS001, RULE_UNS002
-from printer import Printer
 
 
 class Reviewer_Unsure(Reviewer):

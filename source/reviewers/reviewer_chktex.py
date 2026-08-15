@@ -6,20 +6,21 @@ from importlib import resources
 from pathlib import Path
 
 from printer import Printer
+from template_check import Template
+
 from .reviewer import (
     Diagnostic,
     Reviewer,
     Status,
 )
 from .rules import (
-    RULES,
     RULE_CHK901,
     RULE_CHK902,
     RULE_CHK903,
     RULE_CHK904,
+    RULES,
     Severity,
 )
-from template_check import Template
 
 
 class Reviewer_ChkTeX(Reviewer):

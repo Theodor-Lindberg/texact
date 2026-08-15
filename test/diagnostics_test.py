@@ -1,15 +1,14 @@
-from pathlib import Path
 import re
 import subprocess
+from pathlib import Path
 from unittest.mock import patch
 
+from printer import Printer
 from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
 from reviewers.rules import RULES
-from printer import Printer
 from template_check import Template
-
 
 TEST_DIR = Path(__file__).resolve().parent
 

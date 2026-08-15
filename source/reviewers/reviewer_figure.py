@@ -1,6 +1,9 @@
 import re
 from pathlib import Path
+from typing import ClassVar
+
 from PIL import Image
+from printer import Printer
 
 from .reviewer import Diagnostic, Reviewer, Status
 from .rules import (
@@ -13,7 +16,6 @@ from .rules import (
     RULE_FIG007,
     RULE_FIG008,
 )
-from printer import Printer
 
 
 class Reviewer_Figure(Reviewer):
@@ -33,7 +35,7 @@ class Reviewer_Figure(Reviewer):
     _PATTERN_INCLUDEGRAPHICS_PATH = re.compile(
         r"\\includegraphics(?:\[(?P<options>[^\]]*)\])?\{(?P<path>[^}]+)\}"
     )
-    _ALLOWED_POSITIONS = {"bt", "t", "b", "tb"}
+    _ALLOWED_POSITIONS: ClassVar[set[str]] = {"bt", "t", "b", "tb"}
     _IEEE_BIO_REQUIRED_RATIO = 1.25
     _IEEE_BIO_RATIO_TOLERANCE = 0.01
 

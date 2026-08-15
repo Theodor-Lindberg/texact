@@ -2,7 +2,8 @@
 
 from typing import TYPE_CHECKING
 
-from colorama import Fore, Style, init as colorama_init
+from colorama import Fore, Style
+from colorama import init as colorama_init
 
 if TYPE_CHECKING:  # Only for type hints
     from reviewers.reviewer import Diagnostic, Status

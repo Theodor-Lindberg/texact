@@ -1,17 +1,17 @@
 import argparse
 import sys
 from importlib.metadata import PackageNotFoundError, version
-
 from pathlib import Path
+
 from configuration import ConfigurationError, TexactConfig, load_config
 from printer import Printer
 from reviewers.reviewer import Diagnostic, Reviewer, Severity, Status
-from reviewers.reviewer_unsure import Reviewer_Unsure
+from reviewers.reviewer_casing import Reviewer_Casing
+from reviewers.reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer_figure import Reviewer_Figure
 from reviewers.reviewer_inthis import Reviewer_Inthis
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
-from reviewers.reviewer_casing import Reviewer_Casing
-from reviewers.reviewer_figure import Reviewer_Figure
-from reviewers.reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer_unsure import Reviewer_Unsure
 from template_check import get_template
 
 

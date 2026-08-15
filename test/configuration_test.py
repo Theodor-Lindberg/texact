@@ -1,10 +1,9 @@
+import subprocess
+import sys
 from dataclasses import FrozenInstanceError
 from pathlib import Path
-import sys
-import subprocess
 
 import pytest
-
 from configuration import ConfigurationError, TexactConfig, load_config
 from texact import set_up_arg_parser
 
