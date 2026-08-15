@@ -113,6 +113,32 @@ def test_texact_file_marker_stops_processing(tmp_path: Path) -> None:
     assert "asics" not in result.stdout
 
 
+def test_inline_rule_ignore_applies_to_the_same_line(tmp_path: Path) -> None:
+    tex_file = tmp_path / "inline-ignore.tex"
+    tex_file.write_text(
+        "\\begin{figure}[x] asics % texact FIG001 texact CAS001\n"
+        "asics\n"
+        "\\end{figure}\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--no-chktex",
+            str(tex_file),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "[FIG001]" not in result.stdout
+    assert result.stdout.count("[CAS001]") == 1
+
+
 def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:
     for required, expected_severity in (
         (False, Severity.WARNING),

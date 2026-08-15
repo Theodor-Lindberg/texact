@@ -1,4 +1,5 @@
 import argparse
+import re
 import sys
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -13,6 +14,11 @@ from reviewers.reviewer_inthis import Reviewer_Inthis
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from template_check import get_template
+
+_INLINE_IGNORE_PATTERN = re.compile(
+    r"%\s+texact\s+(?P<codes>[A-Z]{2,3}\d{3,}"
+    r"(?:\s+texact\s+[A-Z]{2,3}\d{3,})*)\s*$"
+)
 
 
 def get_version() -> str:
@@ -34,6 +40,13 @@ def _strip_latex_comment(line: str) -> str:
         if backslashes % 2 == 0:
             return line[:index]
     return line
+
+
+def _line_ignored_rule_codes(line: str) -> frozenset[str]:
+    match = _INLINE_IGNORE_PATTERN.search(line)
+    if match is None:
+        return frozenset()
+    return frozenset(match.group("codes").split(" texact "))
 
 
 def set_up_arg_parser() -> argparse.Namespace:
@@ -79,12 +92,16 @@ def process_file(
     printer: Printer,
     config: TexactConfig,
 ) -> int:
+    line_ignored_rule_codes: dict[int, frozenset[str]] = {}
     with file_path.open("r", encoding="utf-8") as input_file:
         for line_no, line in enumerate(input_file):
             if "% texact *" in line:
                 continue
             elif "% texact-file ##" in line:
                 break
+            ignored_codes = _line_ignored_rule_codes(line)
+            if ignored_codes:
+                line_ignored_rule_codes[line_no] = ignored_codes
             line = _strip_latex_comment(line)
             for reviewer in reviewers:
                 reviewer.process_line(line_no, line)
@@ -97,7 +114,11 @@ def process_file(
         all_comments.extend(comments)
 
     visible_comments = [
-        comment for comment in all_comments if comment.code not in config.lint.ignore
+        comment
+        for comment in all_comments
+        if comment.code not in config.lint.ignore
+        and comment.code
+        not in line_ignored_rule_codes.get(comment.line_no, frozenset())
     ]
     sourced_comments = [comment.with_source(file_path) for comment in visible_comments]
     for comment in sorted(
@@ -118,7 +139,11 @@ def process_file(
     printer.print(f"Configuration file: {configuration_path}")
     for reviewer, comments in reviewer_comments:
         visible_reviewer_comments = [
-            comment for comment in comments if comment.code not in config.lint.ignore
+            comment
+            for comment in comments
+            if comment.code not in config.lint.ignore
+            and comment.code
+            not in line_ignored_rule_codes.get(comment.line_no, frozenset())
         ]
         status = _status_for_diagnostics(
             reviewer,
