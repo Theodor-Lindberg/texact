@@ -13,6 +13,7 @@ file options.
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/stex/stex.min.js"></script>
 
     <div class="try-it">
+        <p class="try-it-main-note" id="try-it-main-note" hidden>Note that this demo is running the latest version released on PyPi and not the latest development version.</p>
         <div class="try-it-toolbar">
             <label for="try-it-editor">example.tex</label>
             <span class="try-it-version" id="try-it-version">TeXact loading...</span>

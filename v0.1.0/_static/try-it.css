@@ -2,6 +2,12 @@
   margin: 2rem 0;
 }
 
+.try-it-main-note {
+  color: var(--color-foreground-muted);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem;
+}
+
 .try-it-toolbar {
   align-items: center;
   background: var(--color-background-secondary);
