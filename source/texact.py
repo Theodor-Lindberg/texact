@@ -83,6 +83,8 @@ def process_file(
         for line_no, line in enumerate(input_file):
             if "% texact *" in line:
                 continue
+            elif "% texact-file ##" in line:
+                break
             line = _strip_latex_comment(line)
             for reviewer in reviewers:
                 reviewer.process_line(line_no, line)

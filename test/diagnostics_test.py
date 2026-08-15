@@ -1,5 +1,6 @@
 import re
 import subprocess
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
@@ -72,6 +73,28 @@ def test_casing_checks_text_after_escaped_percent() -> None:
     comments = reviewer.get_comments()
     assert len(comments) == 1
     assert comments[0].code == "CAS001"
+
+
+def test_texact_file_marker_stops_processing(tmp_path: Path) -> None:
+    tex_file = tmp_path / "marker.tex"
+    tex_file.write_text(
+        "Before the marker.\n% texact-file ##\nasics after the marker.\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--no-chktex",
+            str(tex_file),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert "asics" not in result.stdout
 
 
 def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:

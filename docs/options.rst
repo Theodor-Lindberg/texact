@@ -2,7 +2,7 @@ Options
 =======
 
 
-Per line suppressions
+Inline suppressions
 ---------------------
 
 To make TeXact ignore certain lines add the following as a :math:`\text{LaTeX}` comment in your source file:
@@ -12,8 +12,15 @@ To make TeXact ignore certain lines add the following as a :math:`\text{LaTeX}` 
     % texact *
 
 
-Configuration
--------------
+The ignore the rest of the file, use:
+
+.. code-block:: tex
+
+    % texact-file ##
+
+
+Configuration file
+------------------
 
 TeXact can load optional settings from a TOML file. It searches the current
 directory in this order and stops at the first TeXact configuration it finds:
