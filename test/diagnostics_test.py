@@ -9,6 +9,7 @@ from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
 from reviewers.rules import RULES
 from template_check import Template
+from texact import _strip_latex_comment
 
 TEST_DIR = Path(__file__).resolve().parent
 
@@ -44,6 +45,33 @@ def test_diagnostic_has_one_based_location() -> None:
     assert diagnostic.code == "CAS001"
     assert diagnostic.line == 5
     assert diagnostic.filename == "sample.tex"
+
+
+def test_strip_latex_comment_preserves_escaped_percent() -> None:
+    escaped_percent = r"\%"
+    even_backslashes = "\\" * 2
+    cases = [
+        ("text % comment\n", "text "),
+        (
+            f"text {escaped_percent} literal % comment\n",
+            f"text {escaped_percent} literal ",
+        ),
+        (f"text {even_backslashes}% comment\n", f"text {even_backslashes}"),
+        ("text % comment", "text "),
+    ]
+
+    for line, expected in cases:
+        assert _strip_latex_comment(line) == expected
+
+
+def test_casing_checks_text_after_escaped_percent() -> None:
+    reviewer = Reviewer_Casing(Printer())
+
+    reviewer.process_line(13, r"The \% is not be ignore, so trigger on FPgA")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "CAS001"
 
 
 def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:

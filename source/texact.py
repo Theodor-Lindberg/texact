@@ -22,6 +22,20 @@ def get_version() -> str:
         return "unknown"
 
 
+def _strip_latex_comment(line: str) -> str:
+    for index, character in enumerate(line):
+        if character != "%":
+            continue
+        backslashes = 0
+        preceding = index - 1
+        while preceding >= 0 and line[preceding] == "\\":
+            backslashes += 1
+            preceding -= 1
+        if backslashes % 2 == 0:
+            return line[:index]
+    return line
+
+
 def set_up_arg_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Automated LaTeX and article review. Can you pass the judgement?"
@@ -69,6 +83,7 @@ def process_file(
         for line_no, line in enumerate(input_file):
             if "% texact *" in line:
                 continue
+            line = _strip_latex_comment(line)
             for reviewer in reviewers:
                 reviewer.process_line(line_no, line)
 

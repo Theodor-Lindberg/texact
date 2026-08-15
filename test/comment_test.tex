@@ -1,0 +1,19 @@
+\documentclass{article}
+
+\begin{document}
+
+\section{Testing Casing Variants}
+
+\subsection{Base words}
+ASIC, FPGA, VLSI
+
+\subsection{Comment}
+asics, %fpgas, vlsis, flopoco's designs, ais, mls
+
+\subsection{Escaping}
+The \% is not be ignore, so trigger on FPgA
+
+Multi escape: \\% asic
+Multiple escapes: \\\% vlsi
+
+\end{document}

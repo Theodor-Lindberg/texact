@@ -107,10 +107,6 @@ class Reviewer_Casing(Reviewer):
         self.mismatch_count = 0
 
     def process_line(self, line_no: int, line: str) -> None:
-        # Remove comments (everything after %)
-        if "%" in line:
-            line = line[: line.index("%")]
-
         # Ignore casing checks inside \cite{...}, \ref{...}, \label{...}, and \url{...}
         line = self._PATTERN_LATEX_IGNORED_COMMANDS.sub(
             lambda match: " " * len(match.group(0)),
