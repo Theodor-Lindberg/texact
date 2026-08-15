@@ -89,6 +89,12 @@ class Reviewer_Casing(Reviewer):
         "GHW",
         "WASM",
         "HTML",
+        "VLIW",
+        "FP4",
+        "FP8",
+        "FP16",
+        "FP32",
+        "FP64",
     )
     _PATTERN_LATEX_IGNORED_COMMANDS = re.compile(
         r"\\(?:cite|ref|label|url|usepackage)\{[^}]*\}"
