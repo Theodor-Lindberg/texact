@@ -5,11 +5,19 @@ Options
 Inline suppressions
 ---------------------
 
-To make TeXact ignore certain lines add the following as a :math:`\text{LaTeX}` comment in your source file:
+To make TeXact ignore certain lines add the following as a LaTeX comment in your source file:
 
 .. code-block:: tex
 
     % texact *
+
+
+To ignore specific rules only on the current line, list their codes using
+repeated ``texact`` markers:
+
+.. code-block:: tex
+
+    \begin{figure}[x] % texact FIG001 texact CAS001
 
 
 The ignore the rest of the file, use:
