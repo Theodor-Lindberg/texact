@@ -28,10 +28,16 @@ settings.
 
 ## Quickstart
 
-TeXact can be installed using pip directly from git:
+Install TeXact using pip
 
 ```bash
-python -m pip install "git+ssh://git@github.com/Theodor-Lindberg/texact.git"
+pip install texact
+```
+
+or conda
+
+```bash
+conda install conda-forge::texact
 ```
 
 then run as
