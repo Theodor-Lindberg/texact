@@ -129,7 +129,7 @@ RULES = RuleRegistry(
             "INT001",
             "abstract-first-line-this-work",
             "Reviewer_Inthis",
-            "Avoid referring to the document as 'this work' in the first line of the abstract.",
+            "Avoid using 'this work' in the first line of the abstract.",
         ),
         Rule(
             "CAS001",
@@ -141,7 +141,7 @@ RULES = RuleRegistry(
             "UNS001",
             "modal-or-uncertain-word",
             "Reviewer_Unsure",
-            "Avoid modal or uncertain wording: {line}",
+            "Avoid wording: {line}",
         ),
         Rule(
             "UNS002",
