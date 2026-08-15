@@ -1,9 +1,10 @@
 Try it here
 ===========
 
-Here you can try TeXact directly in your browser! The first run downloads
-TeXact, so it may take a few seconds. Support for ChkTeX is
-disabled in browser mode.
+Here you can try TeXact directly in your browser! Note that some
+functionality is not exposed in the web interface. For example,
+integration with ChkTeX, command-line arguments, and configuration
+file options.
 
 .. raw:: html
 

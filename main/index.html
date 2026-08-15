@@ -263,26 +263,40 @@
         <article role="main" id="furo-main-content">
           <section id="welcome-to-texact-s-documentation">
 <h1>Welcome to TeXact’s documentation!<a class="headerlink" href="#welcome-to-texact-s-documentation" title="Link to this heading">¶</a></h1>
-<p>TeXact is a tool for finding miscellaneous mistakes in LaTeX code and article writing.</p>
-<p>The repository can be found at <a class="reference external" href="https://github.com/Theodor-Lindberg/texact">GitHub</a>. Please
-report any issues or suggestions there. Contributions are also welcome.</p>
+<p>TeXact is a tool for finding miscellaneous mistakes in LaTeX code and article writing.
+A live demo of TeXact can be found in the <a class="reference external" href="try-it.html">Try it here</a> section.</p>
+<p>The repository can be found at <a class="reference external" href="https://github.com/Theodor-Lindberg/texact">GitHub</a>. Reporting any issues or suggestions there is appreciated. Contributions are also welcome.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>TeXact can be installed using pip, either directly from git or after cloning the repository.</p>
+<p>The latest released version of TeXact can be installed using pip or conda</p>
+<div class="admonition-install-texact-from-pypi admonition">
+<p class="admonition-title">Install TeXact from PyPi</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>texact
+</pre></div>
+</div>
+</div>
+<div class="admonition-install-texact-from-conda-forge admonition">
+<p class="admonition-title">Install TeXact from conda-forge</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>conda-forge::texact
+</pre></div>
+</div>
+</div>
+<p>The latest development version can be installed using pip,
+either directly from Git or after cloning the repository.</p>
 <div class="admonition-install-texact-from-git admonition">
-<p class="admonition-title">Install TeXact from git</p>
+<p class="admonition-title">Install TeXact from Git</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;git+ssh://git@github.com/Theodor-Lindberg/texact.git&quot;</span>
 </pre></div>
 </div>
 </div>
-<div class="admonition-install-texact-after-cloning admonition">
-<p class="admonition-title">Install TeXact after cloning</p>
+<div class="admonition-install-texact-after-cloning-the-repository admonition">
+<p class="admonition-title">Install TeXact after cloning the repository</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
 </div>
-<p>If Texact has already been installed, chances are a cached version will be used instead of the latest from Git.
-To be sure the latest is installed, to the following:</p>
+<p>If TeXact has already been installed via pip Git, chances are a cached version will be used instead of the latest.
+To be sure the latest is installed, do the following:</p>
 <div class="admonition-install-texact-from-git-avoiding-caches admonition">
 <p class="admonition-title">Install TeXact from git, avoiding caches</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>--no-cache-dir<span class="w"> </span><span class="s2">&quot;git+ssh://git@github.com/Theodor-Lindberg/texact.git&quot;</span>
@@ -307,6 +321,20 @@ To be sure the latest is installed, to the following:</p>
 </dd>
 </dl>
 </div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="options.html"><span class="doc">Options</span></a></dt><dd><p>Information on the available options and how to configure TeXact.</p>
+</dd>
+</dl>
+</div>
+</section>
+<section id="platforms">
+<h2>Platforms<a class="headerlink" href="#platforms" title="Link to this heading">¶</a></h2>
+<p>The plan is to support the major platforms (macOS, Linux, and Windows) and
+Python versions that are still receiving active or security support.
+For details on Python version support lifecycles, see
+<a class="reference external" href="https://endoflife.date/python">Python End of Life</a>.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="try-it.html">Try it here</a></li>
@@ -318,13 +346,6 @@ To be sure the latest is installed, to the following:</p>
 <li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a></li>
 </ul>
 </div>
-</section>
-<section id="platforms">
-<h2>Platforms<a class="headerlink" href="#platforms" title="Link to this heading">¶</a></h2>
-<p>We strive to support the major platforms (macOS, Linux, and Windows) and
-Python versions that are still receiving active or security support.
-For details on Python version support lifecycles, see
-<a class="reference external" href="https://endoflife.date/python">Python End of Life</a>.</p>
 </section>
 </section>
 <section id="indices-and-tables">
