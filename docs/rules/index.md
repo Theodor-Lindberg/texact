@@ -29,6 +29,7 @@ them per their liking and, in some cases, configure them.
 | --- | --- | --- | --- |
 | UNS001 | [modal-or-uncertain-word](modal-or-uncertain-word.md) | Avoid modal or uncertain wording. | error |
 | UNS002 | [excessive-we-usage](excessive-we-usage.md) | Reduce use of 'we' when it exceeds the configured maximum. | error |
+| UNS003 | [singular-author-possessive](singular-author-possessive.md) | Use authors' to author's in papers. | error |
 
 ## RefLabel (`REF`)
 
@@ -74,6 +75,7 @@ abstract-first-line-this-work
 incorrect-casing
 modal-or-uncertain-word
 excessive-we-usage
+singular-author-possessive
 underscore-in-label
 undefined-label-reference
 unreferenced-label

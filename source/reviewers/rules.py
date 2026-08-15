@@ -150,6 +150,12 @@ RULES = RuleRegistry(
             "Reduce use of 'we': found {count} occurrences; maximum is {limit}.",
         ),
         Rule(
+            "UNS003",
+            "singular-author-possessive",
+            "Reviewer_Unsure",
+            "Prefer authors' to author's in papers.",
+        ),
+        Rule(
             "REF001",
             "underscore-in-label",
             "Reviewer_RefLabel",
@@ -247,6 +253,7 @@ RULE_INT001 = RULES.get("INT001")
 RULE_CAS001 = RULES.get("CAS001")
 RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
+RULE_UNS003 = RULES.get("UNS003")
 RULE_REF001 = RULES.get("REF001")
 RULE_REF002 = RULES.get("REF002")
 RULE_REF003 = RULES.get("REF003")

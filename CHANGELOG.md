@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to ignore the rest of the file.
+- Check possessive spelling of "author".
 
 ### Fixed
 

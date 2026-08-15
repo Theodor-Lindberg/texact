@@ -36,6 +36,9 @@ docs = [
     "sphinx-multiversion==0.2.4",
 ]
 
+  [tool.pytest.ini_options]
+  pythonpath = ["source"]
+
 [tool.setuptools.package-data]
 texact_config = ["chktexrc"]
 

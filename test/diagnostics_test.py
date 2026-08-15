@@ -8,6 +8,7 @@ from printer import Printer
 from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.rules import RULES
 from template_check import Template
 from texact import _strip_latex_comment
@@ -73,6 +74,21 @@ def test_casing_checks_text_after_escaped_percent() -> None:
     comments = reviewer.get_comments()
     assert len(comments) == 1
     assert comments[0].code == "CAS001"
+
+
+def test_author_possessive_prefers_plural_form() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+
+    reviewer.process_line(0, "The author's contributions are listed.")
+    reviewer.process_line(1, "The authors' contributions are listed.")
+
+    reviewer.process_line(2, "Author's contributions are listed.")
+    reviewer.process_line(3, "Authors' contributions are listed.")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 2
+    assert comments[0].code == "UNS003"
+    assert comments[1].code == "UNS003"
 
 
 def test_texact_file_marker_stops_processing(tmp_path: Path) -> None:
