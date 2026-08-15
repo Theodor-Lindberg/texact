@@ -269,26 +269,21 @@
 focus. The reviewers keep track of their comments as the LaTeX file is
 processed line by line.
 Once the entire file has passed, all diagnostics are printed to the
-console, referencing the line number.
+console, referencing line numbers.
 A summary is also outputted at the end.
 As the reviewers are independent of one another, adding new ones
 does not break existing features.</p>
-<p>Reviewer implementations live in <code class="docutils literal notranslate"><span class="pre">source/reviewers/</span></code>. The shared
-reviewer contract is in <code class="docutils literal notranslate"><span class="pre">source/reviewers/reviewer.py</span></code> and the central
+<p>Reviewer implementations are located in <code class="docutils literal notranslate"><span class="pre">source/reviewers/</span></code>. All inherit
+from the base class in <code class="docutils literal notranslate"><span class="pre">source/reviewers/reviewer.py</span></code>, and a central
 rule registry is in <code class="docutils literal notranslate"><span class="pre">source/reviewers/rules.py</span></code>.</p>
 </section>
 <section id="rule-identity">
 <h2>Rule identity<a class="headerlink" href="#rule-identity" title="Link to this heading">¶</a></h2>
 <p>Every diagnostic refers to one immutable <code class="docutils literal notranslate"><span class="pre">Rule</span></code> in the central registry.
-The registry owns the stable code, kebab-case name, canonical message
-template, severity, and documentation path. A <code class="docutils literal notranslate"><span class="pre">Diagnostic</span></code> adds the
-context for one occurrence: source filename, line, and the rendered message.</p>
-<p>The command-line output follows this general shape:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">tex</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span> <span class="n">error</span><span class="p">:</span> <span class="n">CAS001</span> <span class="n">incorrect</span><span class="o">-</span><span class="n">casing</span><span class="p">:</span> <span class="n">Use</span> <span class="n">the</span> <span class="n">canonical</span> <span class="n">casing</span> <span class="k">for</span> <span class="n">this</span> <span class="n">technical</span> <span class="n">term</span><span class="o">.</span> <span class="p">[</span><span class="n">docs</span><span class="p">:</span> <span class="n">docs</span><span class="o">/</span><span class="n">rules</span><span class="o">/</span><span class="n">incorrect</span><span class="o">-</span><span class="n">casing</span><span class="o">.</span><span class="n">md</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>Documentation links use repository-relative paths.</p>
-<p>Reviewer prefixes and rule ranges are stable:</p>
+The registry contains the error code, name, message template, severity,
+and documentation path. A <code class="docutils literal notranslate"><span class="pre">Diagnostic</span></code> adds the context for one
+occurrence: source filename, line, and the rendered message.</p>
+<p>Reviewer prefixes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_Inthis</span></code> uses <code class="docutils literal notranslate"><span class="pre">INT</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Reviewer_Casing</span></code> uses <code class="docutils literal notranslate"><span class="pre">CAS</span></code>.</p></li>
@@ -326,7 +321,8 @@ or adding a new one.
 The easiest way to get started is by studying one of the existing
 classes, e.g. <code class="docutils literal notranslate"><span class="pre">Reviewer_Unsure</span></code>. The main file, <code class="docutils literal notranslate"><span class="pre">texact</span></code>, must be
 updated to include any new reviewer.
-Command-line arguments can be added as well, if necessary.</p>
+Options to the command-line interface and the parsing of the configuration
+file can be added as well.</p>
 </section>
 </section>
 
