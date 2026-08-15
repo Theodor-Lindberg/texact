@@ -19,7 +19,18 @@ const output = document.querySelector("#try-it-output");
 const runButton = document.querySelector("#try-it-run");
 const status = document.querySelector("#try-it-status");
 const versionLabel = document.querySelector("#try-it-version");
+const mainVersionNote = document.querySelector("#try-it-main-note");
 let pyodidePromise;
+
+function getReleaseDirectory() {
+  return window.location.pathname.split("/").find(
+      (segment) => /^v\d+\.\d+\.\d+$/.test(segment));
+}
+
+function getTexactPackageSpec() {
+  const releaseDirectory = getReleaseDirectory();
+  return releaseDirectory ? `texact==${releaseDirectory.slice(1)}` : "texact";
+}
 
 function loadTexact() {
   if (!pyodidePromise) {
@@ -33,7 +44,7 @@ function loadTexact() {
           await pyodide.loadPackage("micropip");
           await pyodide.runPythonAsync(`
 import micropip
-await micropip.install("texact")
+await micropip.install("${getTexactPackageSpec()}")
         `);
           const version = await pyodide.runPythonAsync(
               "from texact import get_version\nget_version()",
@@ -127,6 +138,9 @@ json.dumps({"output": stdout.getvalue() + stderr.getvalue(), "exit_code": exit_c
 }
 
 runButton.addEventListener("click", runTexact);
+if (!getReleaseDirectory() && mainVersionNote) {
+  mainVersionNote.hidden = false;
+}
 status.textContent = "Loading TeXact...";
 loadTexact().then(
     function() {
