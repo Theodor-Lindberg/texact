@@ -55,6 +55,8 @@ class Reviewer_Casing(Reviewer):
         "Vivado",
         "Quartus",
         "APyTypes",
+        "NumPy",
+        "Matplotlib",
         "URL",
         "DNS",
         "BRAM",
@@ -95,6 +97,12 @@ class Reviewer_Casing(Reviewer):
         "FP16",
         "FP32",
         "FP64",
+        "MILP",
+        "ILP",
+        "SNR",
+        "SQNR",
+        "MIMO",
+        "CPU",
     )
     _PATTERN_LATEX_IGNORED_COMMANDS = re.compile(
         r"\\(?:cite|ref|label|url|usepackage)\{[^}]*\}"
