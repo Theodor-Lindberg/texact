@@ -91,6 +91,23 @@ def test_author_possessive_prefers_plural_form() -> None:
     assert comments[1].code == "UNS003"
 
 
+def test_markboth_spanning_multiple_lines_is_ignored() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+
+    lines = [
+        r"\markboth{",
+        r"    IEEE TRANSACTIONS ON VERY LARGE SCALE INTEGRATION (VLSI) SYSTEMS,",
+        r"}{Author \MakeLowercase{\textit{et al.}}: Title}",
+        r"This should be flagged normally.",
+    ]
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line + "\n")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].line_no == 3
+
+
 def test_texact_file_marker_stops_processing(tmp_path: Path) -> None:
     tex_file = tmp_path / "marker.tex"
     tex_file.write_text(

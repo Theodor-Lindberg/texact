@@ -12,6 +12,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN = re.compile(r"\b(?:should|would|could|might|very)\b", re.IGNORECASE)
     _PATTERN_WE = re.compile(r"\bwe\b", re.IGNORECASE)
     _PATTERN_AUTHOR_POSSESSIVE = re.compile(r"\bauthor's\b", re.IGNORECASE)
+    _PATTERN_MARKBOTH_START = re.compile(r"\\markboth\b")
     _MAX_WE_OCCURRENCES = 5
 
     def __init__(
@@ -31,8 +32,58 @@ class Reviewer_Unsure(Reviewer):
         self.we_last_line: int | None = None
         self.author_possessive_count = 0
         self.comments: list[Diagnostic] = []
+        # State for masking \markboth{...}{...}, which may span multiple lines
+        self._markboth_awaiting_brace = False
+        self._markboth_depth = 0
+        self._markboth_groups_remaining = 0
+
+    def _mask_markboth(self, line: str) -> str:
+        chars = list(line)
+        i = 0
+        while i < len(chars):
+            if self._markboth_depth == 0 and not self._markboth_awaiting_brace:
+                match = self._PATTERN_MARKBOTH_START.search(line, i)
+                if not match:
+                    break
+                for j in range(match.start(), match.end()):
+                    chars[j] = " "
+                i = match.end()
+                self._markboth_awaiting_brace = True
+                self._markboth_groups_remaining = 2
+                continue
+
+            char = chars[i]
+            if self._markboth_awaiting_brace:
+                if char == "{":
+                    self._markboth_awaiting_brace = False
+                    self._markboth_depth = 1
+                    chars[i] = " "
+                elif not char.isspace():
+                    # Not the expected argument; stop masking.
+                    self._markboth_awaiting_brace = False
+                    self._markboth_groups_remaining = 0
+                    continue
+                i += 1
+                continue
+
+            if char == "{":
+                self._markboth_depth += 1
+            elif char == "}":
+                self._markboth_depth -= 1
+                if self._markboth_depth == 0:
+                    self._markboth_groups_remaining -= 1
+                    if self._markboth_groups_remaining > 0:
+                        self._markboth_awaiting_brace = True
+            chars[i] = " "
+            i += 1
+
+        return "".join(chars)
 
     def process_line(self, line_no: int, line: str) -> None:
+        # Ignore the boilerplate running header set via \markboth{...}{...},
+        # which may span multiple lines.
+        line = self._mask_markboth(line)
+
         we_matches = self.find_we(line)
         if we_matches:
             self.we_count += len(we_matches)
