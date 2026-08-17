@@ -1,7 +1,10 @@
 Integration
 ===========
 
-TeXact can be integrated easily into existing workflows.
+TeXact can be integrated easily into different workflows.
+To lower the barrier of entry, it is recommended to run
+Texact from the beginning of the writing process, and
+to run it often.
 
 Pre-commit hook
 ---------------

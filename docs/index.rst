@@ -91,6 +91,7 @@ For details on Python version support lifecycles, see
 
 .. toctree::
     :maxdepth: 1
+    :hidden:
 
     try-it
     options
@@ -99,13 +100,6 @@ For details on Python version support lifecycles, see
     development
     changelog
     licenses
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 .. image:: _static/texactlogo.svg
    :scale: 500%
