@@ -286,7 +286,7 @@ class Reviewer_Figure(Reviewer):
         if includegraphics_match is None:
             return
 
-        graphics_path = includegraphics_match.group("path")
+        graphics_path = includegraphics_match.group("path").strip()
         resolved_path = self._resolve_graphics_path(graphics_path)
         if resolved_path is None:
             self.comments.append(
