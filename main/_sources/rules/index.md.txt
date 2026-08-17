@@ -4,12 +4,8 @@ tocdepth: 2
 
 # TeXact Rules
 
-TeXact rule codes use a reviewer prefix followed by a numeric identifier.
-The prefix identifies the reviewer class that owns the rule. Each rule has its
-own page linked from the table below.
-
 Some of these rules can seem like nitpicking, but users are free to disable
-them per their liking and, in some cases, configure them.
+them per their liking and, if supported, configure them.
 
 ## Inthis (`INT`)
 

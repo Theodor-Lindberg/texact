@@ -6,6 +6,10 @@ functionality is not exposed in the web interface. For example,
 integration with ChkTeX, command-line arguments, and configuration
 file options.
 
+Keep in mind that TeXact does not ensure that the LaTeX code
+compiles; that is the compiler's responsibility. However,
+it will check for common mistakes in article writing.
+
 .. raw:: html
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
