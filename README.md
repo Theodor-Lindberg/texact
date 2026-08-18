@@ -14,7 +14,7 @@ complement and incorporate them.
 
 ## Documentation
 
-[https://theodor-lindberg.github.io/texact/](https://theodor-lindberg.github.io/texact/)
+[https://texact.org/](https://texact.org/)
 
 ## Features
 
