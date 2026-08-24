@@ -169,6 +169,47 @@ def test_inline_rule_ignore_applies_to_the_same_line(tmp_path: Path) -> None:
     assert result.stdout.count("[CAS001]") == 1
 
 
+def test_output_controls_can_be_set_from_cli_or_config(tmp_path: Path) -> None:
+    tex_file = tmp_path / "empty.tex"
+    tex_file.write_text("\\documentclass{article}\n", encoding="utf-8")
+
+    def run_texact(*arguments: str) -> str:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(TEST_DIR.parent / "source" / "texact.py"),
+                "--no-chktex",
+                *arguments,
+                str(tex_file),
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=tmp_path,
+        )
+        return result.stdout
+
+    normal_output = run_texact()
+    assert "=== Reviewing" in normal_output
+    assert "=== Summary" in normal_output
+
+    quiet_output = run_texact("-q")
+    assert "=== Reviewing" in quiet_output
+    assert "=== Summary" not in quiet_output
+
+    very_quiet_output = run_texact("-qq")
+    assert "=== Reviewing" not in very_quiet_output
+    assert "=== Summary" not in very_quiet_output
+
+    (tmp_path / ".texact.toml").write_text(
+        "[format]\nquiet = 2\n",
+        encoding="utf-8",
+    )
+    configured_output = run_texact()
+    assert "=== Reviewing" not in configured_output
+    assert "=== Summary" not in configured_output
+
+
 def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:
     for required, expected_severity in (
         (False, Severity.WARNING),

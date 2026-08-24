@@ -46,6 +46,7 @@ def test_supported_settings_are_parsed(tmp_path: Path) -> None:
         "\n"
         "[format]\n"
         "html-style = true\n"
+        "quiet = 2\n"
         "\n"
         "[tools]\n"
         "chktex_path = '/usr/bin'\n",
@@ -57,6 +58,7 @@ def test_supported_settings_are_parsed(tmp_path: Path) -> None:
     assert config.lint.casing == ("LaTeX",)
     assert config.lint.we_count == 7
     assert config.format.html_style is True
+    assert config.format.quiet == 2
     assert config.tools.chktex_path == "/usr/bin"
 
 
@@ -85,6 +87,9 @@ def test_invalid_toml_has_a_clear_error(tmp_path: Path) -> None:
         ("[lint]\nwe_count = 'seven'\n", "lint.we_count"),
         ("[lint]\nunknown = true\n", "unsupported option 'lint.unknown'"),
         ("[format]\nhtml-style = 'yes'\n", "format.html-style"),
+        ("[format]\nquiet = 'yes'\n", "format.quiet"),
+        ("[format]\nquiet = 3\n", "format.quiet"),
+        ("[format]\nno-title = true\n", "unsupported option 'format.no-title'"),
         ("[tools]\nchktex_path = 4\n", "tools.chktex_path"),
     ],
 )
@@ -117,6 +122,7 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
             "--config",
             "custom.toml",
             "--no-html-style",
+            "-qq",
             "file.tex",
         ],
     )
@@ -125,6 +131,7 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
 
     assert args.config == Path("custom.toml")
     assert args.html_style is False
+    assert args.quiet == 2
     assert args.chktex is None
 
 

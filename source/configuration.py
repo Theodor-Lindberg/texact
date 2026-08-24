@@ -26,6 +26,7 @@ class FormatConfig:
     """Output formatting settings loaded from a TeXact configuration."""
 
     html_style: bool = False
+    quiet: int = 0
 
 
 @dataclass(frozen=True)
@@ -104,7 +105,7 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
     tools_data = _table(data.get("tools"), path, "tools")
 
     _check_keys(lint_data, {"ignore", "casing", "we_count"}, path, "lint")
-    _check_keys(format_data, {"html-style"}, path, "format")
+    _check_keys(format_data, {"html-style", "quiet"}, path, "format")
     _check_keys(tools_data, {"chktex_path"}, path, "tools")
 
     ignore = _string_list(lint_data.get("ignore", []), path, "lint.ignore")
@@ -126,6 +127,10 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
     if not isinstance(html_style, bool):
         raise ConfigurationError(f"{path}: format.html-style must be a boolean")
 
+    quiet = format_data.get("quiet", 0)
+    if isinstance(quiet, bool) or not isinstance(quiet, int) or quiet not in {0, 1, 2}:
+        raise ConfigurationError(f"{path}: format.quiet must be 0, 1, or 2")
+
     chktex_path = tools_data.get("chktex_path")
     if chktex_path is not None and not isinstance(chktex_path, str):
         raise ConfigurationError(f"{path}: tools.chktex_path must be a string")
@@ -138,7 +143,10 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
             casing=casing,
             we_count=we_count,
         ),
-        format=FormatConfig(html_style=html_style),
+        format=FormatConfig(
+            html_style=html_style,
+            quiet=quiet,
+        ),
         tools=ToolsConfig(chktex_path=chktex_path),
         source_path=path,
     )

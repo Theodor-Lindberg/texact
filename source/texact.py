@@ -82,6 +82,13 @@ def set_up_arg_parser() -> argparse.Namespace:
         action=argparse.BooleanOptionalAction,
         help="Output colors using HTML spans instead of ANSI escape codes",
     )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        default=None,
+        action="count",
+        help="Suppress summaries; repeat to also suppress titles",
+    )
     return parser.parse_args()
 
 
@@ -91,6 +98,7 @@ def process_file(
     reviewers: tuple[Reviewer, ...],
     printer: Printer,
     config: TexactConfig,
+    quiet: int = 0,
 ) -> int:
     line_ignored_rule_codes: dict[int, frozenset[str]] = {}
     with file_path.open("r", encoding="utf-8") as input_file:
@@ -130,6 +138,10 @@ def process_file(
     ):
         printer.print_diagnostic(comment)
 
+    any_failed = any(comment.severity == Severity.ERROR for comment in visible_comments)
+    if quiet >= 1:
+        return 1 if any_failed else 0
+
     printer.print(f"=== Summary of {display_name} ===")
     configuration_path = (
         str(config.source_path.resolve())
@@ -154,7 +166,6 @@ def process_file(
         summary = reviewer.get_summary() if visible_reviewer_comments else ""
         printer.print(f"Reviewer {name}: {printer.status_str(status)}. {summary}")
 
-    any_failed = any(comment.severity == Severity.ERROR for comment in visible_comments)
     return 1 if any_failed else 0
 
 
@@ -183,6 +194,7 @@ def main():
     html_style = (
         config.format.html_style if args.html_style is None else args.html_style
     )
+    quiet = config.format.quiet if args.quiet is None else args.quiet
     printer = Printer(html_style=html_style)
 
     if not args.files:
@@ -192,7 +204,8 @@ def main():
 
     for file_name in args.files:
         name, extension = file_name[:-4], file_name[-3:]
-        printer.print(f"=== Reviewing {name}(.){extension} ===")
+        if quiet < 2:
+            printer.print(f"=== Reviewing {name}(.){extension} ===")
         file_path = Path(file_name)
 
         if not file_path.is_file():
@@ -227,6 +240,7 @@ def main():
             tuple(reviewers),
             printer,
             config,
+            quiet,
         )
         max_ret_code = max(max_ret_code, ret_code)
 
