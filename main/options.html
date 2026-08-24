@@ -283,6 +283,11 @@ repeated <code class="docutils literal notranslate"><span class="pre">texact</sp
 </pre></div>
 </div>
 </section>
+<section id="quiet-output">
+<h2>Quiet output<a class="headerlink" href="#quiet-output" title="Link to this heading">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-q</span></code> or <code class="docutils literal notranslate"><span class="pre">--quiet</span></code> to remove per-file summaries. Repeat the short
+option as <code class="docutils literal notranslate"><span class="pre">-qq</span></code> to remove both summaries and title lines.</p>
+</section>
 <section id="configuration-file">
 <h2>Configuration file<a class="headerlink" href="#configuration-file" title="Link to this heading">¶</a></h2>
 <p>TeXact can load optional settings from a TOML file. It searches the current
@@ -303,6 +308,7 @@ precedence over values loaded from TOML.</p>
 
 <span class="p">[</span><span class="nb">format</span><span class="p">]</span>
 <span class="n">html</span><span class="o">-</span><span class="n">style</span> <span class="o">=</span> <span class="n">true</span>
+<span class="n">quiet</span> <span class="o">=</span> <span class="mi">2</span>
 
 <span class="p">[</span><span class="n">tools</span><span class="p">]</span>
 <span class="n">chktex_path</span> <span class="o">=</span> <span class="s2">"/usr/bin"</span>
@@ -311,8 +317,10 @@ precedence over values loaded from TOML.</p>
 <p><code class="docutils literal notranslate"><span class="pre">lint.ignore</span></code> accepts rule codes to suppress. <code class="docutils literal notranslate"><span class="pre">lint.casing</span></code> adds
 spellings to the built-in casing list. <code class="docutils literal notranslate"><span class="pre">lint.we_count</span></code> changes the maximum
 allowed number of <code class="docutils literal notranslate"><span class="pre">we</span></code> occurrences. <code class="docutils literal notranslate"><span class="pre">format.html-style</span></code> enables HTML
-output by default, and <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a ChkTeX executable
-or directory.</p>
+output by default. <code class="docutils literal notranslate"><span class="pre">format.quiet</span></code> controls non-diagnostic output: <code class="docutils literal notranslate"><span class="pre">0</span></code>
+prints titles and summaries, <code class="docutils literal notranslate"><span class="pre">1</span></code> removes summaries, and <code class="docutils literal notranslate"><span class="pre">2</span></code> removes both
+titles and summaries. <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a ChkTeX executable or
+directory.</p>
 <p>When no configuration file exists, TeXact uses its normal built-in defaults.</p>
 </section>
 </section>
@@ -374,6 +382,7 @@ or directory.</p>
             <ul>
 <li><a class="reference internal" href="#">Options</a><ul>
 <li><a class="reference internal" href="#inline-suppressions">Inline suppressions</a></li>
+<li><a class="reference internal" href="#quiet-output">Quiet output</a></li>
 <li><a class="reference internal" href="#configuration-file">Configuration file</a></li>
 </ul>
 </li>
