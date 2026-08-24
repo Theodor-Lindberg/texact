@@ -3,7 +3,7 @@ import re
 from printer import Printer
 
 from .reviewer import Diagnostic, Reviewer, Status
-from .rules import RULE_UNS001, RULE_UNS002, RULE_UNS003
+from .rules import RULE_UNS001, RULE_UNS002, RULE_UNS003, RULE_UNS004
 
 
 class Reviewer_Unsure(Reviewer):
@@ -12,6 +12,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN = re.compile(r"\b(?:should|would|could|might|very)\b", re.IGNORECASE)
     _PATTERN_WE = re.compile(r"\bwe\b", re.IGNORECASE)
     _PATTERN_AUTHOR_POSSESSIVE = re.compile(r"\bauthor's\b", re.IGNORECASE)
+    _PATTERN_SPACE_BEFORE_PUNCTUATION = re.compile(r"[ \t]+[.,;:!?]")
     _PATTERN_MARKBOTH_START = re.compile(r"\\markboth\b")
     _MAX_WE_OCCURRENCES = 5
 
@@ -31,6 +32,7 @@ class Reviewer_Unsure(Reviewer):
         self.we_limit_comment_added = False
         self.we_last_line: int | None = None
         self.author_possessive_count = 0
+        self.space_before_punctuation_count = 0
         self.comments: list[Diagnostic] = []
         # State for masking \markboth{...}{...}, which may span multiple lines
         self._markboth_awaiting_brace = False
@@ -115,6 +117,17 @@ class Reviewer_Unsure(Reviewer):
             )
             self.author_possessive_count += len(author_possessive_matches)
 
+        space_before_punctuation_matches = self.find_space_before_punctuation(line)
+        if space_before_punctuation_matches:
+            self.comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_UNS004,
+                    RULE_UNS004.render_message(),
+                )
+            )
+            self.space_before_punctuation_count += len(space_before_punctuation_matches)
+
     def get_comments(self) -> list[Diagnostic]:
         if (
             self.we_count > self.max_we_occurrences
@@ -144,6 +157,10 @@ class Reviewer_Unsure(Reviewer):
             )
         if self.author_possessive_count:
             issues.append(f"Author's possessives: {self.author_possessive_count}")
+        if self.space_before_punctuation_count:
+            issues.append(
+                f"Spaces before punctuation: {self.space_before_punctuation_count}"
+            )
 
         if not issues:
             return ""
@@ -156,6 +173,7 @@ class Reviewer_Unsure(Reviewer):
                 self.match_count == 0
                 and self.we_count <= self.max_we_occurrences
                 and self.author_possessive_count == 0
+                and self.space_before_punctuation_count == 0
             )
             else Status.FAILED
         )
@@ -168,6 +186,9 @@ class Reviewer_Unsure(Reviewer):
 
     def find_author_possessive(self, line: str) -> list[str]:
         return self._PATTERN_AUTHOR_POSSESSIVE.findall(line)
+
+    def find_space_before_punctuation(self, line: str) -> list[str]:
+        return self._PATTERN_SPACE_BEFORE_PUNCTUATION.findall(line)
 
     def get_name(self) -> str:
         return "Modal verbs"

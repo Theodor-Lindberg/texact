@@ -91,6 +91,19 @@ def test_author_possessive_prefers_plural_form() -> None:
     assert comments[1].code == "UNS003"
 
 
+def test_spaces_before_punctuation_are_reported() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+
+    reviewer.process_line(0, "This is wrong .")
+    reviewer.process_line(1, "This is also wrong ,")
+    reviewer.process_line(2, "This is correct.")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 2
+    assert comments[0].code == "UNS004"
+    assert comments[1].code == "UNS004"
+
+
 def test_markboth_spanning_multiple_lines_is_ignored() -> None:
     reviewer = Reviewer_Unsure(Printer())
 
