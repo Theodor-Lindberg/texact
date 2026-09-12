@@ -117,6 +117,26 @@ def test_plus_minus_notation_is_reported() -> None:
     assert all(r"\pm" in comment.message for comment in comments)
 
 
+def test_math_operators_use_latex_commands() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        "The maximum is max in prose.",
+        r"$max(x) + min(x)$",
+        r"\[\max(x) + \log(x)\]",
+        r"\begin{equation} exp(x) \end{equation}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT002"
+    ]
+
+    assert len(comments) == 3
+    assert all("Use" in comment.message for comment in comments)
+
+
 def test_label_prefixes_match_latex_context() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
