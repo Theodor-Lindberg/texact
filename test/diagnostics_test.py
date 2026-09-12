@@ -137,6 +137,24 @@ def test_math_operators_use_latex_commands() -> None:
     assert all("Use" in comment.message for comment in comments)
 
 
+def test_mu_uses_textmu_command() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"The word \mu in prose is not checked.",
+        r"$\mu + \textmu$",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT003"
+    ]
+
+    assert len(comments) == 1
+    assert r"\textmu" in comments[0].message
+
+
 def test_label_prefixes_match_latex_context() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [

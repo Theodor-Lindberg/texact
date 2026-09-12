@@ -150,6 +150,12 @@ RULES = RuleRegistry(
             "Use {command} instead of {operator} in math mode.",
         ),
         Rule(
+            "MAT003",
+            "textmu-command",
+            "Reviewer_Math",
+            "Use {command} instead of \\mu in math mode.",
+        ),
+        Rule(
             "UNS001",
             "modal-or-uncertain-word",
             "Reviewer_Unsure",
@@ -283,6 +289,7 @@ RULE_INT001 = RULES.get("INT001")
 RULE_CAS001 = RULES.get("CAS001")
 RULE_MAT001 = RULES.get("MAT001")
 RULE_MAT002 = RULES.get("MAT002")
+RULE_MAT003 = RULES.get("MAT003")
 RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
 RULE_UNS003 = RULES.get("UNS003")

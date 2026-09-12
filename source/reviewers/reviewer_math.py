@@ -3,7 +3,7 @@ import re
 from printer import Printer
 
 from .reviewer import Diagnostic, Reviewer, Status
-from .rules import RULE_MAT001, RULE_MAT002
+from .rules import RULE_MAT001, RULE_MAT002, RULE_MAT003
 
 
 class Reviewer_Math(Reviewer):
@@ -49,6 +49,7 @@ class Reviewer_Math(Reviewer):
         + "|".join(sorted(_MATH_OPERATORS, key=len, reverse=True))
         + r")(?![A-Za-z])"
     )
+    _PATTERN_MU = re.compile(r"(?<![A-Za-z])\\mu(?![A-Za-z])")
     _PATTERN_MATH_TOKEN = re.compile(
         r"\\begin\{(?:equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
         r"|\\end\{(?:equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
@@ -108,6 +109,16 @@ class Reviewer_Math(Reviewer):
                         ),
                     )
                 )
+            for match in self._PATTERN_MU.finditer(math_segment):
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT003,
+                        RULE_MAT003.render_message(
+                            command=self.printer.yellow(r"\textmu"),
+                        ),
+                    )
+                )
 
     def get_comments(self) -> list[Diagnostic]:
         return self.comments
@@ -121,11 +132,14 @@ class Reviewer_Math(Reviewer):
         operator_count = sum(
             comment.code == RULE_MAT002.code for comment in self.comments
         )
+        mu_count = sum(comment.code == RULE_MAT003.code for comment in self.comments)
         summaries = []
         if plus_minus_count:
             summaries.append(f"Plus-minus notation: {plus_minus_count}")
         if operator_count:
             summaries.append(f"Unescaped math operators: {operator_count}")
+        if mu_count:
+            summaries.append(f"Mu commands: {mu_count}")
         return " | ".join(summaries)
 
     def get_status(self) -> Status:

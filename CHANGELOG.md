@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Warn about +-.
 - Enforce hard space before `\ref`.
 - Check operator names inside math mode.
+- Enforce `\textmu` instead of `\mu` in math mode.
 
 ### Fixed
 

@@ -25,6 +25,7 @@ them per their liking and, if supported, configure them.
 | --- | --- | --- | --- |
 | MAT001 | [plus-minus-notation](plus-minus-notation.md) | Use `\pm` instead of `+-` or `-+`. | error |
 | MAT002 | [math-operator-command](math-operator-command.md) | Use LaTeX commands for common math operators. | error |
+| MAT003 | [textmu-command](textmu-command.md) | Use `\textmu` instead of `\mu`. | error |
 
 ## Unsure (`UNS`)
 
@@ -81,6 +82,7 @@ abstract-first-line-this-work
 incorrect-casing
 plus-minus-notation
 math-operator-command
+textmu-command
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
