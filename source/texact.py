@@ -220,7 +220,7 @@ def main():
         reviewers = [
             Reviewer_Inthis(printer),
             Reviewer_RefLabel(printer),
-            Reviewer_Math(printer),
+            Reviewer_Math(printer, template),
             Reviewer_Casing(printer, config.lint.casing),
             Reviewer_Figure(printer, file_path),
             Reviewer_Unsure(printer, config.lint.we_count),

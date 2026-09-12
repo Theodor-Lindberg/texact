@@ -1,9 +1,16 @@
 import re
 
 from printer import Printer
+from template_check import Template
 
 from .reviewer import Diagnostic, Reviewer, Status
-from .rules import RULE_MAT001, RULE_MAT002, RULE_MAT003, RULE_MAT004
+from .rules import (
+    RULE_MAT001,
+    RULE_MAT002,
+    RULE_MAT003,
+    RULE_MAT004,
+    RULE_MAT005,
+)
 
 
 class Reviewer_Math(Reviewer):
@@ -51,18 +58,42 @@ class Reviewer_Math(Reviewer):
     )
     _PATTERN_MU = re.compile(r"(?<![A-Za-z])\\mu(?![A-Za-z])")
     _PATTERN_PARENTHESIS = re.compile(r"(?P<delimiter>\(|\))")
+    _PATTERN_UNSUPPORTED_IEEE_ENVIRONMENT = re.compile(
+        r"\\begin\{(?P<environment>"
+        r"align\*?|alignat\*?|gather\*?|multline\*?|flalign\*?|"
+        r"split\*?|aligned\*?|alignedat\*?|gathered\*?)\}"
+    )
     _PATTERN_MATH_TOKEN = re.compile(
-        r"\\begin\{(?:equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
-        r"|\\end\{(?:equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
+        r"\\begin\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
+        r"|\\end\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
         r"|\\\(|\\\)|\\\[|\\\]|(?<!\\)\$\$?"
     )
 
-    def __init__(self, printer: Printer) -> None:
+    def __init__(
+        self,
+        printer: Printer,
+        template: Template = Template.UNKNOWN,
+    ) -> None:
         self.printer = printer
+        self.template = template
         self.comments: list[Diagnostic] = []
         self._in_math_mode = False
 
     def process_line(self, line_no: int, line: str) -> None:
+        if self.template == Template.IEEE:
+            for match in self._PATTERN_UNSUPPORTED_IEEE_ENVIRONMENT.finditer(line):
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT005,
+                        RULE_MAT005.render_message(
+                            environment=self.printer.dark_red(
+                                match.group("environment")
+                            ),
+                        ),
+                    )
+                )
+
         for match in self._PATTERN_PLUS_MINUS.finditer(line):
             self.comments.append(
                 Diagnostic(
@@ -153,6 +184,9 @@ class Reviewer_Math(Reviewer):
         parenthesis_count = sum(
             comment.code == RULE_MAT004.code for comment in self.comments
         )
+        ieee_environment_count = sum(
+            comment.code == RULE_MAT005.code for comment in self.comments
+        )
         summaries = []
         if plus_minus_count:
             summaries.append(f"Plus-minus notation: {plus_minus_count}")
@@ -162,6 +196,10 @@ class Reviewer_Math(Reviewer):
             summaries.append(f"Mu commands: {mu_count}")
         if parenthesis_count:
             summaries.append(f"Unscaled parentheses: {parenthesis_count}")
+        if ieee_environment_count:
+            summaries.append(
+                f"Non-IEEE alignment environments: {ieee_environment_count}"
+            )
         return " | ".join(summaries)
 
     def get_status(self) -> Status:

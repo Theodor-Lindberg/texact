@@ -175,6 +175,28 @@ def test_math_parentheses_use_left_and_right() -> None:
     assert r"\right" in comments[1].message
 
 
+def test_ieee_math_uses_ieeeeqnarray() -> None:
+    ieee_reviewer = Reviewer_Math(Printer(), Template.IEEE)
+    llncs_reviewer = Reviewer_Math(Printer(), Template.LLNCS)
+
+    ieee_reviewer.process_line(0, r"\begin{align}")
+    ieee_reviewer.process_line(1, r"\begin{split}")
+    ieee_reviewer.process_line(2, r"\begin{IEEEeqnarray}{rCl}")
+    ieee_reviewer.process_line(3, r"\end{IEEEeqnarray}")
+    ieee_reviewer.process_line(4, r"max in prose")
+    llncs_reviewer.process_line(0, r"\begin{align}")
+
+    ieee_comments = [
+        comment for comment in ieee_reviewer.get_comments() if comment.code == "MAT005"
+    ]
+
+    assert len(ieee_comments) == 2
+    assert all("IEEEeqnarray" in comment.message for comment in ieee_comments)
+    assert not any(
+        comment.code == "MAT005" for comment in llncs_reviewer.get_comments()
+    )
+
+
 def test_label_prefixes_match_latex_context() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [

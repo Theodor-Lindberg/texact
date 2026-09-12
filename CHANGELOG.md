@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check operator names inside math mode.
 - Enforce `\textmu` instead of `\mu` in math mode.
 - Enforce `\left` and `\right` for parentheses in math mode.
+- Enforce `IEEEeqnarray` instead of `align`, `split`, etc. in IEEE papers.
 
 ### Fixed
 
