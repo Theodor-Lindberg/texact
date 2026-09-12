@@ -138,6 +138,12 @@ RULES = RuleRegistry(
             "Incorrect casing: {actual} should be {expected}",
         ),
         Rule(
+            "CAS002",
+            "title-casing",
+            "Reviewer_Casing",
+            "Incorrect title casing: {actual} should be {expected}",
+        ),
+        Rule(
             "MAT001",
             "plus-minus-notation",
             "Reviewer_Math",
@@ -299,6 +305,7 @@ RULES = RuleRegistry(
 
 RULE_INT001 = RULES.get("INT001")
 RULE_CAS001 = RULES.get("CAS001")
+RULE_CAS002 = RULES.get("CAS002")
 RULE_MAT001 = RULES.get("MAT001")
 RULE_MAT002 = RULES.get("MAT002")
 RULE_MAT003 = RULES.get("MAT003")
