@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="excessive-we-usage (UNS002)" href="excessive-we-usage.html"><link rel="prev" title="math-operator-command (MAT002)" href="math-operator-command.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="modal-or-uncertain-word (UNS001)" href="modal-or-uncertain-word.html"><link rel="prev" title="plus-minus-notation (MAT001)" href="plus-minus-notation.html">
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>modal-or-uncertain-word (UNS001) - TeXact documentation</title>
+        <title>math-operator-command (MAT002) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -209,13 +209,13 @@
   <label for="sidebar-version-select">Version</label>
   <select id="sidebar-version-select" aria-label="Documentation version" onchange="window.location.href = this.value">
     
-    <option value="../../v0.1.0/rules/modal-or-uncertain-word.html">v0.1.0</option>
+    <option value="../../v0.1.0/index.html">v0.1.0</option>
     
-    <option value="../../v0.1.1/rules/modal-or-uncertain-word.html">v0.1.1</option>
+    <option value="../../v0.1.1/index.html">v0.1.1</option>
     
-    <option value="../../v0.1.2/rules/modal-or-uncertain-word.html">v0.1.2</option>
+    <option value="../../v0.1.2/index.html">v0.1.2</option>
     
-    <option value="modal-or-uncertain-word.html" selected>main</option>
+    <option value="math-operator-command.html" selected>main</option>
     
   </select>
 </div>
@@ -247,7 +247,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/rules/modal-or-uncertain-word.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/rules/math-operator-command.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -265,20 +265,22 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="modal-or-uncertain-word-uns001">
-<h1>modal-or-uncertain-word (UNS001)<a class="headerlink" href="#modal-or-uncertain-word-uns001" title="Link to this heading">¶</a></h1>
+          <section id="math-operator-command-mat002">
+<h1>math-operator-command (MAT002)<a class="headerlink" href="#math-operator-command-mat002" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Reports modal or uncertain terms such as <code class="docutils literal notranslate"><span class="pre">should</span></code>, <code class="docutils literal notranslate"><span class="pre">would</span></code>, <code class="docutils literal notranslate"><span class="pre">could</span></code>, <code class="docutils literal notranslate"><span class="pre">might</span></code>,
-and <code class="docutils literal notranslate"><span class="pre">very</span></code>.</p>
+<p>Checks that common mathematical operators use their LaTeX commands, such as
+<code class="docutils literal notranslate"><span class="pre">\max</span></code>, <code class="docutils literal notranslate"><span class="pre">\min</span></code>, <code class="docutils literal notranslate"><span class="pre">\log</span></code>, and <code class="docutils literal notranslate"><span class="pre">\sin</span></code>.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>These words are vague and imprecise, which is not suitable for academic writing.</p>
+<p>Unescaped operator names are typeset as products of variables instead of as
+mathematical operators.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>The proposed method could improve the result.
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span><span class="s">$</span><span class="nb">max</span><span class="o">(</span><span class="nb">x</span><span class="o">)</span><span class="nb"> </span><span class="o">=</span><span class="nb"> log</span><span class="o">(</span><span class="nb">x</span><span class="o">)</span><span class="s">$</span>
+<span class="s">$</span><span class="nv">\max</span><span class="o">(</span><span class="nb">x</span><span class="o">)</span><span class="nb"> </span><span class="o">=</span><span class="nb"> </span><span class="nv">\log</span><span class="o">(</span><span class="nb">x</span><span class="o">)</span><span class="s">$</span>
 </pre></div>
 </div>
 </section>
@@ -289,23 +291,23 @@ and <code class="docutils literal notranslate"><span class="pre">very</span></co
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="excessive-we-usage.html">
+          <a class="next-page" href="modal-or-uncertain-word.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">excessive-we-usage (UNS002)</div>
+                <div class="title">modal-or-uncertain-word (UNS001)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="math-operator-command.html">
+          <a class="prev-page" href="plus-minus-notation.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">math-operator-command (MAT002)</div>
+                <div class="title">plus-minus-notation (MAT001)</div>
                 
               </div>
             </a>
@@ -339,7 +341,7 @@ and <code class="docutils literal notranslate"><span class="pre">very</span></co
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">modal-or-uncertain-word (UNS001)</a><ul>
+<li><a class="reference internal" href="#">math-operator-command (MAT002)</a><ul>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
