@@ -78,6 +78,52 @@ def test_casing_checks_text_after_escaped_percent() -> None:
     assert comments[0].code == "CAS001"
 
 
+def test_title_casing_correct() -> None:
+    reviewer = Reviewer_Casing(Printer())
+
+    reviewer.process_line(0, r"\title{A Study of Digital Systems}")
+    reviewer.process_line(1, r"\section*{Analysis of IEEE Results}")
+
+    assert reviewer.get_comments() == []
+    assert reviewer.get_status().name == "PASSED"
+
+
+def test_title_casing_reports_incorrect_minor_word_casing() -> None:
+    reviewer = Reviewer_Casing(Printer())
+
+    reviewer.process_line(7, r"\section{A Study Of Digital Systems}")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "CAS002"
+    assert comments[0].line == 8
+    assert "A Study of Digital Systems" in comments[0].message
+    assert reviewer.get_summary() == "Title casing errors: 1"
+    assert reviewer.get_status().name == "FAILED"
+
+
+def test_title_casing_reports_minor_words_at_title_edges() -> None:
+    reviewer = Reviewer_Casing(Printer())
+
+    reviewer.process_line(0, r"\section{of analysis and}")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "CAS002"
+    assert "Of Analysis And" in comments[0].message
+
+
+def test_title_casing_ignores_math() -> None:
+    reviewer = Reviewer_Casing(Printer())
+
+    reviewer.process_line(
+        0,
+        r"\section{A Study of \textit{Digital} Systems with $x^2$ Results}",
+    )
+
+    assert reviewer.get_comments() == []
+
+
 def test_author_possessive_prefers_plural_form() -> None:
     reviewer = Reviewer_Unsure(Printer())
 
