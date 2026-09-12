@@ -27,6 +27,7 @@ them per their liking and, if supported, configure them.
 | MAT002 | [math-operator-command](math-operator-command.md) | Use LaTeX commands for common math operators. | error |
 | MAT003 | [textmu-command](textmu-command.md) | Use `\textmu` instead of `\mu`. | error |
 | MAT004 | [scaled-parentheses](scaled-parentheses.md) | Use `\left` and `\right` for math parentheses. | error |
+| MAT005 | [ieee-math-environment](ieee-math-environment.md) | Use `IEEEeqnarray` in IEEE papers. | error |
 
 ## Unsure (`UNS`)
 
@@ -85,6 +86,7 @@ plus-minus-notation
 math-operator-command
 textmu-command
 scaled-parentheses
+ieee-math-environment
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
