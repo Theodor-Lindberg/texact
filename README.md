@@ -20,6 +20,7 @@ complement and incorporate them.
 
 * Check consistency between "\ref" and "\label".
 * Make sure certain words have correct casing.
+* Check title casing for document titles and section headings.
 * Warn if the abstract begins with "In this work" or similar.
 * Avoid certain modal verbs, such as should, would, could, and might.
 * Run [ChkTeX](https://www.nongnu.org/chktex/), if installed, with "appropriate"
