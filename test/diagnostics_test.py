@@ -8,6 +8,7 @@ from printer import Printer
 from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer_math import Reviewer_Math
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.rules import RULES
@@ -103,6 +104,17 @@ def test_spaces_before_punctuation_are_reported() -> None:
     assert len(comments) == 2
     assert comments[0].code == "UNS004"
     assert comments[1].code == "UNS004"
+
+
+def test_plus_minus_notation_is_reported() -> None:
+    reviewer = Reviewer_Math(Printer())
+
+    reviewer.process_line(0, r"The values are +-1 and -+2, but + 3 is valid.")
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 2
+    assert [comment.code for comment in comments] == ["MAT001", "MAT001"]
+    assert all(r"\pm" in comment.message for comment in comments)
 
 
 def test_label_prefixes_match_latex_context() -> None:

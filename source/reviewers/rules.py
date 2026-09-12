@@ -138,6 +138,12 @@ RULES = RuleRegistry(
             "Incorrect casing: {actual} should be {expected}",
         ),
         Rule(
+            "MAT001",
+            "plus-minus-notation",
+            "Reviewer_Math",
+            "Use \\pm instead of {notation}.",
+        ),
+        Rule(
             "UNS001",
             "modal-or-uncertain-word",
             "Reviewer_Unsure",
@@ -263,6 +269,7 @@ RULES = RuleRegistry(
 
 RULE_INT001 = RULES.get("INT001")
 RULE_CAS001 = RULES.get("CAS001")
+RULE_MAT001 = RULES.get("MAT001")
 RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
 RULE_UNS003 = RULES.get("UNS003")
