@@ -26,6 +26,7 @@ them per their liking and, if supported, configure them.
 | MAT001 | [plus-minus-notation](plus-minus-notation.md) | Use `\pm` instead of `+-` or `-+`. | error |
 | MAT002 | [math-operator-command](math-operator-command.md) | Use LaTeX commands for common math operators. | error |
 | MAT003 | [textmu-command](textmu-command.md) | Use `\textmu` instead of `\mu`. | error |
+| MAT004 | [scaled-parentheses](scaled-parentheses.md) | Use `\left` and `\right` for math parentheses. | error |
 
 ## Unsure (`UNS`)
 
@@ -83,6 +84,7 @@ incorrect-casing
 plus-minus-notation
 math-operator-command
 textmu-command
+scaled-parentheses
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
