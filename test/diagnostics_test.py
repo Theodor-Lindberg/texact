@@ -8,6 +8,7 @@ from printer import Printer
 from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer_reflabel import Reviewer_RefLabel
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.rules import RULES
 from template_check import Template
@@ -102,6 +103,38 @@ def test_spaces_before_punctuation_are_reported() -> None:
     assert len(comments) == 2
     assert comments[0].code == "UNS004"
     assert comments[1].code == "UNS004"
+
+
+def test_label_prefixes_match_latex_context() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"\section{Introduction}",
+        r"\label{intro}",
+        r"\section{Conclusion}\label{sec:conclusion}",
+        r"\label{standalone}",
+        r"\begin{figure}",
+        r"\label{figure:overview}",
+        r"\end{figure}",
+        r"\begin{equation}",
+        r"\label{eq:energy}",
+        r"\end{equation}",
+        r"\begin{table}",
+        r"\label{table:results}",
+        r"\end{table}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF004"
+    ]
+
+    assert [comment.code for comment in comments] == ["REF004", "REF004", "REF004"]
+    assert [comment.line_no for comment in comments] == [1, 5, 11]
+    assert "sec:" in comments[0].message
+    assert "fig:" in comments[1].message
+    assert "tab:" in comments[2].message
 
 
 def test_markboth_spanning_multiple_lines_is_ignored() -> None:

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Warn about space before punctuation.
 - Option for quiet level.
+- Enforce prefixes in label names.
 
 ### Fixed
 

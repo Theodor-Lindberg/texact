@@ -35,6 +35,7 @@ them per their liking and, if supported, configure them.
 | REF001 | [underscore-in-label](underscore-in-label.md) | Use hyphens in label names. | error |
 | REF002 | [undefined-label-reference](undefined-label-reference.md) | Undefined label. | error |
 | REF003 | [unreferenced-label](unreferenced-label.md) | Unreferenced label. | error |
+| REF004 | [label-prefix](label-prefix.md) | Use the matching prefix for the label context. | error |
 
 ## Figure (`FIG`)
 
@@ -77,6 +78,7 @@ space-before-punctuation
 underscore-in-label
 undefined-label-reference
 unreferenced-label
+label-prefix
 invalid-figure-position
 scaled-figure-image
 missing-figure-label
