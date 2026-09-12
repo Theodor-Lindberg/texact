@@ -3,7 +3,7 @@ import re
 from printer import Printer
 
 from .reviewer import Diagnostic, Reviewer, Status
-from .rules import RULE_MAT001, RULE_MAT002, RULE_MAT003
+from .rules import RULE_MAT001, RULE_MAT002, RULE_MAT003, RULE_MAT004
 
 
 class Reviewer_Math(Reviewer):
@@ -50,6 +50,7 @@ class Reviewer_Math(Reviewer):
         + r")(?![A-Za-z])"
     )
     _PATTERN_MU = re.compile(r"(?<![A-Za-z])\\mu(?![A-Za-z])")
+    _PATTERN_PARENTHESIS = re.compile(r"(?P<delimiter>\(|\))")
     _PATTERN_MATH_TOKEN = re.compile(
         r"\\begin\{(?:equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
         r"|\\end\{(?:equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
@@ -119,6 +120,22 @@ class Reviewer_Math(Reviewer):
                         ),
                     )
                 )
+            for match in self._PATTERN_PARENTHESIS.finditer(math_segment):
+                delimiter = match.group("delimiter")
+                required_command = r"\left" if delimiter == "(" else r"\right"
+                preceding_text = math_segment[: match.start()]
+                if preceding_text.endswith(required_command):
+                    continue
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT004,
+                        RULE_MAT004.render_message(
+                            command=self.printer.yellow(required_command),
+                            delimiter=self.printer.dark_red(delimiter),
+                        ),
+                    )
+                )
 
     def get_comments(self) -> list[Diagnostic]:
         return self.comments
@@ -133,6 +150,9 @@ class Reviewer_Math(Reviewer):
             comment.code == RULE_MAT002.code for comment in self.comments
         )
         mu_count = sum(comment.code == RULE_MAT003.code for comment in self.comments)
+        parenthesis_count = sum(
+            comment.code == RULE_MAT004.code for comment in self.comments
+        )
         summaries = []
         if plus_minus_count:
             summaries.append(f"Plus-minus notation: {plus_minus_count}")
@@ -140,6 +160,8 @@ class Reviewer_Math(Reviewer):
             summaries.append(f"Unescaped math operators: {operator_count}")
         if mu_count:
             summaries.append(f"Mu commands: {mu_count}")
+        if parenthesis_count:
+            summaries.append(f"Unscaled parentheses: {parenthesis_count}")
         return " | ".join(summaries)
 
     def get_status(self) -> Status:

@@ -155,6 +155,26 @@ def test_mu_uses_textmu_command() -> None:
     assert r"\textmu" in comments[0].message
 
 
+def test_math_parentheses_use_left_and_right() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"Text (outside math) is not checked.",
+        r"$f(x) + \left(x + 1\right)$",
+        r"\[\left( x + 1 \right)\]",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT004"
+    ]
+
+    assert len(comments) == 2
+    assert r"\left" in comments[0].message
+    assert r"\right" in comments[1].message
+
+
 def test_label_prefixes_match_latex_context() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
