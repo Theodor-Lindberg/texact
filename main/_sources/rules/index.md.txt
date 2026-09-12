@@ -19,6 +19,12 @@ them per their liking and, if supported, configure them.
 | --- | --- | --- | --- |
 | CAS001 | [incorrect-casing](incorrect-casing.md) | Incorrect casing. | error |
 
+## Math (`MAT`)
+
+| Code | Name | Message | Severity |
+| --- | --- | --- | --- |
+| MAT001 | [plus-minus-notation](plus-minus-notation.md) | Use `\pm` instead of `+-` or `-+`. | error |
+
 ## Unsure (`UNS`)
 
 | Code | Name | Message | Severity |
@@ -71,6 +77,7 @@ come from ChkTeX, and they link to the shared
 
 abstract-first-line-this-work
 incorrect-casing
+plus-minus-notation
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
