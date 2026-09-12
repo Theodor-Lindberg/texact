@@ -149,6 +149,26 @@ def test_label_prefixes_match_latex_context() -> None:
     assert "tab:" in comments[2].message
 
 
+def test_references_require_hard_spaces() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"See~\ref{fig:valid}.",
+        r"See \ref{fig:invalid}.",
+        r"\ref{fig:at-start}.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF005"
+    ]
+
+    assert len(comments) == 2
+    assert [comment.line_no for comment in comments] == [1, 2]
+    assert all("hard space" in comment.message for comment in comments)
+
+
 def test_markboth_spanning_multiple_lines_is_ignored() -> None:
     reviewer = Reviewer_Unsure(Printer())
 

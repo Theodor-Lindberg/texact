@@ -42,6 +42,7 @@ them per their liking and, if supported, configure them.
 | REF002 | [undefined-label-reference](undefined-label-reference.md) | Undefined label. | error |
 | REF003 | [unreferenced-label](unreferenced-label.md) | Unreferenced label. | error |
 | REF004 | [label-prefix](label-prefix.md) | Use the matching prefix for the label context. | error |
+| REF005 | [space-before-reference](space-before-reference.md) | Use a hard space (`~`) before `\ref`. | error |
 
 ## Figure (`FIG`)
 
@@ -86,6 +87,7 @@ underscore-in-label
 undefined-label-reference
 unreferenced-label
 label-prefix
+space-before-reference
 invalid-figure-position
 scaled-figure-image
 missing-figure-label

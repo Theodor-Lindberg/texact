@@ -192,6 +192,12 @@ RULES = RuleRegistry(
             "Use the {expected_prefix} prefix for {context} labels: {label}.",
         ),
         Rule(
+            "REF005",
+            "space-before-reference",
+            "Reviewer_RefLabel",
+            "Use a hard space (~) before \\ref.",
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -278,6 +284,7 @@ RULE_REF001 = RULES.get("REF001")
 RULE_REF002 = RULES.get("REF002")
 RULE_REF003 = RULES.get("REF003")
 RULE_REF004 = RULES.get("REF004")
+RULE_REF005 = RULES.get("REF005")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")

@@ -4,7 +4,13 @@ from typing import ClassVar
 from printer import Printer
 
 from .reviewer import Diagnostic, Reviewer, Status
-from .rules import RULE_REF001, RULE_REF002, RULE_REF003, RULE_REF004
+from .rules import (
+    RULE_REF001,
+    RULE_REF002,
+    RULE_REF003,
+    RULE_REF004,
+    RULE_REF005,
+)
 
 
 class Reviewer_RefLabel(Reviewer):
@@ -12,6 +18,7 @@ class Reviewer_RefLabel(Reviewer):
 
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
     _PATTERN_REF = re.compile(r"\\ref\{([^}]+)\}")
+    _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
     _PATTERN_BEGIN_CONTEXT = re.compile(
         r"\\begin\{(?P<context>figure|table|equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
     )
@@ -41,6 +48,7 @@ class Reviewer_RefLabel(Reviewer):
         self.ref_line_map = {}  # Maps reference name to first line number it was referenced
         self.underscore_comments: list[Diagnostic] = []
         self.prefix_comments: list[Diagnostic] = []
+        self.ref_space_comments: list[Diagnostic] = []
         self.context_stack: list[str] = []
         self.pending_section_context = False
 
@@ -95,6 +103,15 @@ class Reviewer_RefLabel(Reviewer):
                 self.label_line_map[label_name] = line_no
 
         # Extract all \ref{...} patterns
+        for ref_match in self._PATTERN_REF_WITHOUT_HARD_SPACE.finditer(line):
+            self.ref_space_comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_REF005,
+                    RULE_REF005.render_message(),
+                )
+            )
+
         ref_matches = self._PATTERN_REF.finditer(line)
         for ref_match in ref_matches:
             ref_name = ref_match.group(1)
@@ -129,6 +146,11 @@ class Reviewer_RefLabel(Reviewer):
                 f"Labels with invalid prefixes: {len(self.prefix_comments)}"
             )
 
+        if self.ref_space_comments:
+            messages.append(
+                f"References without hard spaces: {len(self.ref_space_comments)}"
+            )
+
         return " | ".join(messages) if messages else ""
 
     def get_comments(self) -> list[Diagnostic]:
@@ -138,6 +160,7 @@ class Reviewer_RefLabel(Reviewer):
         comments: list[Diagnostic] = []
         comments.extend(self.underscore_comments)
         comments.extend(self.prefix_comments)
+        comments.extend(self.ref_space_comments)
 
         for label in missing_labels:
             comments.append(
@@ -168,6 +191,7 @@ class Reviewer_RefLabel(Reviewer):
             or orphaned_labels
             or self.underscore_comments
             or self.prefix_comments
+            or self.ref_space_comments
         ):
             return Status.FAILED
         return Status.PASSED
