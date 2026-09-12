@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="abstract-first-line-this-work (INT001)" href="abstract-first-line-this-work.html"><link rel="prev" title="Options" href="../options.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="invalid-figure-position (FIG001)" href="invalid-figure-position.html"><link rel="prev" title="label-prefix (REF004)" href="label-prefix.html">
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>TeXact Rules - TeXact documentation</title>
+        <title>space-before-reference (REF005) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -209,21 +209,21 @@
   <label for="sidebar-version-select">Version</label>
   <select id="sidebar-version-select" aria-label="Documentation version" onchange="window.location.href = this.value">
     
-    <option value="../../v0.1.0/rules/index.html">v0.1.0</option>
+    <option value="../../v0.1.0/index.html">v0.1.0</option>
     
-    <option value="../../v0.1.1/rules/index.html">v0.1.1</option>
+    <option value="../../v0.1.1/index.html">v0.1.1</option>
     
-    <option value="../../v0.1.2/rules/index.html">v0.1.2</option>
+    <option value="../../v0.1.2/index.html">v0.1.2</option>
     
-    <option value="index.html" selected>main</option>
+    <option value="space-before-reference.html" selected>main</option>
     
   </select>
 </div>
 <div class="sidebar-tree">
-  <ul class="current">
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="../try-it.html">Try it here</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../options.html">Options</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">TeXact Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">TeXact Rules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../integration.html">Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -247,7 +247,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/rules/index.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/rules/space-before-reference.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -265,247 +265,22 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="texact-rules">
-<h1>TeXact Rules<a class="headerlink" href="#texact-rules" title="Link to this heading">¶</a></h1>
-<p>Some of these rules can seem like nitpicking, but users are free to disable
-them per their liking and, if supported, configure them.</p>
-<section id="inthis-int">
-<h2>Inthis (<code class="docutils literal notranslate"><span class="pre">INT</span></code>)<a class="headerlink" href="#inthis-int" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>INT001</p></td>
-<td><p><a class="reference internal" href="abstract-first-line-this-work.html"><span class="std std-doc">abstract-first-line-this-work</span></a></p></td>
-<td><p>Avoid ‘this work’ in the first line of the abstract.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+          <section id="space-before-reference-ref005">
+<h1>space-before-reference (REF005)<a class="headerlink" href="#space-before-reference-ref005" title="Link to this heading">¶</a></h1>
+<section id="what-it-does">
+<h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
+<p>Checks that references have a hard space (<code class="docutils literal notranslate"><span class="pre">~</span></code>) before <code class="docutils literal notranslate"><span class="pre">\ref</span></code>.</p>
 </section>
-<section id="casing-cas">
-<h2>Casing (<code class="docutils literal notranslate"><span class="pre">CAS</span></code>)<a class="headerlink" href="#casing-cas" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>CAS001</p></td>
-<td><p><a class="reference internal" href="incorrect-casing.html"><span class="std std-doc">incorrect-casing</span></a></p></td>
-<td><p>Incorrect casing.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<section id="why-is-this-bad">
+<h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
+<p>A normal space can leave a reference number at the beginning of a line. A hard
+space keeps the preceding text and reference together.</p>
 </section>
-<section id="math-mat">
-<h2>Math (<code class="docutils literal notranslate"><span class="pre">MAT</span></code>)<a class="headerlink" href="#math-mat" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>MAT001</p></td>
-<td><p><a class="reference internal" href="plus-minus-notation.html"><span class="std std-doc">plus-minus-notation</span></a></p></td>
-<td><p>Use <code class="docutils literal notranslate"><span class="pre">\pm</span></code> instead of <code class="docutils literal notranslate"><span class="pre">+-</span></code> or <code class="docutils literal notranslate"><span class="pre">-+</span></code>.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="unsure-uns">
-<h2>Unsure (<code class="docutils literal notranslate"><span class="pre">UNS</span></code>)<a class="headerlink" href="#unsure-uns" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>UNS001</p></td>
-<td><p><a class="reference internal" href="modal-or-uncertain-word.html"><span class="std std-doc">modal-or-uncertain-word</span></a></p></td>
-<td><p>Avoid modal or uncertain wording.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>UNS002</p></td>
-<td><p><a class="reference internal" href="excessive-we-usage.html"><span class="std std-doc">excessive-we-usage</span></a></p></td>
-<td><p>Reduce use of ‘we’ when it exceeds the configured maximum.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>UNS003</p></td>
-<td><p><a class="reference internal" href="singular-author-possessive.html"><span class="std std-doc">singular-author-possessive</span></a></p></td>
-<td><p>Use authors’ to author’s in papers.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>UNS004</p></td>
-<td><p><a class="reference internal" href="space-before-punctuation.html"><span class="std std-doc">space-before-punctuation</span></a></p></td>
-<td><p>Avoid spaces before punctuation.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="reflabel-ref">
-<h2>RefLabel (<code class="docutils literal notranslate"><span class="pre">REF</span></code>)<a class="headerlink" href="#reflabel-ref" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>REF001</p></td>
-<td><p><a class="reference internal" href="underscore-in-label.html"><span class="std std-doc">underscore-in-label</span></a></p></td>
-<td><p>Use hyphens in label names.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>REF002</p></td>
-<td><p><a class="reference internal" href="undefined-label-reference.html"><span class="std std-doc">undefined-label-reference</span></a></p></td>
-<td><p>Undefined label.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>REF003</p></td>
-<td><p><a class="reference internal" href="unreferenced-label.html"><span class="std std-doc">unreferenced-label</span></a></p></td>
-<td><p>Unreferenced label.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>REF004</p></td>
-<td><p><a class="reference internal" href="label-prefix.html"><span class="std std-doc">label-prefix</span></a></p></td>
-<td><p>Use the matching prefix for the label context.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>REF005</p></td>
-<td><p><a class="reference internal" href="space-before-reference.html"><span class="std std-doc">space-before-reference</span></a></p></td>
-<td><p>Use a hard space (<code class="docutils literal notranslate"><span class="pre">~</span></code>) before <code class="docutils literal notranslate"><span class="pre">\ref</span></code>.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="figure-fig">
-<h2>Figure (<code class="docutils literal notranslate"><span class="pre">FIG</span></code>)<a class="headerlink" href="#figure-fig" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>FIG001</p></td>
-<td><p><a class="reference internal" href="invalid-figure-position.html"><span class="std std-doc">invalid-figure-position</span></a></p></td>
-<td><p>Use an empty figure position or one of <code class="docutils literal notranslate"><span class="pre">[bt]</span></code>, <code class="docutils literal notranslate"><span class="pre">[t]</span></code>, <code class="docutils literal notranslate"><span class="pre">[b]</span></code>, <code class="docutils literal notranslate"><span class="pre">[tb]</span></code>.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>FIG002</p></td>
-<td><p><a class="reference internal" href="scaled-figure-image.html"><span class="std std-doc">scaled-figure-image</span></a></p></td>
-<td><p>Avoid scaling figure images.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>FIG003</p></td>
-<td><p><a class="reference internal" href="missing-figure-label.html"><span class="std std-doc">missing-figure-label</span></a></p></td>
-<td><p>Add a <code class="docutils literal notranslate"><span class="pre">\label{...}</span></code> to the figure.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>FIG004</p></td>
-<td><p><a class="reference internal" href="missing-figure-caption.html"><span class="std std-doc">missing-figure-caption</span></a></p></td>
-<td><p>Add a <code class="docutils literal notranslate"><span class="pre">\caption{...}</span></code> to the figure.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>FIG005</p></td>
-<td><p><a class="reference internal" href="caption-before-graphics.html"><span class="std std-doc">caption-before-graphics</span></a></p></td>
-<td><p>Place the figure caption below the graphics.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>FIG006</p></td>
-<td><p><a class="reference internal" href="inconsistent-caption-period.html"><span class="std std-doc">inconsistent-caption-period</span></a></p></td>
-<td><p>Use one consistent period style for all figure captions.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>FIG007</p></td>
-<td><p><a class="reference internal" href="biography-image-not-found.html"><span class="std std-doc">biography-image-not-found</span></a></p></td>
-<td><p>Add the IEEEbiography image relative to the TeX file.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>FIG008</p></td>
-<td><p><a class="reference internal" href="invalid-biography-image-ratio.html"><span class="std std-doc">invalid-biography-image-ratio</span></a></p></td>
-<td><p>Use an IEEEbiography image with a height/width ratio of 1.25.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="chktex-chk">
-<h2>ChkTeX (<code class="docutils literal notranslate"><span class="pre">CHK</span></code>)<a class="headerlink" href="#chktex-chk" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">CHK001</span></code> through <code class="docutils literal notranslate"><span class="pre">CHK899</span></code> are reserved for native ChkTeX diagnostics with
-native numbers 1 through 899. Native numbers at or above 900 are mapped into
-a disjoint numeric range beginning at <code class="docutils literal notranslate"><span class="pre">CHK1900</span></code>. Their metadata and message
-come from ChkTeX, and they link to the shared
-<a class="reference internal" href="chktex-diagnostic.html"><span class="std std-doc">chktex-diagnostic</span></a> page.</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Code</p></th>
-<th class="head"><p>Name</p></th>
-<th class="head"><p>Message</p></th>
-<th class="head"><p>Severity</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>CHK901</p></td>
-<td><p><a class="reference internal" href="chktex-not-installed.html"><span class="std std-doc">chktex-not-installed</span></a></p></td>
-<td><p>ChkTeX not installed.</p></td>
-<td><p>warning</p></td>
-</tr>
-<tr class="row-odd"><td><p>CHK902</p></td>
-<td><p><a class="reference internal" href="chktex-config-not-found.html"><span class="std std-doc">chktex-config-not-found</span></a></p></td>
-<td><p>Provide <code class="docutils literal notranslate"><span class="pre">config/chktexrc</span></code> or a packaged ChkTeX configuration.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-even"><td><p>CHK903</p></td>
-<td><p><a class="reference internal" href="chktex-command-not-found.html"><span class="std std-doc">chktex-command-not-found</span></a></p></td>
-<td><p>Make the ChkTeX executable available on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.</p></td>
-<td><p>error</p></td>
-</tr>
-<tr class="row-odd"><td><p>CHK904</p></td>
-<td><p><a class="reference internal" href="chktex-execution-failed.html"><span class="std std-doc">chktex-execution-failed</span></a></p></td>
-<td><p>Fix the ChkTeX execution failure.</p></td>
-<td><p>error</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="toctree-wrapper compound">
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>See <span class="k">\ref</span><span class="nb">{</span>fig:example<span class="nb">}</span>.
+See~<span class="k">\ref</span><span class="nb">{</span>fig:example<span class="nb">}</span>.
+</pre></div>
 </div>
 </section>
 </section>
@@ -515,23 +290,23 @@ come from ChkTeX, and they link to the shared
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="abstract-first-line-this-work.html">
+          <a class="next-page" href="invalid-figure-position.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">abstract-first-line-this-work (INT001)</div>
+                <div class="title">invalid-figure-position (FIG001)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../options.html">
+          <a class="prev-page" href="label-prefix.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Options</div>
+                <div class="title">label-prefix (REF004)</div>
                 
               </div>
             </a>
@@ -565,14 +340,10 @@ come from ChkTeX, and they link to the shared
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">TeXact Rules</a><ul>
-<li><a class="reference internal" href="#inthis-int">Inthis (<code class="docutils literal notranslate"><span class="pre">INT</span></code>)</a></li>
-<li><a class="reference internal" href="#casing-cas">Casing (<code class="docutils literal notranslate"><span class="pre">CAS</span></code>)</a></li>
-<li><a class="reference internal" href="#math-mat">Math (<code class="docutils literal notranslate"><span class="pre">MAT</span></code>)</a></li>
-<li><a class="reference internal" href="#unsure-uns">Unsure (<code class="docutils literal notranslate"><span class="pre">UNS</span></code>)</a></li>
-<li><a class="reference internal" href="#reflabel-ref">RefLabel (<code class="docutils literal notranslate"><span class="pre">REF</span></code>)</a></li>
-<li><a class="reference internal" href="#figure-fig">Figure (<code class="docutils literal notranslate"><span class="pre">FIG</span></code>)</a></li>
-<li><a class="reference internal" href="#chktex-chk">ChkTeX (<code class="docutils literal notranslate"><span class="pre">CHK</span></code>)</a></li>
+<li><a class="reference internal" href="#">space-before-reference (REF005)</a><ul>
+<li><a class="reference internal" href="#what-it-does">What it does</a></li>
+<li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
 </ul>
