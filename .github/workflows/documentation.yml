@@ -98,6 +98,7 @@ jobs:
             </body>
           </html>
           EOF
+            echo "texact.org" > _build/html/CNAME
       - name: Deploy to GitHub Pages
         if: ${{ github.event_name == 'push' }}
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453
