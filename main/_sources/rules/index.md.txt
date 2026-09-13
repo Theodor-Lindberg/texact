@@ -18,6 +18,7 @@ them per their liking and, if supported, configure them.
 | Code | Name | Message | Severity |
 | --- | --- | --- | --- |
 | CAS001 | [incorrect-casing](incorrect-casing.md) | Incorrect casing. | error |
+| CAS002 | [title-casing](title-casing.md) | Use IEEE-style title casing. | error |
 
 ## Math (`MAT`)
 
@@ -82,6 +83,7 @@ come from ChkTeX, and they link to the shared
 
 abstract-first-line-this-work
 incorrect-casing
+title-casing
 plus-minus-notation
 math-operator-command
 textmu-command

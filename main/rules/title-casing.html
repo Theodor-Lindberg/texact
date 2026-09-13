@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="math-operator-command (MAT002)" href="math-operator-command.html"><link rel="prev" title="title-casing (CAS002)" href="title-casing.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="plus-minus-notation (MAT001)" href="plus-minus-notation.html"><link rel="prev" title="incorrect-casing (CAS001)" href="incorrect-casing.html">
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>plus-minus-notation (MAT001) - TeXact documentation</title>
+        <title>title-casing (CAS002) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -215,7 +215,7 @@
     
     <option value="../../v0.1.2/index.html">v0.1.2</option>
     
-    <option value="plus-minus-notation.html" selected>main</option>
+    <option value="title-casing.html" selected>main</option>
     
   </select>
 </div>
@@ -247,7 +247,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/rules/plus-minus-notation.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/rules/title-casing.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -265,20 +265,23 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="plus-minus-notation-mat001">
-<h1>plus-minus-notation (MAT001)<a class="headerlink" href="#plus-minus-notation-mat001" title="Link to this heading">¶</a></h1>
+          <section id="title-casing-cas002">
+<h1>title-casing (CAS002)<a class="headerlink" href="#title-casing-cas002" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks for <code class="docutils literal notranslate"><span class="pre">+-</span></code> and <code class="docutils literal notranslate"><span class="pre">-+</span></code> in mathematical expressions.</p>
+<p>Checks the casing of document titles and section headings against title-case convention.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>The proper command should be used: <code class="docutils literal notranslate"><span class="pre">\pm</span></code>.</p>
+<p>Title casing should be used.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span><span class="s">$</span><span class="nb">x </span><span class="o">=</span><span class="nb"> </span><span class="m">3</span><span class="nb"> </span><span class="o">+-</span><span class="nb"> </span><span class="m">1</span><span class="s">$</span>
-<span class="s">$</span><span class="nb">x </span><span class="o">=</span><span class="nb"> </span><span class="m">3</span><span class="nb"> </span><span class="nv">\pm</span><span class="nb"> </span><span class="m">1</span><span class="s">$</span>
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span><span class="c">% Correct</span>
+<span class="k">\section</span><span class="nb">{</span>A Study of Digital Systems<span class="nb">}</span>
+
+<span class="c">% Incorrect</span>
+<span class="k">\section</span><span class="nb">{</span>A study Of digital Systems<span class="nb">}</span>
 </pre></div>
 </div>
 </section>
@@ -289,23 +292,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="math-operator-command.html">
+          <a class="next-page" href="plus-minus-notation.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">math-operator-command (MAT002)</div>
+                <div class="title">plus-minus-notation (MAT001)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="title-casing.html">
+          <a class="prev-page" href="incorrect-casing.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">title-casing (CAS002)</div>
+                <div class="title">incorrect-casing (CAS001)</div>
                 
               </div>
             </a>
@@ -339,7 +342,7 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">plus-minus-notation (MAT001)</a><ul>
+<li><a class="reference internal" href="#">title-casing (CAS002)</a><ul>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
