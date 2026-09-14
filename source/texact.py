@@ -84,6 +84,12 @@ def set_up_arg_parser() -> argparse.Namespace:
         help="Output colors using HTML spans instead of ANSI escape codes",
     )
     parser.add_argument(
+        "--vscode-style",
+        default=None,
+        action=argparse.BooleanOptionalAction,
+        help="Output diagnostics in a format that VS Code can navigate",
+    )
+    parser.add_argument(
         "-q",
         "--quiet",
         default=None,
@@ -195,8 +201,11 @@ def main():
     html_style = (
         config.format.html_style if args.html_style is None else args.html_style
     )
+    vscode_style = (
+        config.format.vscode_style if args.vscode_style is None else args.vscode_style
+    )
     quiet = config.format.quiet if args.quiet is None else args.quiet
-    printer = Printer(html_style=html_style)
+    printer = Printer(html_style=html_style, vscode_style=vscode_style)
 
     if not args.files:
         raise SystemExit("Error: provide at least one LaTeX file.")

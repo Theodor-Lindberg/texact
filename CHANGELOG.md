@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enforce `\textmu` instead of `\mu` in math mode.
 - Enforce `\left` and `\right` for parentheses in math mode.
 - Enforce `IEEEeqnarray` instead of `align`, `split`, etc. in IEEE papers.
+- Option for VS Code compatible printing"
 
 ### Fixed
 

@@ -20,8 +20,9 @@ class Printer:
     HTML_DARK_RED = "#800000"
     HTML_YELLOW = "#808000"
 
-    def __init__(self, html_style: bool = False) -> None:
-        self.html_style = html_style
+    def __init__(self, html_style: bool = False, vscode_style: bool = False) -> None:
+        self.vscode_style = vscode_style
+        self.html_style = html_style and not vscode_style
         if not self.html_style:
             colorama_init()
 
@@ -42,6 +43,15 @@ class Printer:
             print(f"{self.green(line_label)} {self.yellow(warning_label)} {message}")
 
     def print_diagnostic(self, diagnostic: "Diagnostic") -> None:
+        if self.vscode_style:
+            filename = diagnostic.filename or "<unknown>"
+            color = (
+                self.yellow if diagnostic.severity.value == "warning" else self.dark_red
+            )
+            warning_label = color(f"[{diagnostic.code}]")
+            print(f"{filename}:{diagnostic.line}: {warning_label} {diagnostic.message}")
+            return
+
         line_label = self.green(f"L{diagnostic.line}")
         color = self.yellow if diagnostic.severity.value == "warning" else self.dark_red
         warning_label = color(f"[{diagnostic.code}]")

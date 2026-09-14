@@ -414,6 +414,50 @@ def test_output_controls_can_be_set_from_cli_or_config(tmp_path: Path) -> None:
     assert "=== Summary" not in configured_output
 
 
+def test_vscode_style_formats_diagnostics_from_cli_or_config(tmp_path: Path) -> None:
+    tex_file = tmp_path / "main.tex"
+    tex_file.write_text("asic\n", encoding="utf-8")
+
+    def run_texact(*arguments: str) -> str:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(TEST_DIR.parent / "source" / "texact.py"),
+                "--no-chktex",
+                "-q",
+                *arguments,
+                "./main.tex",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=tmp_path,
+        )
+        assert result.returncode == 1
+        return result.stdout
+
+    cli_output = run_texact("--vscode-style")
+    assert "main.tex:1: [CAS001] Incorrect casing: asic should be ASIC" in cli_output
+    assert "\x1b[" not in cli_output
+
+    (tmp_path / ".texact.toml").write_text(
+        "[format]\nvscode-style = true\n",
+        encoding="utf-8",
+    )
+    configured_output = run_texact()
+    assert (
+        "main.tex:1: [CAS001] Incorrect casing: asic should be ASIC"
+        in configured_output
+    )
+
+
+def test_vscode_style_keeps_diagnostic_colors() -> None:
+    printer = Printer(vscode_style=True)
+
+    assert printer.dark_red("[CAS001]").startswith(Printer.DARK_RED)
+    assert printer.yellow("[CHK001]").startswith(Printer.YELLOW)
+
+
 def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:
     for required, expected_severity in (
         (False, Severity.WARNING),

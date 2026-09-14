@@ -69,3 +69,9 @@ Set the name to ``texact:texact`` and let it execute ``texact --no-chktex --html
 Press OK to save the settings.
 
 TeXact can now be invoked on the current file under Tools->User->texact.
+
+Visual Studio Code
+------------------
+
+Use ``--vscode-style`` to print diagnostics as ``path:line: [CODE] message``
+so VS Code can navigate to the reported line when the output is clicked.
