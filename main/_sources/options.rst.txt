@@ -57,6 +57,7 @@ The supported structure is::
 
     [format]
     html-style = true
+    vscode-style = true
     quiet = 2
 
     [tools]
@@ -67,7 +68,8 @@ spellings to the built-in casing list. ``lint.we_count`` changes the maximum
 allowed number of ``we`` occurrences. ``format.html-style`` enables HTML
 output by default. ``format.quiet`` controls non-diagnostic output: ``0``
 prints titles and summaries, ``1`` removes summaries, and ``2`` removes both
-titles and summaries. ``tools.chktex_path`` points to a ChkTeX executable or
+titles and summaries. ``format.vscode-style`` enables VS Code-compatible
+diagnostic output. ``tools.chktex_path`` points to a ChkTeX executable or
 directory.
 
 When no configuration file exists, TeXact uses its normal built-in defaults.

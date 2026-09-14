@@ -308,6 +308,7 @@ precedence over values loaded from TOML.</p>
 
 <span class="p">[</span><span class="nb">format</span><span class="p">]</span>
 <span class="n">html</span><span class="o">-</span><span class="n">style</span> <span class="o">=</span> <span class="n">true</span>
+<span class="n">vscode</span><span class="o">-</span><span class="n">style</span> <span class="o">=</span> <span class="n">true</span>
 <span class="n">quiet</span> <span class="o">=</span> <span class="mi">2</span>
 
 <span class="p">[</span><span class="n">tools</span><span class="p">]</span>
@@ -319,7 +320,8 @@ spellings to the built-in casing list. <code class="docutils literal notranslate
 allowed number of <code class="docutils literal notranslate"><span class="pre">we</span></code> occurrences. <code class="docutils literal notranslate"><span class="pre">format.html-style</span></code> enables HTML
 output by default. <code class="docutils literal notranslate"><span class="pre">format.quiet</span></code> controls non-diagnostic output: <code class="docutils literal notranslate"><span class="pre">0</span></code>
 prints titles and summaries, <code class="docutils literal notranslate"><span class="pre">1</span></code> removes summaries, and <code class="docutils literal notranslate"><span class="pre">2</span></code> removes both
-titles and summaries. <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a ChkTeX executable or
+titles and summaries. <code class="docutils literal notranslate"><span class="pre">format.vscode-style</span></code> enables VS Code-compatible
+diagnostic output. <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a ChkTeX executable or
 directory.</p>
 <p>When no configuration file exists, TeXact uses its normal built-in defaults.</p>
 </section>
