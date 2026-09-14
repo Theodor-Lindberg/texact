@@ -68,6 +68,7 @@ class Reviewer_Math(Reviewer):
         r"|\\end\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
         r"|\\\(|\\\)|\\\[|\\\]|(?<!\\)\$\$?"
     )
+    _PATTERN_LABEL = re.compile(r"\\label\{[^}]*\}")
 
     def __init__(
         self,
@@ -129,7 +130,8 @@ class Reviewer_Math(Reviewer):
             math_segments.append(line[cursor:])
 
         for math_segment in math_segments:
-            for match in self._PATTERN_MATH_OPERATOR.finditer(math_segment):
+            operator_segment = self._PATTERN_LABEL.sub("", math_segment)
+            for match in self._PATTERN_MATH_OPERATOR.finditer(operator_segment):
                 operator = match.group("operator")
                 self.comments.append(
                     Diagnostic(

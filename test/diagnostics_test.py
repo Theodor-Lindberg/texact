@@ -183,6 +183,19 @@ def test_math_operators_use_latex_commands() -> None:
     assert all("Use" in comment.message for comment in comments)
 
 
+def test_math_operators_inside_labels_are_ignored() -> None:
+    reviewer = Reviewer_Math(Printer())
+
+    reviewer.process_line(0, r"$\label{eq:max} + min(x)$")
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT002"
+    ]
+
+    assert len(comments) == 1
+    assert "min" in comments[0].message
+
+
 def test_mu_uses_textmu_command() -> None:
     reviewer = Reviewer_Math(Printer())
     lines = [
