@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.2.0] - 2026-09-14
+
+### Added
+
 - Warn about space before punctuation.
 - Check title casing for document titles and section headings.
 - Option for quiet level.
@@ -17,16 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Warn about +-.
 - Enforce hard space before `\ref`.
 - Check operator names inside math mode.
-- Enforce `\textmu` instead of `\mu` in math mode.
+- Enforce `\textmu` instead of `\mu`.
 - Enforce `\left` and `\right` for parentheses in math mode.
 - Enforce `IEEEeqnarray` instead of `align`, `split`, etc. in IEEE papers.
-- Option for VS Code compatible printing"
-
-### Fixed
-
-### Changed
-
-### Removed
+- Option for VS Code compatible printing.
 
 ## [0.1.2] - 2026-08-20
 
@@ -55,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial release.
 
-[unreleased]: https://github.com/Theodor-Lindberg/texact/compare/v0.1.2...HEAD
+[unreleased]: https://github.com/Theodor-Lindberg/texact/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.2.0
 [0.1.2]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.2
 [0.1.1]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.1
 [0.1.0]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.0
