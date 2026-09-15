@@ -174,6 +174,12 @@ RULES = RuleRegistry(
             "Use IEEEeqnarray instead of \\begin{{{environment}}} in IEEE papers.",
         ),
         Rule(
+            "MAT006",
+            "matching-delimiters",
+            "Reviewer_Math",
+            "Use matching delimiters: {details}.",
+        ),
+        Rule(
             "UNS001",
             "modal-or-uncertain-word",
             "Reviewer_Unsure",
@@ -311,6 +317,7 @@ RULE_MAT002 = RULES.get("MAT002")
 RULE_MAT003 = RULES.get("MAT003")
 RULE_MAT004 = RULES.get("MAT004")
 RULE_MAT005 = RULES.get("MAT005")
+RULE_MAT006 = RULES.get("MAT006")
 RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
 RULE_UNS003 = RULES.get("UNS003")

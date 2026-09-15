@@ -1,4 +1,5 @@
 import re
+from typing import ClassVar
 
 from printer import Printer
 from template_check import Template
@@ -10,6 +11,7 @@ from .rules import (
     RULE_MAT003,
     RULE_MAT004,
     RULE_MAT005,
+    RULE_MAT006,
 )
 
 
@@ -58,6 +60,12 @@ class Reviewer_Math(Reviewer):
     )
     _PATTERN_MU = re.compile(r"(?<![A-Za-z])\\mu(?![A-Za-z])")
     _PATTERN_PARENTHESIS = re.compile(r"(?P<delimiter>\(|\))")
+    _PATTERN_DELIMITER = re.compile(r"(?<!\\)(?P<delimiter>[\[\]{}()])")
+    _DELIMITER_PAIRS: ClassVar[dict[str, str]] = {
+        "(": ")",
+        "[": "]",
+        "{": "}",
+    }
     _PATTERN_UNSUPPORTED_IEEE_ENVIRONMENT = re.compile(
         r"\\begin\{(?P<environment>"
         r"align\*?|alignat\*?|gather\*?|multline\*?|flalign\*?|"
@@ -79,8 +87,38 @@ class Reviewer_Math(Reviewer):
         self.template = template
         self.comments: list[Diagnostic] = []
         self._in_math_mode = False
+        self._delimiter_stack: list[tuple[str, int]] = []
+        self._unclosed_delimiters_added = False
 
     def process_line(self, line_no: int, line: str) -> None:
+        for match in self._PATTERN_DELIMITER.finditer(line):
+            delimiter = match.group("delimiter")
+            if delimiter in self._DELIMITER_PAIRS:
+                self._delimiter_stack.append((delimiter, line_no))
+                continue
+
+            if not self._delimiter_stack:
+                details = f"unmatched closing {delimiter}"
+            else:
+                opening, opening_line = self._delimiter_stack.pop()
+                expected = self._DELIMITER_PAIRS[opening]
+                if expected == delimiter:
+                    continue
+                details = (
+                    f"{opening} from line {opening_line + 1} is closed by {delimiter}; "
+                    f"expected {expected}"
+                )
+
+            self.comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_MAT006,
+                    RULE_MAT006.render_message(
+                        details=self.printer.dark_red(details),
+                    ),
+                )
+            )
+
         if self.template == Template.IEEE:
             for match in self._PATTERN_UNSUPPORTED_IEEE_ENVIRONMENT.finditer(line):
                 self.comments.append(
@@ -171,6 +209,19 @@ class Reviewer_Math(Reviewer):
                 )
 
     def get_comments(self) -> list[Diagnostic]:
+        if not self._unclosed_delimiters_added:
+            for delimiter, opening_line in self._delimiter_stack:
+                details = f"unclosed {delimiter} from line {opening_line + 1}"
+                self.comments.append(
+                    Diagnostic(
+                        opening_line,
+                        RULE_MAT006,
+                        RULE_MAT006.render_message(
+                            details=self.printer.dark_red(details),
+                        ),
+                    )
+                )
+            self._unclosed_delimiters_added = True
         return self.comments
 
     def get_summary(self) -> str:
@@ -189,6 +240,9 @@ class Reviewer_Math(Reviewer):
         ieee_environment_count = sum(
             comment.code == RULE_MAT005.code for comment in self.comments
         )
+        delimiter_count = sum(
+            comment.code == RULE_MAT006.code for comment in self.comments
+        )
         summaries = []
         if plus_minus_count:
             summaries.append(f"Plus-minus notation: {plus_minus_count}")
@@ -202,6 +256,8 @@ class Reviewer_Math(Reviewer):
             summaries.append(
                 f"Non-IEEE alignment environments: {ieee_environment_count}"
             )
+        if delimiter_count:
+            summaries.append(f"Mismatched delimiters: {delimiter_count}")
         return " | ".join(summaries)
 
     def get_status(self) -> Status:

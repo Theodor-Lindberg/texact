@@ -256,6 +256,28 @@ def test_ieee_math_uses_ieeeeqnarray() -> None:
     )
 
 
+def test_delimiters_match_outside_and_inside_math() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"Valid [()]{} and escaped \{literal\}.",
+        r"Invalid [)",
+        r"Invalid (]",
+        r"$x + (y$",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT006"
+    ]
+
+    assert len(comments) == 3
+    assert "expected ]" in comments[0].message
+    assert "expected )" in comments[1].message
+    assert "unclosed (" in comments[2].message
+
+
 def test_label_prefixes_match_latex_context() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
