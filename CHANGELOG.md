@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Check matching brackets, parentheses, and braces.
+- Enforce citations before sentence-ending periods.
 
 ### Fixed
 

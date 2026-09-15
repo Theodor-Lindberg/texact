@@ -234,6 +234,12 @@ RULES = RuleRegistry(
             "Use a hard space (~) before \\ref.",
         ),
         Rule(
+            "REF006",
+            "citation-before-period",
+            "Reviewer_RefLabel",
+            "Place \\cite{{...}} before the period.",
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -327,6 +333,7 @@ RULE_REF002 = RULES.get("REF002")
 RULE_REF003 = RULES.get("REF003")
 RULE_REF004 = RULES.get("REF004")
 RULE_REF005 = RULES.get("REF005")
+RULE_REF006 = RULES.get("REF006")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")
