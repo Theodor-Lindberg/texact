@@ -49,6 +49,7 @@ them per their liking and, if supported, configure them.
 | REF003 | [unreferenced-label](unreferenced-label.md) | Unreferenced label. | error |
 | REF004 | [label-prefix](label-prefix.md) | Use the matching prefix for the label context. | error |
 | REF005 | [space-before-reference](space-before-reference.md) | Use a hard space (`~`) before `\ref`. | error |
+| REF006 | [citation-before-period](citation-before-period.md) | Place `\cite{...}` before the period. | error |
 
 ## Figure (`FIG`)
 
@@ -100,6 +101,7 @@ undefined-label-reference
 unreferenced-label
 label-prefix
 space-before-reference
+citation-before-period
 invalid-figure-position
 scaled-figure-image
 missing-figure-label

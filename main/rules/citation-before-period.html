@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="scaled-figure-image (FIG002)" href="scaled-figure-image.html"><link rel="prev" title="citation-before-period (REF006)" href="citation-before-period.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="invalid-figure-position (FIG001)" href="invalid-figure-position.html"><link rel="prev" title="space-before-reference (REF005)" href="space-before-reference.html">
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>invalid-figure-position (FIG001) - TeXact documentation</title>
+        <title>citation-before-period (REF006) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -209,15 +209,15 @@
   <label for="sidebar-version-select">Version</label>
   <select id="sidebar-version-select" aria-label="Documentation version" onchange="window.location.href = this.value">
     
-    <option value="invalid-figure-position.html" selected>main</option>
+    <option value="citation-before-period.html" selected>main</option>
     
-    <option value="../../v0.2.0/rules/invalid-figure-position.html">v0.2.0</option>
+    <option value="../../v0.2.0/index.html">v0.2.0</option>
     
-    <option value="../../v0.1.2/rules/invalid-figure-position.html">v0.1.2</option>
+    <option value="../../v0.1.2/index.html">v0.1.2</option>
     
-    <option value="../../v0.1.1/rules/invalid-figure-position.html">v0.1.1</option>
+    <option value="../../v0.1.1/index.html">v0.1.1</option>
     
-    <option value="../../v0.1.0/rules/invalid-figure-position.html">v0.1.0</option>
+    <option value="../../v0.1.0/index.html">v0.1.0</option>
     
   </select>
 </div>
@@ -249,7 +249,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/rules/invalid-figure-position.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/rules/citation-before-period.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -267,22 +267,21 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="invalid-figure-position-fig001">
-<h1>invalid-figure-position (FIG001)<a class="headerlink" href="#invalid-figure-position-fig001" title="Link to this heading">¶</a></h1>
+          <section id="citation-before-period-ref006">
+<h1>citation-before-period (REF006)<a class="headerlink" href="#citation-before-period-ref006" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks optional LaTeX figure placement arguments and permits only the empty
-argument or <code class="docutils literal notranslate"><span class="pre">[bt]</span></code>, <code class="docutils literal notranslate"><span class="pre">[t]</span></code>, <code class="docutils literal notranslate"><span class="pre">[b]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[tb]</span></code>.</p>
+<p>Checks that a <code class="docutils literal notranslate"><span class="pre">\cite{...}</span></code> tag comes before the period that ends a sentence.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>Forcing the placement of a figure makes the spacing look wrong.
-If the figure must be moved, in the can be moved by changing the location
-of the source code.</p>
+<p>Putting the citation after the period makes it appear detached from the
+sentence it documents.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>figure<span class="nb">}</span>[h]
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>This is a sentence.<span class="k">\cite</span><span class="nb">{</span>reference<span class="nb">}</span>
+This is a sentence<span class="k">\cite</span><span class="nb">{</span>reference<span class="nb">}</span>.
 </pre></div>
 </div>
 </section>
@@ -293,23 +292,23 @@ of the source code.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="scaled-figure-image.html">
+          <a class="next-page" href="invalid-figure-position.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">scaled-figure-image (FIG002)</div>
+                <div class="title">invalid-figure-position (FIG001)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="citation-before-period.html">
+          <a class="prev-page" href="space-before-reference.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">citation-before-period (REF006)</div>
+                <div class="title">space-before-reference (REF005)</div>
                 
               </div>
             </a>
@@ -343,7 +342,7 @@ of the source code.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">invalid-figure-position (FIG001)</a><ul>
+<li><a class="reference internal" href="#">citation-before-period (REF006)</a><ul>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
