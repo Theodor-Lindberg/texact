@@ -29,6 +29,7 @@ them per their liking and, if supported, configure them.
 | MAT003 | [textmu-command](textmu-command.md) | Use `\textmu` instead of `\mu`. | error |
 | MAT004 | [scaled-parentheses](scaled-parentheses.md) | Use `\left` and `\right` for math parentheses. | error |
 | MAT005 | [ieee-math-environment](ieee-math-environment.md) | Use `IEEEeqnarray` in IEEE papers. | error |
+| MAT006 | [matching-delimiters](matching-delimiters.md) | Use matching brackets, parentheses, and braces. | error |
 
 ## Unsure (`UNS`)
 
@@ -89,6 +90,7 @@ math-operator-command
 textmu-command
 scaled-parentheses
 ieee-math-environment
+matching-delimiters
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
