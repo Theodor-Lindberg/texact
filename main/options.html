@@ -290,6 +290,14 @@ repeated <code class="docutils literal notranslate"><span class="pre">texact</sp
 <p>Use <code class="docutils literal notranslate"><span class="pre">-q</span></code> or <code class="docutils literal notranslate"><span class="pre">--quiet</span></code> to remove per-file summaries. Repeat the short
 option as <code class="docutils literal notranslate"><span class="pre">-qq</span></code> to remove both summaries and title lines.</p>
 </section>
+<section id="rule-selection">
+<h2>Rule selection<a class="headerlink" href="#rule-selection" title="Link to this heading">¶</a></h2>
+<p>Enable a disabled rule with <code class="docutils literal notranslate"><span class="pre">--select</span></code>. Repeat the option to select multiple
+rules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">select</span> <span class="n">MAT004</span> <span class="o">--</span><span class="n">select</span> <span class="n">UNS007</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
+</pre></div>
+</div>
+</section>
 <section id="configuration-file">
 <h2>Configuration file<a class="headerlink" href="#configuration-file" title="Link to this heading">¶</a></h2>
 <p>TeXact can load optional settings from a TOML file. It searches the current
@@ -389,6 +397,7 @@ directory.</p>
 <li><a class="reference internal" href="#">Options</a><ul>
 <li><a class="reference internal" href="#inline-suppressions">Inline suppressions</a></li>
 <li><a class="reference internal" href="#quiet-output">Quiet output</a></li>
+<li><a class="reference internal" href="#rule-selection">Rule selection</a></li>
 <li><a class="reference internal" href="#configuration-file">Configuration file</a></li>
 </ul>
 </li>
