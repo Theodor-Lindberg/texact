@@ -126,6 +126,10 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
             "texact",
             "--config",
             "custom.toml",
+            "--select",
+            "MAT004",
+            "--select",
+            "UNS007",
             "--no-html-style",
             "--vscode-style",
             "-qq",
@@ -136,6 +140,7 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
     args = set_up_arg_parser()
 
     assert args.config == Path("custom.toml")
+    assert args.select == ["MAT004", "UNS007"]
     assert args.html_style is False
     assert args.vscode_style is True
     assert args.quiet == 2

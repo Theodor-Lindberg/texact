@@ -305,7 +305,7 @@ def test_dash_length_ignores_coordinates_dates_specs_math_and_verbatim() -> None
 
 def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     tex_file = tmp_path / "math.tex"
-    tex_file.write_text("$ (x) $\n", encoding="utf-8")
+    tex_file.write_text("$ (x) $\nSee pages 5-10.\n", encoding="utf-8")
 
     command = [
         sys.executable,
@@ -321,13 +321,22 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
         check=False,
     )
     assert "MAT004" not in disabled.stdout
+    assert "UNS007" in disabled.stdout
 
+    selected_command = [
+        *command[:-1],
+        "--select",
+        "MAT004",
+        "--select",
+        "UNS007",
+        str(tex_file),
+    ]
     (tmp_path / ".texact.toml").write_text(
         "[lint]\nselect = ['MAT004']\n",
         encoding="utf-8",
     )
     enabled = subprocess.run(
-        command,
+        selected_command,
         capture_output=True,
         text=True,
         check=False,
@@ -335,6 +344,7 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     )
     assert enabled.returncode == 1
     assert "MAT004" in enabled.stdout
+    assert "UNS007" in enabled.stdout
 
 
 def test_plus_minus_notation_is_reported() -> None:

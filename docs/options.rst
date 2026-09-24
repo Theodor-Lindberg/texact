@@ -34,6 +34,15 @@ Use ``-q`` or ``--quiet`` to remove per-file summaries. Repeat the short
 option as ``-qq`` to remove both summaries and title lines.
 
 
+Rule selection
+--------------
+
+Enable a disabled rule with ``--select``. Repeat the option to select multiple
+rules::
+
+    texact --select MAT004 --select UNS007 paper.tex
+
+
 Configuration file
 ------------------
 

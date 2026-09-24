@@ -1,6 +1,7 @@
 import argparse
 import re
 import sys
+from dataclasses import replace
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
@@ -72,6 +73,12 @@ def set_up_arg_parser() -> argparse.Namespace:
         type=Path,
         metavar="PATH",
         help="Path to a TeXact TOML configuration file",
+    )
+    parser.add_argument(
+        "--select",
+        action="append",
+        metavar="RULE",
+        help="Enable a disabled rule; repeat for multiple rules",
     )
     parser.add_argument(
         "--chktex",
@@ -209,6 +216,25 @@ def main():
         config = load_config(args.config)
     except ConfigurationError as error:
         raise SystemExit(f"Configuration error: {error}") from error
+
+    if args.select:
+        invalid_codes = [
+            code
+            for code in args.select
+            if re.fullmatch(r"[A-Z]{2,3}\d{3,}", code) is None
+        ]
+        if invalid_codes:
+            raise SystemExit(
+                "Configuration error: --select contains invalid rule code(s): "
+                + ", ".join(invalid_codes)
+            )
+        config = replace(
+            config,
+            lint=replace(
+                config.lint,
+                select=config.lint.select.union(args.select),
+            ),
+        )
 
     html_style = (
         config.format.html_style if args.html_style is None else args.html_style
