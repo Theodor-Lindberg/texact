@@ -1,4 +1,5 @@
 import re
+from dataclasses import dataclass
 from typing import ClassVar
 
 from printer import Printer
@@ -11,7 +12,15 @@ from .rules import (
     RULE_REF004,
     RULE_REF005,
     RULE_REF006,
+    RULE_REF007,
 )
+
+
+@dataclass
+class _EnvironmentFrame:
+    name: str
+    base_depth: int
+    counter_established: bool = False
 
 
 class Reviewer_RefLabel(Reviewer):
@@ -21,6 +30,11 @@ class Reviewer_RefLabel(Reviewer):
     _PATTERN_REF = re.compile(r"\\ref\{([^}]+)\}")
     _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
     _PATTERN_CITE_AFTER_PERIOD = re.compile(r"\.\s*\\cite\{[^}]+\}")
+    _PATTERN_TOKEN = re.compile(
+        r"\\(?P<environment_command>begin|end)\s*\{(?P<environment>[^}]+)\}"
+        r"|\\(?P<command>label|captionof|caption|item)\b"
+        r"|(?P<brace>[{}])"
+    )
     _PATTERN_BEGIN_CONTEXT = re.compile(
         r"\\begin\{(?P<context>figure|table|equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
     )
@@ -52,8 +66,11 @@ class Reviewer_RefLabel(Reviewer):
         self.prefix_comments: list[Diagnostic] = []
         self.ref_space_comments: list[Diagnostic] = []
         self.cite_period_comments: list[Diagnostic] = []
+        self.label_before_counter_comments: list[Diagnostic] = []
         self.context_stack: list[str] = []
         self.pending_section_context = False
+        self.environment_stack: list[_EnvironmentFrame] = []
+        self.brace_depth = 0
 
     def process_line(self, line_no: int, line: str) -> None:
         # Remove comments (everything after %)
@@ -105,6 +122,8 @@ class Reviewer_RefLabel(Reviewer):
                 self.defined_labels.add(label_name)
                 self.label_line_map[label_name] = line_no
 
+        self._check_label_counter_order(line_no, line)
+
         # Extract all \ref{...} patterns
         for _ in self._PATTERN_CITE_AFTER_PERIOD.finditer(line):
             self.cite_period_comments.append(
@@ -138,6 +157,67 @@ class Reviewer_RefLabel(Reviewer):
                     del self.context_stack[index:]
                     break
 
+    def _check_label_counter_order(self, line_no: int, line: str) -> None:
+        for token_match in self._PATTERN_TOKEN.finditer(line):
+            environment_command = token_match.group("environment_command")
+            if environment_command is not None:
+                environment = token_match.group("environment").strip().rstrip("*")
+                if environment_command == "begin":
+                    self.environment_stack.append(
+                        _EnvironmentFrame(environment, self.brace_depth)
+                    )
+                else:
+                    for index in range(len(self.environment_stack) - 1, -1, -1):
+                        if self.environment_stack[index].name == environment:
+                            del self.environment_stack[index:]
+                            break
+                continue
+
+            brace = token_match.group("brace")
+            if brace is not None:
+                if brace == "{":
+                    self.brace_depth += 1
+                elif self.brace_depth:
+                    self.brace_depth -= 1
+                continue
+
+            command = token_match.group("command")
+            frame = self.environment_stack[-1] if self.environment_stack else None
+            if frame is None or self.brace_depth != frame.base_depth:
+                continue
+
+            if command == "label" and not frame.counter_established:
+                target = self._label_counter_target(frame.name)
+                if target is not None:
+                    self.label_before_counter_comments.append(
+                        Diagnostic(
+                            line_no,
+                            RULE_REF007,
+                            RULE_REF007.render_message(target=target),
+                        )
+                    )
+            elif (
+                command == "caption"
+                and frame.name in {"figure", "table"}
+                or command == "captionof"
+                and frame.name == "minipage"
+                or command == "item"
+                and frame.name == "enumerate"
+            ):
+                frame.counter_established = True
+
+    @staticmethod
+    def _label_counter_target(environment: str) -> str | None:
+        if environment == "figure":
+            return "figure caption"
+        if environment == "table":
+            return "table caption"
+        if environment == "minipage":
+            return r"\captionof"
+        if environment == "enumerate":
+            return "first enumerate item"
+        return None
+
     def get_summary(self) -> str:
         missing_labels = self.referenced_labels - self.defined_labels
         orphaned_labels = self.defined_labels - self.referenced_labels
@@ -168,6 +248,11 @@ class Reviewer_RefLabel(Reviewer):
                 f"Citations after periods: {len(self.cite_period_comments)}"
             )
 
+        if self.label_before_counter_comments:
+            messages.append(
+                f"Labels before counters: {len(self.label_before_counter_comments)}"
+            )
+
         return " | ".join(messages) if messages else ""
 
     def get_comments(self) -> list[Diagnostic]:
@@ -179,6 +264,7 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.prefix_comments)
         comments.extend(self.ref_space_comments)
         comments.extend(self.cite_period_comments)
+        comments.extend(self.label_before_counter_comments)
 
         for label in missing_labels:
             comments.append(
@@ -211,6 +297,7 @@ class Reviewer_RefLabel(Reviewer):
             or self.prefix_comments
             or self.ref_space_comments
             or self.cite_period_comments
+            or self.label_before_counter_comments
         ):
             return Status.FAILED
         return Status.PASSED

@@ -258,6 +258,13 @@ RULES = RuleRegistry(
             "Place \\cite{{...}} before the period.",
         ),
         Rule(
+            "REF007",
+            "label-before-caption",
+            "Reviewer_RefLabel",
+            "Move \\label after the {target}.",
+            Severity.WARNING,
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -355,6 +362,7 @@ RULE_REF003 = RULES.get("REF003")
 RULE_REF004 = RULES.get("REF004")
 RULE_REF005 = RULES.get("REF005")
 RULE_REF006 = RULES.get("REF006")
+RULE_REF007 = RULES.get("REF007")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")

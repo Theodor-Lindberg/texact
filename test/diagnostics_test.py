@@ -391,6 +391,64 @@ def test_references_require_hard_spaces() -> None:
     assert all("hard space" in comment.message for comment in comments)
 
 
+def test_labels_follow_numbering_statements() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"\begin{figure*}",
+        r"  \label{fig:before}",
+        r"  \caption{A plot}",
+        r"\end{figure*}",
+        r"\begin{table}",
+        r"  \label{tab:before}",
+        r"  \caption{A table}",
+        r"\end{table}",
+        r"\begin{minipage}{\textwidth}",
+        r"  \label{fig:minipage}",
+        r"  \captionof{figure}{A plot}",
+        r"\end{minipage}",
+        r"\begin{enumerate}",
+        r"  \label{item:first}",
+        r"  \item<1->[First] An item",
+        r"  \label{item:second}",
+        r"  \item Second item",
+        r"\end{enumerate}",
+        r"\begin{itemize}",
+        r"  \label{itemize:label}",
+        r"  \item An item",
+        r"\end{itemize}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF007"
+    ]
+
+    assert len(comments) == 4
+    assert [comment.line_no for comment in comments] == [1, 5, 9, 13]
+    assert "figure caption" in comments[0].message
+    assert "table caption" in comments[1].message
+    assert r"\captionof" in comments[2].message
+    assert "first enumerate item" in comments[3].message
+    assert all(comment.severity == Severity.WARNING for comment in comments)
+
+
+def test_nested_labels_are_not_treated_as_statement_labels() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"\begin{figure}",
+        r"  \textbf{\label{fig:nested}}",
+        r"  \caption{A plot}",
+        r"\end{figure}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    assert not any(comment.code == "REF007" for comment in reviewer.get_comments())
+
+
 def test_citations_precede_periods() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
