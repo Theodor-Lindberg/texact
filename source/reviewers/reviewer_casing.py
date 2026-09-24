@@ -59,6 +59,8 @@ class Reviewer_Casing(Reviewer):
         "Matplotlib",
         "URL",
         "DNS",
+        "HTTP",
+        "HTTPS",
         "BRAM",
         "DRAM",
         "NaN",
@@ -80,6 +82,7 @@ class Reviewer_Casing(Reviewer):
         "CISC",
         "EDA",
         "Python",
+        "C++",
         "GitHub",
         "GitLab",
         "VSCode",
@@ -104,6 +107,9 @@ class Reviewer_Casing(Reviewer):
         "SQNR",
         "MIMO",
         "CPU",
+        "Linux",
+        "Windows",
+        "macOS",
     )
     _PATTERN_LATEX_IGNORED_COMMANDS = re.compile(
         r"\\(?:cite|ref|label|url|usepackage)\{[^}]*\}"
