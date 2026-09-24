@@ -49,6 +49,7 @@ them per their liking and, if supported, configure them.
 | UNS005 | [double-period-sentence](double-period-sentence.md) | Avoid ending a sentence with two periods. | error |
 | UNS006 | [space-after-period](space-after-period.md) | Add a space after periods. | error |
 | UNS007 | [dash-length](dash-length.md) | Use the appropriate dash for its context. | warning |
+| UNS008 | [double-comma](double-comma.md) | Avoid using two commas in a row. | error |
 
 ## RefLabel (`REF`)
 
@@ -112,6 +113,7 @@ space-before-punctuation
 double-period-sentence
 space-after-period
 dash-length
+double-comma
 underscore-in-label
 undefined-label-reference
 unreferenced-label

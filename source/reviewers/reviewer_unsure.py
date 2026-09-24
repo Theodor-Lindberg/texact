@@ -11,6 +11,7 @@ from .rules import (
     RULE_UNS005,
     RULE_UNS006,
     RULE_UNS007,
+    RULE_UNS008,
 )
 
 
@@ -22,6 +23,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_AUTHOR_POSSESSIVE = re.compile(r"\bauthor's\b", re.IGNORECASE)
     _PATTERN_SPACE_BEFORE_PUNCTUATION = re.compile(r"[ \t]+[.,;:!?]")
     _PATTERN_DOUBLE_PERIOD = re.compile(r"(?<![./])\.\.(?![./])(?=\s|$)")
+    _PATTERN_DOUBLE_COMMA = re.compile(r"(?<![\\,/]),,(?![,/])(?=\s|$)")
     _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/])")
     _PATTERN_PATH = re.compile(r"[^\s{}]*\/[^\s{}]*")
     _PATTERN_ABBREVIATION = re.compile(r"\b(?:[A-Za-z]{1,3}\.){2,}")
@@ -67,6 +69,7 @@ class Reviewer_Unsure(Reviewer):
         self.author_possessive_count = 0
         self.space_before_punctuation_count = 0
         self.double_period_count = 0
+        self.double_comma_count = 0
         self.period_without_space_count = 0
         self.dash_length_count = 0
         self.comments: list[Diagnostic] = []
@@ -177,6 +180,17 @@ class Reviewer_Unsure(Reviewer):
             )
             self.double_period_count += len(double_period_matches)
 
+        double_comma_matches = self.find_double_commas(line)
+        if double_comma_matches:
+            self.comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_UNS008,
+                    RULE_UNS008.render_message(),
+                )
+            )
+            self.double_comma_count += len(double_comma_matches)
+
         period_without_space_matches = self.find_periods_without_space(line)
         if period_without_space_matches:
             self.comments.append(
@@ -227,6 +241,8 @@ class Reviewer_Unsure(Reviewer):
             )
         if self.double_period_count:
             issues.append(f"Double periods: {self.double_period_count}")
+        if self.double_comma_count:
+            issues.append(f"Double commas: {self.double_comma_count}")
         if self.period_without_space_count:
             issues.append(
                 f"Periods without following spaces: {self.period_without_space_count}"
@@ -247,6 +263,7 @@ class Reviewer_Unsure(Reviewer):
                 and self.author_possessive_count == 0
                 and self.space_before_punctuation_count == 0
                 and self.double_period_count == 0
+                and self.double_comma_count == 0
                 and self.period_without_space_count == 0
                 and self.dash_length_count == 0
             )
@@ -267,6 +284,9 @@ class Reviewer_Unsure(Reviewer):
 
     def find_double_periods(self, line: str) -> list[str]:
         return self._PATTERN_DOUBLE_PERIOD.findall(line)
+
+    def find_double_commas(self, line: str) -> list[str]:
+        return self._PATTERN_DOUBLE_COMMA.findall(line)
 
     def find_periods_without_space(self, line: str) -> list[str]:
         masked_line = list(line)

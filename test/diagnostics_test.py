@@ -215,6 +215,24 @@ def test_double_periods_are_reported_but_relative_paths_are_ignored() -> None:
     assert reviewer.get_summary() == "Double periods: 1"
 
 
+def test_double_commas_are_reported_but_latex_spacing_is_ignored() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "This sentence has two commas,,",
+        r"This uses thin space\, correctly.",
+        "This sentence has a single comma, correctly.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "UNS008"
+    assert comments[0].line_no == 0
+    assert reviewer.get_summary() == "Double commas: 1"
+
+
 def test_periods_require_following_spaces_except_in_paths_and_abbreviations() -> None:
     reviewer = Reviewer_Unsure(Printer())
     lines = [

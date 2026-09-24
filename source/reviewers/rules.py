@@ -237,6 +237,12 @@ RULES = RuleRegistry(
             Severity.WARNING,
         ),
         Rule(
+            "UNS008",
+            "double-comma",
+            "Reviewer_Unsure",
+            "Avoid using two commas in a row.",
+        ),
+        Rule(
             "REF001",
             "underscore-in-label",
             "Reviewer_RefLabel",
@@ -373,6 +379,7 @@ RULE_UNS004 = RULES.get("UNS004")
 RULE_UNS005 = RULES.get("UNS005")
 RULE_UNS006 = RULES.get("UNS006")
 RULE_UNS007 = RULES.get("UNS007")
+RULE_UNS008 = RULES.get("UNS008")
 RULE_REF001 = RULES.get("REF001")
 RULE_REF002 = RULES.get("REF002")
 RULE_REF003 = RULES.get("REF003")

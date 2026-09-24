@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add a check for dash length in ranges and compounds.
 - Support selecting disabled rules.
 - Support selecting rules from the command line.
+- Check for consecutive commas.
 - More casing checks.
 
 ### Fixed
