@@ -15,7 +15,9 @@ manual choice. Coordinate names such as `Newton--Raphson` are allowed.
 ```latex
 See pages 5-10 for the proof.
 A well--known result.
+The value -4 has the incorrect sign for minus.
 ```
 
 The first line should use `5--10`. The second needs either a hyphen or an em
-dash, depending on the intended meaning.
+dash, depending on the intended meaning. For a negative number in text, use
+math mode, such as `$-$ 4`.

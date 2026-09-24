@@ -32,6 +32,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_DASH_WORD = re.compile(
         r"(?<![\w-])(?P<left>\w+)(?P<dash>-+)(?P<right>\w+)(?![\w-])"
     )
+    _PATTERN_TEXT_NEGATIVE_NUMBER = re.compile(r"(?<![\w-])-(?P<number>\d+)(?![\w-])")
     _PATTERN_MATH_TOKEN = re.compile(
         r"\\begin\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
         r"|\\end\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
@@ -314,6 +315,19 @@ class Reviewer_Unsure(Reviewer):
                     line_no,
                     RULE_UNS007,
                     RULE_UNS007.render_message(message=message),
+                )
+            )
+        for match in self._PATTERN_TEXT_NEGATIVE_NUMBER.finditer(masked_line):
+            comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_UNS007,
+                    RULE_UNS007.render_message(
+                        message=(
+                            f"Hyphen before a number; use `$-$ {match.group('number')}` "
+                            "for a minus sign."
+                        ),
+                    ),
                 )
             )
         return comments

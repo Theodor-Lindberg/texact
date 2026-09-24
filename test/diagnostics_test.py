@@ -258,6 +258,27 @@ def test_dash_length_reports_number_ranges_and_word_en_dashes() -> None:
     assert comments[0].severity == Severity.WARNING
 
 
+def test_dash_length_reports_text_negative_numbers_but_not_math() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "The value -4 is invalid.",
+        r"The math value $-4$ is valid.",
+        r"The other math value \(-4\) is valid.",
+        "The range 5-10 is a separate issue.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS007"
+    ]
+    assert len(comments) == 2
+    assert comments[0].line_no == 0
+    assert "$-$ 4" in comments[0].message
+    assert comments[1].line_no == 3
+
+
 def test_dash_length_ignores_coordinates_dates_specs_math_and_verbatim() -> None:
     reviewer = Reviewer_Unsure(Printer())
     lines = [
