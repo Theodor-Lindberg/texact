@@ -21,6 +21,7 @@ class Rule:
     message: str
     severity: Severity = Severity.ERROR
     documentation_path: str = ""
+    enabled_by_default: bool = True
 
     def __post_init__(self) -> None:
         if not self.documentation_path:
@@ -172,6 +173,7 @@ RULES = RuleRegistry(
             "scaled-parentheses",
             "Reviewer_Math",
             "Use {command} before {delimiter} in math mode.",
+            enabled_by_default=False,
         ),
         Rule(
             "MAT005",

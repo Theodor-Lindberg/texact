@@ -17,6 +17,7 @@ class LintConfig:
     """Lint settings loaded from a TeXact configuration."""
 
     ignore: frozenset[str] = frozenset()
+    select: frozenset[str] = frozenset()
     casing: tuple[str, ...] = ()
     we_count: int = 5
 
@@ -105,7 +106,12 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
     format_data = _table(data.get("format"), path, "format")
     tools_data = _table(data.get("tools"), path, "tools")
 
-    _check_keys(lint_data, {"ignore", "casing", "we_count"}, path, "lint")
+    _check_keys(
+        lint_data,
+        {"ignore", "select", "casing", "we_count"},
+        path,
+        "lint",
+    )
     _check_keys(
         format_data,
         {"html-style", "vscode-style", "quiet"},
@@ -115,10 +121,17 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
     _check_keys(tools_data, {"chktex_path"}, path, "tools")
 
     ignore = _string_list(lint_data.get("ignore", []), path, "lint.ignore")
+    select = _string_list(lint_data.get("select", []), path, "lint.select")
     invalid_codes = [code for code in ignore if not _RULE_CODE_PATTERN.fullmatch(code)]
     if invalid_codes:
         raise ConfigurationError(
             f"{path}: lint.ignore contains invalid rule code(s): "
+            f"{', '.join(invalid_codes)}"
+        )
+    invalid_codes = [code for code in select if not _RULE_CODE_PATTERN.fullmatch(code)]
+    if invalid_codes:
+        raise ConfigurationError(
+            f"{path}: lint.select contains invalid rule code(s): "
             f"{', '.join(invalid_codes)}"
         )
 
@@ -150,6 +163,7 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
     return TexactConfig(
         lint=LintConfig(
             ignore=frozenset(ignore),
+            select=frozenset(select),
             casing=casing,
             we_count=we_count,
         ),

@@ -41,6 +41,7 @@ def test_pyproject_configuration_is_used(tmp_path: Path) -> None:
 def test_supported_settings_are_parsed(tmp_path: Path) -> None:
     (tmp_path / ".texact.toml").write_text(
         "[lint]\n"
+        "select = ['UNS007']\n"
         "casing = ['LaTeX']\n"
         "we_count = 7\n"
         "\n"
@@ -56,6 +57,7 @@ def test_supported_settings_are_parsed(tmp_path: Path) -> None:
 
     config = load_config(directory=tmp_path)
 
+    assert config.lint.select == frozenset({"UNS007"})
     assert config.lint.casing == ("LaTeX",)
     assert config.lint.we_count == 7
     assert config.format.html_style is True

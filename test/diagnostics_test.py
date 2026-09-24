@@ -29,6 +29,10 @@ def test_rule_codes_and_reviewer_numbers_are_unique() -> None:
     assert len(RULES.prefixes) == len(set(RULES.prefixes.values()))
 
 
+def test_only_mat004_is_disabled_by_default() -> None:
+    assert [rule.code for rule in RULES if not rule.enabled_by_default] == ["MAT004"]
+
+
 def test_rule_metadata_has_kebab_names_and_documentation() -> None:
     rules_root = TEST_DIR.parent / "docs" / "rules"
 
@@ -276,6 +280,40 @@ def test_dash_length_ignores_coordinates_dates_specs_math_and_verbatim() -> None
     ]
     assert len(comments) == 1
     assert comments[0].line_no == 8
+
+
+def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
+    tex_file = tmp_path / "math.tex"
+    tex_file.write_text("$ (x) $\n", encoding="utf-8")
+
+    command = [
+        sys.executable,
+        str(TEST_DIR.parent / "source" / "texact.py"),
+        "--no-chktex",
+        "-q",
+        str(tex_file),
+    ]
+    disabled = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert "MAT004" not in disabled.stdout
+
+    (tmp_path / ".texact.toml").write_text(
+        "[lint]\nselect = ['MAT004']\n",
+        encoding="utf-8",
+    )
+    enabled = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert enabled.returncode == 1
+    assert "MAT004" in enabled.stdout
 
 
 def test_plus_minus_notation_is_reported() -> None:

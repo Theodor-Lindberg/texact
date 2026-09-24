@@ -15,6 +15,7 @@ from reviewers.reviewer_math import Reviewer_Math
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
 from reviewers.reviewer_section import Reviewer_Section
 from reviewers.reviewer_unsure import Reviewer_Unsure
+from reviewers.rules import RULES
 from template_check import get_template
 
 _INLINE_IGNORE_PATTERN = re.compile(
@@ -132,9 +133,7 @@ def process_file(
     visible_comments = [
         comment
         for comment in all_comments
-        if comment.code not in config.lint.ignore
-        and comment.code
-        not in line_ignored_rule_codes.get(comment.line_no, frozenset())
+        if _is_visible_comment(comment, config, line_ignored_rule_codes)
     ]
     sourced_comments = [comment.with_source(file_path) for comment in visible_comments]
     for comment in sorted(
@@ -161,9 +160,7 @@ def process_file(
         visible_reviewer_comments = [
             comment
             for comment in comments
-            if comment.code not in config.lint.ignore
-            and comment.code
-            not in line_ignored_rule_codes.get(comment.line_no, frozenset())
+            if _is_visible_comment(comment, config, line_ignored_rule_codes)
         ]
         status = _status_for_diagnostics(
             reviewer,
@@ -175,6 +172,20 @@ def process_file(
         printer.print(f"Reviewer {name}: {printer.status_str(status)}. {summary}")
 
     return 1 if any_failed else 0
+
+
+def _is_visible_comment(
+    comment: Diagnostic,
+    config: TexactConfig,
+    line_ignored_rule_codes: dict[int, frozenset[str]],
+) -> bool:
+    rule = RULES.get(comment.code)
+    return (
+        comment.code not in config.lint.ignore
+        and (rule.enabled_by_default or comment.code in config.lint.select)
+        and comment.code
+        not in line_ignored_rule_codes.get(comment.line_no, frozenset())
+    )
 
 
 def _status_for_diagnostics(

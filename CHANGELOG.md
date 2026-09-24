@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Warn when labels precede captions or first numbered items.
 - Check section heading hierarchy.
 - Add a check for dash length in ranges and compounds.
+- Support selecting disabled rules, with `MAT004` disabled by default.
 - More casing checks.
 
 ### Fixed
