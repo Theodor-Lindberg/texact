@@ -10,6 +10,7 @@ from .rules import (
     RULE_UNS004,
     RULE_UNS005,
     RULE_UNS006,
+    RULE_UNS007,
 )
 
 
@@ -28,6 +29,23 @@ class Reviewer_Unsure(Reviewer):
         r"\b[\w-]+\.(?:aux|bib|cfg|class|cls|css|csv|gif|html|jpg|jpeg|js|json|md|pdf|png|py|svg|tex|txt|webp|xml|yaml|yml)\b"
     )
     _PATTERN_MARKBOTH_START = re.compile(r"\\markboth\b")
+    _PATTERN_DASH_WORD = re.compile(
+        r"(?<![\w-])(?P<left>\w+)(?P<dash>-+)(?P<right>\w+)(?![\w-])"
+    )
+    _PATTERN_MATH_TOKEN = re.compile(
+        r"\\begin\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
+        r"|\\end\{(?:equation|IEEEeqnarray|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
+        r"|\\\(|\\\)|\\\[|\\\]|(?<!\\)\$\$?"
+    )
+    _PATTERN_VERBATIM_ENVIRONMENT = re.compile(
+        r"\\(?P<kind>begin|end)\{(?P<environment>verbatim\*?|lstlisting|minted|comment)\}"
+    )
+    _PATTERN_VERB = re.compile(r"\\verb\*?(?![A-Za-z@])")
+    _PATTERN_OPAQUE_ARGUMENT = re.compile(
+        r"\\(?:cline|cmidrule(?:\([^)]*\))?|label|cite\w*)"
+        r"\s*(?:\[[^\]]*\])?\s*\{[^{}\n]*\}"
+    )
+    _PATTERN_ANGLE_SPEC = re.compile(r"\\(?:item|begin\{[^}\n]+\})<[^>\n]*>")
     _MAX_WE_OCCURRENCES = 5
 
     def __init__(
@@ -49,11 +67,14 @@ class Reviewer_Unsure(Reviewer):
         self.space_before_punctuation_count = 0
         self.double_period_count = 0
         self.period_without_space_count = 0
+        self.dash_length_count = 0
         self.comments: list[Diagnostic] = []
         # State for masking \markboth{...}{...}, which may span multiple lines
         self._markboth_awaiting_brace = False
         self._markboth_depth = 0
         self._markboth_groups_remaining = 0
+        self._in_dash_math_mode = False
+        self._verbatim_environment: str | None = None
 
     def _mask_markboth(self, line: str) -> str:
         chars = list(line)
@@ -166,6 +187,10 @@ class Reviewer_Unsure(Reviewer):
             )
             self.period_without_space_count += len(period_without_space_matches)
 
+        dash_matches = self.find_dash_length_issues(line_no, line)
+        self.comments.extend(dash_matches)
+        self.dash_length_count += len(dash_matches)
+
     def get_comments(self) -> list[Diagnostic]:
         if (
             self.we_count > self.max_we_occurrences
@@ -205,6 +230,8 @@ class Reviewer_Unsure(Reviewer):
             issues.append(
                 f"Periods without following spaces: {self.period_without_space_count}"
             )
+        if self.dash_length_count:
+            issues.append(f"Dash length issues: {self.dash_length_count}")
 
         if not issues:
             return ""
@@ -220,6 +247,7 @@ class Reviewer_Unsure(Reviewer):
                 and self.space_before_punctuation_count == 0
                 and self.double_period_count == 0
                 and self.period_without_space_count == 0
+                and self.dash_length_count == 0
             )
             else Status.FAILED
         )
@@ -250,6 +278,131 @@ class Reviewer_Unsure(Reviewer):
                 for index in range(match.start(), match.end()):
                     masked_line[index] = " "
         return self._PATTERN_PERIOD_WITHOUT_SPACE.findall("".join(masked_line))
+
+    def find_dash_length_issues(self, line_no: int, line: str) -> list[Diagnostic]:
+        masked_line = self._mask_dash_exclusions(line)
+        comments: list[Diagnostic] = []
+        for match in self._PATTERN_DASH_WORD.finditer(masked_line):
+            left = match.group("left")
+            dash = match.group("dash")
+            right = match.group("right")
+
+            if left.isdigit() and right.isdigit():
+                if dash == "--":
+                    continue
+                message = (
+                    f"Hyphen between numbers; use an en dash `--` "
+                    f"(unsafe fix), found {dash}."
+                )
+            elif dash == "--":
+                if left[0].isupper() or right[0].isupper():
+                    continue
+                message = (
+                    "En dash between words; choose a hyphen `-` for a compound "
+                    "or an em dash `---`."
+                )
+            elif dash not in {"-", "---"}:
+                message = (
+                    "Invalid dash length between words; choose a hyphen `-` "
+                    "or an em dash `---`."
+                )
+            else:
+                continue
+
+            comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_UNS007,
+                    RULE_UNS007.render_message(message=message),
+                )
+            )
+        return comments
+
+    def _mask_dash_exclusions(self, line: str) -> str:
+        masked = self._mask_verbatim(line)
+        masked = self._mask_inline_verbatim(masked)
+        masked = self._strip_comment(masked)
+        masked = self._mask_math(masked)
+        for pattern in (self._PATTERN_OPAQUE_ARGUMENT, self._PATTERN_ANGLE_SPEC):
+            masked = pattern.sub(lambda match: " " * len(match.group(0)), masked)
+        return masked
+
+    def _mask_verbatim(self, line: str) -> str:
+        chars = list(line)
+        cursor = 0
+        for match in self._PATTERN_VERBATIM_ENVIRONMENT.finditer(line):
+            if self._verbatim_environment is not None:
+                self._blank(chars, cursor, match.end())
+                if match.group("kind") == "end":
+                    self._verbatim_environment = None
+            elif match.group("kind") == "begin":
+                self._blank(chars, match.start(), match.end())
+                self._verbatim_environment = match.group("environment")
+            else:
+                self._blank(chars, match.start(), match.end())
+            cursor = match.end()
+
+        if self._verbatim_environment is not None:
+            self._blank(chars, cursor, len(chars))
+        return "".join(chars)
+
+    def _mask_inline_verbatim(self, line: str) -> str:
+        chars = list(line)
+        for match in self._PATTERN_VERB.finditer(line):
+            if self._has_odd_backslashes(line, match.start()):
+                continue
+            delimiter_index = match.end()
+            if delimiter_index >= len(line):
+                self._blank(chars, match.start(), len(chars))
+                continue
+            delimiter = line[delimiter_index]
+            if delimiter.isalnum() or delimiter.isspace():
+                continue
+            end = line.find(delimiter, delimiter_index + 1)
+            self._blank(chars, match.start(), len(chars) if end == -1 else end + 1)
+        return "".join(chars)
+
+    def _mask_math(self, line: str) -> str:
+        chars = list(line)
+        cursor = 0
+        for match in self._PATTERN_MATH_TOKEN.finditer(line):
+            if self._in_dash_math_mode:
+                self._blank(chars, cursor, match.start())
+            token = match.group(0)
+            if token.startswith(r"\begin") or (
+                not self._in_dash_math_mode and token in (r"\(", r"\[", "$$", "$")
+            ):
+                self._in_dash_math_mode = True
+            elif token.startswith(r"\end") or token in (r"\)", r"\]", "$$", "$"):
+                self._in_dash_math_mode = False
+            self._blank(chars, match.start(), match.end())
+            cursor = match.end()
+
+        if self._in_dash_math_mode:
+            self._blank(chars, cursor, len(chars))
+        return "".join(chars)
+
+    @staticmethod
+    def _strip_comment(line: str) -> str:
+        for index, character in enumerate(line):
+            if character != "%":
+                continue
+            if not Reviewer_Unsure._has_odd_backslashes(line, index):
+                return line[:index]
+        return line
+
+    @staticmethod
+    def _has_odd_backslashes(line: str, index: int) -> bool:
+        backslashes = 0
+        index -= 1
+        while index >= 0 and line[index] == "\\":
+            backslashes += 1
+            index -= 1
+        return backslashes % 2 == 1
+
+    @staticmethod
+    def _blank(chars: list[str], start: int, end: int) -> None:
+        chars[start:end] = [" "] * (end - start)
 
     def get_name(self) -> str:
         return "Modal verbs"

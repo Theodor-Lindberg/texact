@@ -230,6 +230,54 @@ def test_periods_require_following_spaces_except_in_paths_and_abbreviations() ->
     assert reviewer.get_summary() == "Periods without following spaces: 1"
 
 
+def test_dash_length_reports_number_ranges_and_word_en_dashes() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "See pages 5-10 for the proof.",
+        "A well--known result.",
+        "A correct 5--10 range.",
+        "A correct state---of---the-art phrase.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS007"
+    ]
+    assert len(comments) == 2
+    assert comments[0].line_no == 0
+    assert "numbers" in comments[0].message
+    assert "unsafe fix" in comments[0].message
+    assert comments[1].line_no == 1
+    assert "words" in comments[1].message
+    assert comments[0].severity == Severity.WARNING
+
+
+def test_dash_length_ignores_coordinates_dates_specs_math_and_verbatim() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "Barzilai--Borwein and Newton--Raphson are coordinate names.",
+        "Dates 2020-01-15 and ISBN 0-306-40615-2 are opaque.",
+        r"\cline{1-3} \cmidrule(lr){2-3} \label{fig:1-3} \cite{smith2020-1}",
+        r"\item<1-2> \begin{onlyenv}<2-3>",
+        r"Math $5-10$ and \(well--known\).",
+        r"\begin{verbatim}",
+        "5-10 well--known",
+        r"\end{verbatim}",
+        "5-10 well-known",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS007"
+    ]
+    assert len(comments) == 1
+    assert comments[0].line_no == 8
+
+
 def test_plus_minus_notation_is_reported() -> None:
     reviewer = Reviewer_Math(Printer())
 
