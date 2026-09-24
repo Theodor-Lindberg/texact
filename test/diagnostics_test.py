@@ -152,6 +152,25 @@ def test_spaces_before_punctuation_are_reported() -> None:
     assert comments[1].code == "UNS004"
 
 
+def test_double_periods_are_reported_but_relative_paths_are_ignored() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "This sentence ends with two periods..",
+        r"\includegraphics{../assets/image.png}",
+        r"\input{../../shared.tex}",
+        "This uses an ellipsis... correctly.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "UNS005"
+    assert "two periods" in comments[0].message
+    assert reviewer.get_summary() == "Double periods: 1"
+
+
 def test_plus_minus_notation_is_reported() -> None:
     reviewer = Reviewer_Math(Printer())
 

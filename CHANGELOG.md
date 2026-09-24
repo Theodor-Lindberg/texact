@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check matching brackets, parentheses, and braces.
 - Enforce citations before sentence-ending periods.
 - Enforce LaTeX commands for ellipses in normal text and math mode.
+- Check for sentences ending with two periods.
 - More casing checks.
 
 ### Fixed

@@ -210,6 +210,12 @@ RULES = RuleRegistry(
             "Avoid spaces before punctuation.",
         ),
         Rule(
+            "UNS005",
+            "double-period-sentence",
+            "Reviewer_Unsure",
+            "Avoid ending a sentence with two periods.",
+        ),
+        Rule(
             "REF001",
             "underscore-in-label",
             "Reviewer_RefLabel",
@@ -335,6 +341,7 @@ RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
 RULE_UNS003 = RULES.get("UNS003")
 RULE_UNS004 = RULES.get("UNS004")
+RULE_UNS005 = RULES.get("UNS005")
 RULE_REF001 = RULES.get("REF001")
 RULE_REF002 = RULES.get("REF002")
 RULE_REF003 = RULES.get("REF003")
