@@ -41,6 +41,7 @@ them per their liking and, if supported, configure them.
 | UNS003 | [singular-author-possessive](singular-author-possessive.md) | Use authors' to author's in papers. | error |
 | UNS004 | [space-before-punctuation](space-before-punctuation.md) | Avoid spaces before punctuation. | error |
 | UNS005 | [double-period-sentence](double-period-sentence.md) | Avoid ending a sentence with two periods. | error |
+| UNS006 | [space-after-period](space-after-period.md) | Add a space after periods. | error |
 
 ## RefLabel (`REF`)
 
@@ -100,6 +101,7 @@ excessive-we-usage
 singular-author-possessive
 space-before-punctuation
 double-period-sentence
+space-after-period
 underscore-in-label
 undefined-label-reference
 unreferenced-label
