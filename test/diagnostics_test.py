@@ -10,6 +10,7 @@ from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
 from reviewers.reviewer_math import Reviewer_Math
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
+from reviewers.reviewer_section import Reviewer_Section
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.rules import RULES
 from template_check import Template
@@ -120,6 +121,45 @@ def test_title_casing_ignores_math() -> None:
         0,
         r"\section{A Study of \textit{Digital} Systems with $x^2$ Results}",
     )
+
+    assert reviewer.get_comments() == []
+
+
+def test_section_headings_do_not_skip_levels() -> None:
+    reviewer = Reviewer_Section(Printer())
+    lines = [
+        r"\section{Introduction}",
+        r"\subsubsection{Skipped subsection}",
+        r"\subsection*{Methods}",
+        r"\subsubsection{Details}",
+        r"\paragraph{Fine detail}",
+        r"\subparagraph{More detail}",
+        r"\subparagraph{Another detail}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "SEC001"
+    assert r"\subsection" in comments[0].message
+    assert r"\subsubsection" in comments[0].message
+    assert reviewer.get_summary() == "Heading hierarchy errors: 1"
+
+
+def test_section_heading_order_accepts_top_level_and_starred_headings() -> None:
+    reviewer = Reviewer_Section(Printer())
+    lines = [
+        r"\section*{Introduction}",
+        r"\subsection{Methods}",
+        r"\subsubsection*{Details}",
+        r"\section{Results}",
+        r"\subsection{Conclusion}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
 
     assert reviewer.get_comments() == []
 

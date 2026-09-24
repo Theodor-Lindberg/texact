@@ -144,6 +144,12 @@ RULES = RuleRegistry(
             "Incorrect title casing: {actual} should be {expected}",
         ),
         Rule(
+            "SEC001",
+            "heading-order",
+            "Reviewer_Section",
+            "Use {parent} before {heading}.",
+        ),
+        Rule(
             "MAT001",
             "plus-minus-notation",
             "Reviewer_Math",
@@ -343,6 +349,7 @@ RULES = RuleRegistry(
 RULE_INT001 = RULES.get("INT001")
 RULE_CAS001 = RULES.get("CAS001")
 RULE_CAS002 = RULES.get("CAS002")
+RULE_SEC001 = RULES.get("SEC001")
 RULE_MAT001 = RULES.get("MAT001")
 RULE_MAT002 = RULES.get("MAT002")
 RULE_MAT003 = RULES.get("MAT003")

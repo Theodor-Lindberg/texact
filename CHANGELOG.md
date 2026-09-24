@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check for sentences ending with two periods.
 - Require spaces after periods.
 - Warn when labels precede captions or first numbered items.
+- Check section heading hierarchy.
 - More casing checks.
 
 ### Fixed
