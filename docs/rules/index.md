@@ -30,6 +30,7 @@ them per their liking and, if supported, configure them.
 | MAT004 | [scaled-parentheses](scaled-parentheses.md) | Use `\left` and `\right` for math parentheses. | error |
 | MAT005 | [ieee-math-environment](ieee-math-environment.md) | Use `IEEEeqnarray` in IEEE papers. | error |
 | MAT006 | [matching-delimiters](matching-delimiters.md) | Use matching brackets, parentheses, and braces. | error |
+| MAT007 | [ellipsis-notation](ellipsis-notation.md) | Use LaTeX ellipsis commands instead of three periods. | error |
 
 ## Unsure (`UNS`)
 
@@ -92,6 +93,7 @@ textmu-command
 scaled-parentheses
 ieee-math-environment
 matching-delimiters
+ellipsis-notation
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive

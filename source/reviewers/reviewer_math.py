@@ -12,6 +12,7 @@ from .rules import (
     RULE_MAT004,
     RULE_MAT005,
     RULE_MAT006,
+    RULE_MAT007,
 )
 
 
@@ -19,6 +20,7 @@ class Reviewer_Math(Reviewer):
     """Checks mathematical notation."""
 
     _PATTERN_PLUS_MINUS = re.compile(r"\+\-|\-\+")
+    _PATTERN_ELLIPSIS = re.compile(r"\.\.\.")
     _MATH_OPERATORS = (
         "arccos",
         "arcsin",
@@ -144,11 +146,14 @@ class Reviewer_Math(Reviewer):
                 )
             )
 
+        text_segments: list[str] = []
         math_segments: list[str] = []
         cursor = 0
         for token_match in self._PATTERN_MATH_TOKEN.finditer(line):
             if self._in_math_mode:
                 math_segments.append(line[cursor : token_match.start()])
+            else:
+                text_segments.append(line[cursor : token_match.start()])
 
             token = token_match.group(0)
             is_begin_environment = token.startswith(r"\begin")
@@ -166,8 +171,39 @@ class Reviewer_Math(Reviewer):
 
         if self._in_math_mode:
             math_segments.append(line[cursor:])
+        else:
+            text_segments.append(line[cursor:])
+
+        for text_segment in text_segments:
+            for match in self._PATTERN_ELLIPSIS.finditer(text_segment):
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT007,
+                        RULE_MAT007.render_message(
+                            command=self.printer.yellow(r"\dots"),
+                            context=" in normal text",
+                        ),
+                    )
+                )
 
         for math_segment in math_segments:
+            for _match in self._PATTERN_ELLIPSIS.finditer(math_segment):
+                baseline_ellipsis = self.printer.yellow(r"\ldots")
+                centered_ellipsis = self.printer.yellow(r"\cdots")
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT007,
+                        RULE_MAT007.render_message(
+                            command=(
+                                f"{baseline_ellipsis} (baseline, for comma lists) "
+                                f"or {centered_ellipsis} (centered, for operator chains)"
+                            ),
+                            context=" in math mode",
+                        ),
+                    )
+                )
             operator_segment = self._PATTERN_LABEL.sub("", math_segment)
             for match in self._PATTERN_MATH_OPERATOR.finditer(operator_segment):
                 operator = match.group("operator")
@@ -243,6 +279,9 @@ class Reviewer_Math(Reviewer):
         delimiter_count = sum(
             comment.code == RULE_MAT006.code for comment in self.comments
         )
+        ellipsis_count = sum(
+            comment.code == RULE_MAT007.code for comment in self.comments
+        )
         summaries = []
         if plus_minus_count:
             summaries.append(f"Plus-minus notation: {plus_minus_count}")
@@ -258,6 +297,8 @@ class Reviewer_Math(Reviewer):
             )
         if delimiter_count:
             summaries.append(f"Mismatched delimiters: {delimiter_count}")
+        if ellipsis_count:
+            summaries.append(f"Ellipsis notation: {ellipsis_count}")
         return " | ".join(summaries)
 
     def get_status(self) -> Status:

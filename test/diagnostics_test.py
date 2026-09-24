@@ -234,6 +234,29 @@ def test_math_parentheses_use_left_and_right() -> None:
     assert r"\right" in comments[1].message
 
 
+def test_ellipsis_uses_context_specific_latex_commands() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"Text ... in normal text, but $...$ is math.",
+        r"\begin{equation} x ... y \end{equation}",
+        r"Text with \dots, $\ldots$ and $\cdots$ is valid.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT007"
+    ]
+
+    assert len(comments) == 3
+    assert r"\dots" in comments[0].message
+    assert "normal text" in comments[0].message
+    assert r"\ldots" in comments[1].message
+    assert r"\cdots" in comments[1].message
+    assert "math mode" in comments[1].message
+
+
 def test_ieee_math_uses_ieeeeqnarray() -> None:
     ieee_reviewer = Reviewer_Math(Printer(), Template.IEEE)
     llncs_reviewer = Reviewer_Math(Printer(), Template.LLNCS)
