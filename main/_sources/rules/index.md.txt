@@ -53,6 +53,7 @@ them per their liking and, if supported, configure them.
 | REF004 | [label-prefix](label-prefix.md) | Use the matching prefix for the label context. | error |
 | REF005 | [space-before-reference](space-before-reference.md) | Use a hard space (`~`) before `\ref`. | error |
 | REF006 | [citation-before-period](citation-before-period.md) | Place `\cite{...}` before the period. | error |
+| REF007 | [label-before-caption](label-before-caption.md) | Put labels after captions or first numbered items. | warning |
 
 ## Figure (`FIG`)
 
@@ -108,6 +109,7 @@ unreferenced-label
 label-prefix
 space-before-reference
 citation-before-period
+label-before-caption
 invalid-figure-position
 scaled-figure-image
 missing-figure-label
