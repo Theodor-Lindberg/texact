@@ -52,6 +52,7 @@ The supported structure is::
 
     [lint]
     ignore = ["FIG002", "UNS001"]
+    select = ["MAT004"]
     casing = ["LaTeX"]
     we_count = 7
 
@@ -64,8 +65,9 @@ The supported structure is::
     chktex_path = "/usr/bin"
 
 ``lint.ignore`` accepts rule codes to suppress. ``lint.casing`` adds
-spellings to the built-in casing list. ``lint.we_count`` changes the maximum
-allowed number of ``we`` occurrences. ``format.html-style`` enables HTML
+spellings to the built-in casing list. ``lint.select`` enables rules that are
+disabled by default. ``lint.we_count`` changes the maximum allowed number of
+``we`` occurrences. ``format.html-style`` enables HTML
 output by default. ``format.quiet`` controls non-diagnostic output: ``0``
 prints titles and summaries, ``1`` removes summaries, and ``2`` removes both
 titles and summaries. ``format.vscode-style`` enables VS Code-compatible

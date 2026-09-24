@@ -48,6 +48,7 @@ them per their liking and, if supported, configure them.
 | UNS004 | [space-before-punctuation](space-before-punctuation.md) | Avoid spaces before punctuation. | error |
 | UNS005 | [double-period-sentence](double-period-sentence.md) | Avoid ending a sentence with two periods. | error |
 | UNS006 | [space-after-period](space-after-period.md) | Add a space after periods. | error |
+| UNS007 | [dash-length](dash-length.md) | Use the appropriate dash for its context. | warning |
 
 ## RefLabel (`REF`)
 
@@ -110,6 +111,7 @@ singular-author-possessive
 space-before-punctuation
 double-period-sentence
 space-after-period
+dash-length
 underscore-in-label
 undefined-label-reference
 unreferenced-label
