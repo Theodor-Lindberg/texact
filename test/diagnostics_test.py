@@ -171,6 +171,25 @@ def test_double_periods_are_reported_but_relative_paths_are_ignored() -> None:
     assert reviewer.get_summary() == "Double periods: 1"
 
 
+def test_periods_require_following_spaces_except_in_paths_and_abbreviations() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "This sentence has no space.Next sentence.",
+        "The author is Ph.D. Smith.",
+        r"\includegraphics{../assets/image.png} \input{source/main.tex}",
+        "Version 1.2 and an ellipsis... are valid.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "UNS006"
+    assert "space after periods" in comments[0].message
+    assert reviewer.get_summary() == "Periods without following spaces: 1"
+
+
 def test_plus_minus_notation_is_reported() -> None:
     reviewer = Reviewer_Math(Printer())
 
