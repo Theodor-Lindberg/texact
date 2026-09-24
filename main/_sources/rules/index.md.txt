@@ -20,6 +20,12 @@ them per their liking and, if supported, configure them.
 | CAS001 | [incorrect-casing](incorrect-casing.md) | Incorrect casing. | error |
 | CAS002 | [title-casing](title-casing.md) | Use IEEE-style title casing. | error |
 
+## Section (`SEC`)
+
+| Code | Name | Message | Severity |
+| --- | --- | --- | --- |
+| SEC001 | [heading-order](heading-order.md) | Do not skip section heading levels. | error |
+
 ## Math (`MAT`)
 
 | Code | Name | Message | Severity |
@@ -90,6 +96,7 @@ come from ChkTeX, and they link to the shared
 abstract-first-line-this-work
 incorrect-casing
 title-casing
+heading-order
 plus-minus-notation
 math-operator-command
 textmu-command
