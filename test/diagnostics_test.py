@@ -188,12 +188,22 @@ def test_spaces_before_punctuation_are_reported() -> None:
 
     reviewer.process_line(0, "This is wrong .")
     reviewer.process_line(1, "This is also wrong ,")
-    reviewer.process_line(2, "This is correct.")
+    reviewer.process_line(2, r"This is still wrong ,}")
+    reviewer.process_line(3, "This is correct.")
 
     comments = reviewer.get_comments()
-    assert len(comments) == 2
+    assert len(comments) == 3
     assert comments[0].code == "UNS004"
     assert comments[1].code == "UNS004"
+    assert comments[2].code == "UNS004"
+
+
+def test_period_before_closing_brace_does_not_need_a_space() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+
+    reviewer.process_line(0, r"This is fine.}")
+
+    assert reviewer.get_comments() == []
 
 
 def test_double_periods_are_reported_but_relative_paths_are_ignored() -> None:

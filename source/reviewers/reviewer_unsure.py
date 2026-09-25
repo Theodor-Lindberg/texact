@@ -24,7 +24,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_SPACE_BEFORE_PUNCTUATION = re.compile(r"[ \t]+[.,;:!?]")
     _PATTERN_DOUBLE_PERIOD = re.compile(r"(?<![./])\.\.(?![./])(?=\s|$)")
     _PATTERN_DOUBLE_COMMA = re.compile(r"(?<![\\,/]),,(?![,/])(?=\s|$)")
-    _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/])")
+    _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/}])")
     _PATTERN_PATH = re.compile(r"[^\s{}]*\/[^\s{}]*")
     _PATTERN_ABBREVIATION = re.compile(r"\b(?:[A-Za-z]{1,3}\.){2,}")
     _PATTERN_FILENAME = re.compile(
