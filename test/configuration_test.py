@@ -144,7 +144,15 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
     assert args.html_style is False
     assert args.vscode_style is True
     assert args.quiet == 2
-    assert args.chktex is None
+    assert args.chktex is False
+
+
+def test_chktex_can_be_enabled_from_cli(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, "argv", ["texact", "--chktex", "file.tex"])
+
+    args = set_up_arg_parser()
+
+    assert args.chktex is True
 
 
 @pytest.mark.parametrize("version_option", ["-v", "--version"])

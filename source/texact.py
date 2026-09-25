@@ -82,7 +82,7 @@ def set_up_arg_parser() -> argparse.Namespace:
     )
     parser.add_argument(
         "--chktex",
-        default=None,
+        default=False,
         action=argparse.BooleanOptionalAction,
         help="Run chktex with config/chktexrc",
     )
