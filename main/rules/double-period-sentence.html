@@ -271,16 +271,19 @@
 <h1>double-period-sentence (UNS005)<a class="headerlink" href="#double-period-sentence-uns005" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks that sentences do not end with two periods.</p>
+<p>Checks for consecutive periods in prose, excluding ellipses and relative paths.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>A sentence should end with one period.</p>
+<p>Two consecutive periods can accidentally leave a sentence or abbreviation with
+incorrect punctuation.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>This sentence ends with two periods.
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>This sentence ends with two periods..
+The list includes apples, etc.., and pears.
 <span class="k">\includegraphics</span><span class="nb">{</span>../assets/image.png<span class="nb">}</span>
+This uses an ellipsis... correctly.
 </pre></div>
 </div>
 </section>
