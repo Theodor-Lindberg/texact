@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="eqref-non-equation-label (REF012)" href="eqref-non-equation-label.html"><link rel="prev" title="capitalize-reference-type (REF010)" href="capitalize-reference-type.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="invalid-figure-position (FIG001)" href="invalid-figure-position.html"><link rel="prev" title="space-before-citation (REF011)" href="space-before-citation.html">
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 7.4.7 and Furo 2025.12.19 -->
-        <title>space-before-citation (REF011) - TeXact documentation</title>
+        <title>eqref-non-equation-label (REF012) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -209,7 +209,7 @@
   <label for="sidebar-version-select">Version</label>
   <select id="sidebar-version-select" aria-label="Documentation version" onchange="window.location.href = this.value">
     
-    <option value="space-before-citation.html" selected>main</option>
+    <option value="eqref-non-equation-label.html" selected>main</option>
     
     <option value="../../v0.2.0/index.html">v0.2.0</option>
     
@@ -249,7 +249,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/rules/space-before-citation.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/rules/eqref-non-equation-label.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -267,23 +267,22 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="space-before-citation-ref011">
-<h1>space-before-citation (REF011)<a class="headerlink" href="#space-before-citation-ref011" title="Link to this heading">¶</a></h1>
+          <section id="eqref-non-equation-label-ref012">
+<h1>eqref-non-equation-label (REF012)<a class="headerlink" href="#eqref-non-equation-label-ref012" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks that a hard space (<code class="docutils literal notranslate"><span class="pre">~</span></code>) precedes each <code class="docutils literal notranslate"><span class="pre">\cite</span></code> command. This rule is
-disabled by default. Enable it with <code class="docutils literal notranslate"><span class="pre">--select</span> <span class="pre">REF011</span></code> or add <code class="docutils literal notranslate"><span class="pre">REF011</span></code> to
-<code class="docutils literal notranslate"><span class="pre">lint.select</span></code> in the TeXact configuration.</p>
+<p>Checks that <code class="docutils literal notranslate"><span class="pre">\eqref</span></code> is used only with equation labels. It flags labels with
+the <code class="docutils literal notranslate"><span class="pre">fig:</span></code>, <code class="docutils literal notranslate"><span class="pre">tab:</span></code>, or <code class="docutils literal notranslate"><span class="pre">sec:</span></code> prefixes.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>A hard space keeps the citation attached to the preceding word and prevents a
-line break before the citation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">\eqref</span></code> adds parentheses around the referenced number, which is intended for
+equations rather than figures, tables, or sections.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>See <span class="k">\cite</span><span class="nb">{</span>source<span class="nb">}</span>.
-See~<span class="k">\cite</span><span class="nb">{</span>source<span class="nb">}</span>.
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span><span class="k">\eqref</span><span class="nb">{</span>fig:plot<span class="nb">}</span>
+<span class="k">\ref</span><span class="nb">{</span>fig:plot<span class="nb">}</span>
 </pre></div>
 </div>
 </section>
@@ -294,23 +293,23 @@ See~<span class="k">\cite</span><span class="nb">{</span>source<span class="nb">
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="eqref-non-equation-label.html">
+          <a class="next-page" href="invalid-figure-position.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">eqref-non-equation-label (REF012)</div>
+                <div class="title">invalid-figure-position (FIG001)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="capitalize-reference-type.html">
+          <a class="prev-page" href="space-before-citation.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">capitalize-reference-type (REF010)</div>
+                <div class="title">space-before-citation (REF011)</div>
                 
               </div>
             </a>
@@ -344,7 +343,7 @@ See~<span class="k">\cite</span><span class="nb">{</span>source<span class="nb">
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">space-before-citation (REF011)</a><ul>
+<li><a class="reference internal" href="#">eqref-non-equation-label (REF012)</a><ul>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
