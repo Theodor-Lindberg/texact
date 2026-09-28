@@ -17,6 +17,7 @@ from .rules import (
     RULE_REF009,
     RULE_REF010,
     RULE_REF011,
+    RULE_REF012,
 )
 
 
@@ -51,6 +52,11 @@ class Reviewer_RefLabel(Reviewer):
         r"\\end\{(?P<context>figure|table|equation|align|alignat|gather|multline|flalign|displaymath|math)\*?\}"
     )
     _PATTERN_SECTION = re.compile(r"\\(?:sub)*section\*?(?=\s*(?:\[|\{))")
+    _NON_EQUATION_LABEL_PREFIXES: ClassVar[tuple[str, ...]] = (
+        "fig:",
+        "tab:",
+        "sec:",
+    )
     _CONTEXT_PREFIXES: ClassVar[dict[str, tuple[str, str]]] = {
         "figure": ("fig:", "figure"),
         "equation": ("eq:", "equation"),
@@ -78,6 +84,7 @@ class Reviewer_RefLabel(Reviewer):
         self.cite_period_comments: list[Diagnostic] = []
         self.eqref_preference_comments: list[Diagnostic] = []
         self.eqref_parentheses_comments: list[Diagnostic] = []
+        self.eqref_misuse_comments: list[Diagnostic] = []
         self.reference_type_comments: list[Diagnostic] = []
         self.label_before_counter_comments: list[Diagnostic] = []
         self.context_stack: list[str] = []
@@ -191,7 +198,20 @@ class Reviewer_RefLabel(Reviewer):
 
         for ref_match in self._PATTERN_REF.finditer(line):
             ref_name = ref_match.group("label")
-            if ref_match.group("command") == "ref" and ref_name.startswith("eq:"):
+            command = ref_match.group("command")
+            if command == "eqref" and ref_name.startswith(
+                self._NON_EQUATION_LABEL_PREFIXES
+            ):
+                self.eqref_misuse_comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_REF012,
+                        RULE_REF012.render_message(
+                            label=self.printer.dark_red(ref_name),
+                        ),
+                    )
+                )
+            if command == "ref" and ref_name.startswith("eq:"):
                 self.eqref_preference_comments.append(
                     Diagnostic(
                         line_no,
@@ -312,6 +332,11 @@ class Reviewer_RefLabel(Reviewer):
                 f"Parentheses around \\eqref: {len(self.eqref_parentheses_comments)}"
             )
 
+        if self.eqref_misuse_comments:
+            messages.append(
+                f"\\eqref used for non-equation labels: {len(self.eqref_misuse_comments)}"
+            )
+
         if self.reference_type_comments:
             messages.append(
                 f"Lowercase reference types: {len(self.reference_type_comments)}"
@@ -340,6 +365,7 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.cite_space_comments)
         comments.extend(self.eqref_preference_comments)
         comments.extend(self.eqref_parentheses_comments)
+        comments.extend(self.eqref_misuse_comments)
         comments.extend(self.reference_type_comments)
         comments.extend(self.cite_period_comments)
         comments.extend(self.label_before_counter_comments)
@@ -375,6 +401,7 @@ class Reviewer_RefLabel(Reviewer):
             or self.prefix_comments
             or self.ref_space_comments
             or self.cite_space_comments
+            or self.eqref_misuse_comments
             or self.reference_type_comments
             or self.cite_period_comments
             or self.label_before_counter_comments

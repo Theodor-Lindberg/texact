@@ -856,6 +856,29 @@ def test_equation_references_can_prefer_eqref() -> None:
     assert reviewer.referenced_labels == {"eq:invalid", "fig:valid", "eq:valid"}
 
 
+def test_eqref_is_not_used_for_non_equation_labels() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"\eqref{eq:energy}",
+        r"\eqref{fig:plot}",
+        r"\eqref{tab:results}",
+        r"\eqref{sec:method}",
+        r"\ref{fig:plot}",
+        r"\eqref{unknown:label}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF012"
+    ]
+
+    assert [comment.line_no for comment in comments] == [1, 2, 3]
+    assert all(r"\ref" in comment.message for comment in comments)
+    assert all("non-equation label" in comment.message for comment in comments)
+
+
 def test_eqref_parentheses_are_redundant() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [

@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optionally require a hard space before `\cite`.
 - Check punctuation in `i.e.`, `e.g.`, and `et al.`.
 - Opt-in warning for unbraced multi-character math scripts.
+- Flag `\eqref` used with figure, table, or section labels.
 
 ### Fixed
 

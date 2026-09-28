@@ -68,6 +68,7 @@ them per their liking and, if supported, configure them.
 | REF009 | [parentheses-around-eqref](parentheses-around-eqref.md) | Remove parentheses around `\eqref`; it adds them automatically. | warning |
 | REF010 | [capitalize-reference-type](capitalize-reference-type.md) | Capitalize the first letter of reference types before `\ref`. | error |
 | REF011 | [space-before-citation](space-before-citation.md) | Use a hard space (`~`) before `\cite`. | error |
+| REF012 | [eqref-non-equation-label](eqref-non-equation-label.md) | Use `\ref` instead of `\eqref` for non-equation labels. | error |
 
 ## Figure (`FIG`)
 
@@ -132,6 +133,7 @@ prefer-eqref
 parentheses-around-eqref
 capitalize-reference-type
 space-before-citation
+eqref-non-equation-label
 invalid-figure-position
 scaled-figure-image
 missing-figure-label
