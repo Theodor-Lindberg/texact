@@ -194,6 +194,14 @@ RULES = RuleRegistry(
             "Use {command} instead of ...{context}.",
         ),
         Rule(
+            "MAT009",
+            "braced-math-scripts",
+            "Reviewer_Math",
+            "Use {braced_script} instead of {script} in math mode.",
+            Severity.WARNING,
+            enabled_by_default=False,
+        ),
+        Rule(
             "UNS001",
             "modal-or-uncertain-word",
             "Reviewer_Unsure",
@@ -405,6 +413,7 @@ RULE_MAT004 = RULES.get("MAT004")
 RULE_MAT005 = RULES.get("MAT005")
 RULE_MAT006 = RULES.get("MAT006")
 RULE_MAT007 = RULES.get("MAT007")
+RULE_MAT009 = RULES.get("MAT009")
 RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
 RULE_UNS003 = RULES.get("UNS003")

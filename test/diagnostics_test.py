@@ -32,6 +32,7 @@ def test_rule_codes_and_reviewer_numbers_are_unique() -> None:
 def test_only_opt_in_rules_are_disabled_by_default() -> None:
     assert [rule.code for rule in RULES if not rule.enabled_by_default] == [
         "MAT004",
+        "MAT009",
         "REF008",
         "REF011",
     ]
@@ -438,7 +439,7 @@ def test_dash_length_ignores_coordinates_dates_specs_math_and_verbatim() -> None
 
 def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     tex_file = tmp_path / "math.tex"
-    tex_file.write_text("$ (x) $\nSee pages 5-10.\n", encoding="utf-8")
+    tex_file.write_text("$ (x) $\n$x^23$\nSee pages 5-10.\n", encoding="utf-8")
 
     command = [
         sys.executable,
@@ -454,12 +455,15 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
         check=False,
     )
     assert "MAT004" not in disabled.stdout
+    assert "MAT009" not in disabled.stdout
     assert "UNS007" in disabled.stdout
 
     selected_command = [
         *command[:-1],
         "--select",
         "MAT004",
+        "--select",
+        "MAT009",
         "--select",
         "UNS007",
         str(tex_file),
@@ -477,6 +481,7 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     )
     assert enabled.returncode == 1
     assert "MAT004" in enabled.stdout
+    assert "MAT009" in enabled.stdout
     assert "UNS007" in enabled.stdout
 
 
@@ -594,6 +599,29 @@ def test_math_symbol_operators_use_latex_commands() -> None:
     for comment, (operator, command) in zip(comments, expected):
         assert f"{Printer.DARK_RED}{operator}{Printer.RESET}" in comment.message
         assert f"{Printer.YELLOW}{command}{Printer.RESET}" in comment.message
+
+
+def test_multi_character_math_scripts_need_braces() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"$x^23 + y_ij$",
+        r"\[x^{23} + y_{ij} + z^2 3 + w_i + v^\alpha\]",
+        "Text x^23 and y_ij are not math scripts.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT009"
+    ]
+
+    assert [comment.line_no for comment in comments] == [0, 0]
+    assert f"{Printer.DARK_RED}^23{Printer.RESET}" in comments[0].message
+    assert f"{Printer.YELLOW}^{{23}}{Printer.RESET}" in comments[0].message
+    assert f"{Printer.DARK_RED}_ij{Printer.RESET}" in comments[1].message
+    assert f"{Printer.YELLOW}_{{ij}}{Printer.RESET}" in comments[1].message
+    assert reviewer.get_summary() == "Unbraced multi-character scripts: 2"
 
 
 def test_math_operators_use_latex_commands() -> None:

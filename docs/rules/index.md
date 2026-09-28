@@ -37,6 +37,7 @@ them per their liking and, if supported, configure them.
 | MAT005 | [ieee-math-environment](ieee-math-environment.md) | Use `IEEEeqnarray` in IEEE papers. | error |
 | MAT006 | [matching-delimiters](matching-delimiters.md) | Use matching brackets, parentheses, and braces. | error |
 | MAT007 | [ellipsis-notation](ellipsis-notation.md) | Use LaTeX ellipsis commands instead of three periods. | error |
+| MAT009 | [braced-math-scripts](braced-math-scripts.md) | Brace multi-character subscripts and superscripts. | warning |
 
 ## Unsure (`UNS`)
 
@@ -110,6 +111,7 @@ scaled-parentheses
 ieee-math-environment
 matching-delimiters
 math-symbol-commands
+braced-math-scripts
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive

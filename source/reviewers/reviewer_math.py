@@ -13,6 +13,7 @@ from .rules import (
     RULE_MAT005,
     RULE_MAT006,
     RULE_MAT007,
+    RULE_MAT009,
 )
 
 
@@ -32,6 +33,9 @@ class Reviewer_Math(Reviewer):
     }
     _PATTERN_MATH_SYMBOL = re.compile(
         "|".join(re.escape(symbol) for symbol in _MATH_SYMBOL_COMMANDS)
+    )
+    _PATTERN_UNBRACED_SCRIPT = re.compile(
+        r"(?<!\\)(?P<operator>[\^_])(?P<argument>[A-Za-z0-9]{2,})"
     )
     _PATTERN_ELLIPSIS = re.compile(r"\.\.\.")
     _MATH_OPERATORS = (
@@ -193,6 +197,22 @@ class Reviewer_Math(Reviewer):
                 )
 
         for math_segment in math_segments:
+            for match in self._PATTERN_UNBRACED_SCRIPT.finditer(math_segment):
+                script = match.group(0)
+                operator = match.group("operator")
+                argument = match.group("argument")
+                braced_script = f"{operator}{{{argument}}}"
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT009,
+                        RULE_MAT009.render_message(
+                            script=self.printer.dark_red(script),
+                            braced_script=self.printer.yellow(braced_script),
+                        ),
+                    )
+                )
+
             for match in self._PATTERN_MATH_SYMBOL.finditer(math_segment):
                 operator = match.group(0)
                 self._add_symbol_command_comment(
@@ -296,6 +316,9 @@ class Reviewer_Math(Reviewer):
         symbol_command_count = sum(
             comment.code == RULE_MAT001.code for comment in self.comments
         )
+        unbraced_script_count = sum(
+            comment.code == RULE_MAT009.code for comment in self.comments
+        )
         operator_count = sum(
             comment.code == RULE_MAT002.code for comment in self.comments
         )
@@ -315,6 +338,10 @@ class Reviewer_Math(Reviewer):
         summaries = []
         if symbol_command_count:
             summaries.append(f"Math symbol command issues: {symbol_command_count}")
+        if unbraced_script_count:
+            summaries.append(
+                f"Unbraced multi-character scripts: {unbraced_script_count}"
+            )
         if operator_count:
             summaries.append(f"Unescaped math operators: {operator_count}")
         if mu_count:
