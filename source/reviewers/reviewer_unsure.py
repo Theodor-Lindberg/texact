@@ -299,7 +299,13 @@ class Reviewer_Unsure(Reviewer):
         contexts: list[str] = []
         if searchable_line is None:
             searchable_line = line
-        for match in self._PATTERN_SPACE_BEFORE_PUNCTUATION.finditer(searchable_line):
+        for match in self._PATTERN_SPACE_BEFORE_PUNCTUATION.finditer(line):
+            punctuation_index = match.end() - 1
+            if (
+                punctuation_index >= len(searchable_line)
+                or searchable_line[punctuation_index] != line[punctuation_index]
+            ):
+                continue
             before = re.search(r"\w+$", line[: match.start()])
             context = match.group(0)
             if before is not None:

@@ -222,6 +222,28 @@ def test_spaces_before_punctuation_are_ignored_in_math() -> None:
     assert "error ." in comments[0].message
 
 
+def test_spaces_before_punctuation_ignore_hidden_text_before_punctuation() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        r"See the result\cite{smith2026}, which follows.",
+        r"Inline math $x+y$, followed by prose.",
+        r"Display math $$x+y$$, followed by prose.",
+        r"Display math $$x+y$$ , followed by prose.",
+        "This is a genuine error .",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS004"
+    ]
+    assert len(comments) == 2
+    assert [comment.line_no for comment in comments] == [3, 4]
+    assert f"{Printer.DARK_RED} ,{Printer.RESET}" in comments[0].message
+    assert "error ." in comments[1].message
+
+
 def test_period_before_closing_brace_does_not_need_a_space() -> None:
     reviewer = Reviewer_Unsure(Printer())
 
