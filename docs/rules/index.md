@@ -50,6 +50,7 @@ them per their liking and, if supported, configure them.
 | UNS006 | [space-after-period](space-after-period.md) | Add a space after periods. | error |
 | UNS007 | [dash-length](dash-length.md) | Use the appropriate dash for its context. | warning |
 | UNS008 | [double-comma](double-comma.md) | Avoid using two commas in a row. | error |
+| UNS009 | [abbreviation-punctuation](abbreviation-punctuation.md) | Use `i.e.`, `e.g.`, and `et al.` with correct punctuation. | error |
 
 ## RefLabel (`REF`)
 
@@ -118,6 +119,7 @@ double-period-sentence
 space-after-period
 dash-length
 double-comma
+abbreviation-punctuation
 underscore-in-label
 undefined-label-reference
 unreferenced-label

@@ -298,6 +298,7 @@ def test_periods_require_following_spaces_except_in_paths_and_abbreviations() ->
     lines = [
         "This sentence has no space.Next sentence.",
         "The author is Ph.D. Smith.",
+        "Use i.e. when clarifying.",
         r"See Fig.~\ref{fig:example} and Figs.~\ref{fig:examples}.",
         r"\includegraphics{../assets/image.png} \input{source/main.tex}",
         "Version 1.2 and an ellipsis... are valid.",
@@ -335,6 +336,35 @@ def test_periods_in_math_are_not_checked() -> None:
 
     assert [comment.line_no for comment in comments] == [5]
     assert "space.Next" in comments[0].message
+
+
+def test_abbreviation_punctuation_is_correct() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "The abbreviation ie is incorrect.",
+        "Use i.e, for example.",
+        "The abbreviation eg is incorrect.",
+        "Use e.g, for example.",
+        "The authors et al are listed.",
+        "The authors et. al. are listed.",
+        "Use i.e., for example.",
+        "Use e.g., for example.",
+        "The authors et al. are listed.",
+        "The forms i.e. and e.g. are correct.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS009"
+    ]
+
+    assert [comment.line_no for comment in comments] == list(range(6))
+    assert "i.e." in comments[0].message
+    assert f"{Printer.DARK_RED}ie{Printer.RESET}" in comments[0].message
+    assert "e.g." in comments[2].message
+    assert f"{Printer.DARK_RED}et. al.{Printer.RESET}" in comments[5].message
 
 
 def test_dash_length_reports_number_ranges_and_word_en_dashes() -> None:

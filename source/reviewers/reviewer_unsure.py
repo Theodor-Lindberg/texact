@@ -12,6 +12,7 @@ from .rules import (
     RULE_UNS006,
     RULE_UNS007,
     RULE_UNS008,
+    RULE_UNS009,
 )
 
 
@@ -25,6 +26,10 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_DOUBLE_PERIOD = re.compile(r"(?<![./])\.\.(?![./])(?=\s|$)")
     _PATTERN_DOUBLE_COMMA = re.compile(r"(?<![\\,/]),,(?![,/])(?=\s|$)")
     _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/}])")
+    _PATTERN_ABBREVIATION_PUNCTUATION = re.compile(
+        r"(?<![A-Za-z])(?P<abbreviation>i\.{0,2}e\.{0,2}|e\.{0,2}g\.{0,2}|et\.{0,2}\s+al\.{0,2})(?![A-Za-z])",
+        re.IGNORECASE,
+    )
     _PATTERN_PATH = re.compile(r"[^\s{}]*\/[^\s{}]*")
     _PATTERN_ABBREVIATION = re.compile(r"\b(?:Figs?\.|(?:[A-Za-z]{1,3}\.){2,})")
     _PATTERN_FILENAME = re.compile(
@@ -71,6 +76,7 @@ class Reviewer_Unsure(Reviewer):
         self.double_period_count = 0
         self.double_comma_count = 0
         self.period_without_space_count = 0
+        self.abbreviation_punctuation_count = 0
         self.dash_length_count = 0
         self.comments: list[Diagnostic] = []
         # State for masking \markboth{...}{...}, which may span multiple lines
@@ -159,6 +165,30 @@ class Reviewer_Unsure(Reviewer):
             self.author_possessive_count += len(author_possessive_matches)
 
         masked_line = self._mask_dash_exclusions(line)
+        for match in self._PATTERN_ABBREVIATION_PUNCTUATION.finditer(masked_line):
+            actual = match.group("abbreviation")
+            normalized = actual.casefold()
+            if normalized.startswith("i"):
+                expected = "i.e."
+            elif normalized.startswith("et"):
+                expected = "et al."
+            else:
+                expected = "e.g."
+            if normalized == expected:
+                continue
+
+            self.comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_UNS009,
+                    RULE_UNS009.render_message(
+                        expected=self.printer.yellow(expected),
+                        actual=self.printer.dark_red(actual),
+                    ),
+                )
+            )
+            self.abbreviation_punctuation_count += 1
+
         space_before_punctuation_matches = self.find_space_before_punctuation(
             line,
             searchable_line=masked_line,
@@ -262,6 +292,10 @@ class Reviewer_Unsure(Reviewer):
             issues.append(
                 f"Periods without following spaces: {self.period_without_space_count}"
             )
+        if self.abbreviation_punctuation_count:
+            issues.append(
+                f"Abbreviation punctuation issues: {self.abbreviation_punctuation_count}"
+            )
         if self.dash_length_count:
             issues.append(f"Dash length issues: {self.dash_length_count}")
 
@@ -280,6 +314,7 @@ class Reviewer_Unsure(Reviewer):
                 and self.double_period_count == 0
                 and self.double_comma_count == 0
                 and self.period_without_space_count == 0
+                and self.abbreviation_punctuation_count == 0
                 and self.dash_length_count == 0
             )
             else Status.FAILED
