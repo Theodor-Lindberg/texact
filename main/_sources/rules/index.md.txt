@@ -65,6 +65,7 @@ them per their liking and, if supported, configure them.
 | REF008 | [prefer-eqref](prefer-eqref.md) | Use `\eqref{...}` for equation references instead of `\ref`. | error |
 | REF009 | [parentheses-around-eqref](parentheses-around-eqref.md) | Remove parentheses around `\eqref`; it adds them automatically. | warning |
 | REF010 | [capitalize-reference-type](capitalize-reference-type.md) | Capitalize the first letter of reference types before `\ref`. | error |
+| REF011 | [space-before-citation](space-before-citation.md) | Use a hard space (`~`) before `\cite`. | error |
 
 ## Figure (`FIG`)
 
@@ -127,6 +128,7 @@ label-before-caption
 prefer-eqref
 parentheses-around-eqref
 capitalize-reference-type
+space-before-citation
 invalid-figure-position
 scaled-figure-image
 missing-figure-label
