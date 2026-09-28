@@ -38,7 +38,7 @@ class Reviewer_RefLabel(Reviewer):
         r"(?<![A-Za-z])(?P<reference>(?:tables|table|section|figure|figs?\.|listing)~\\ref\{[^}]+\})"
     )
     _PATTERN_PARENTHESIZED_EQREF = re.compile(r"\(\s*\\eqref\{[^}]+\}\s*\)")
-    _PATTERN_CITE_AFTER_PERIOD = re.compile(r"\.\s*\\cite\{[^}]+\}")
+    _PATTERN_CITE_AFTER_PUNCTUATION = re.compile(r"[.,;:!?][ \t~]*\\cite\{[^}]+\}")
     _PATTERN_TOKEN = re.compile(
         r"\\(?P<environment_command>begin|end)\s*\{(?P<environment>[^}]+)\}"
         r"|\\(?P<command>label|captionof|caption|item)\b"
@@ -138,7 +138,7 @@ class Reviewer_RefLabel(Reviewer):
         self._check_label_counter_order(line_no, line)
 
         # Extract all \ref{...} patterns
-        for _ in self._PATTERN_CITE_AFTER_PERIOD.finditer(line):
+        for _ in self._PATTERN_CITE_AFTER_PUNCTUATION.finditer(line):
             self.cite_period_comments.append(
                 Diagnostic(
                     line_no,

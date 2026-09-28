@@ -288,9 +288,9 @@ RULES = RuleRegistry(
         ),
         Rule(
             "REF006",
-            "citation-before-period",
+            "citation-before-punctuation",
             "Reviewer_RefLabel",
-            "Place \\cite{{...}} before the period.",
+            "Place \\cite{{...}} before punctuation.",
         ),
         Rule(
             "REF007",

@@ -976,12 +976,18 @@ def test_nested_labels_are_not_treated_as_statement_labels() -> None:
     assert not any(comment.code == "REF007" for comment in reviewer.get_comments())
 
 
-def test_citations_precede_periods() -> None:
+def test_citations_precede_punctuation() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
         r"This is correct \cite{valid}.",
         r"This is wrong. \cite{invalid}.",
         r"This is also wrong.\cite{invalid2}.",
+        r"This uses a hard space.~\cite{invalid3}.",
+        r"This precedes a comma,\cite{invalid4}.",
+        r"This precedes an exclamation! ~\cite{invalid5}.",
+        r"This precedes a question?\cite{invalid6}.",
+        r"This precedes a semicolon; \cite{invalid7}.",
+        r"This precedes a colon:\cite{invalid8}.",
     ]
 
     for line_no, line in enumerate(lines):
@@ -991,8 +997,8 @@ def test_citations_precede_periods() -> None:
         comment for comment in reviewer.get_comments() if comment.code == "REF006"
     ]
 
-    assert len(comments) == 2
-    assert [comment.line_no for comment in comments] == [1, 2]
+    assert len(comments) == 8
+    assert [comment.line_no for comment in comments] == list(range(1, 9))
     assert all(r"\cite" in comment.message for comment in comments)
 
 
