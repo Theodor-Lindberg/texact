@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+[0.3.0] - 2026-09-28
+
+### Added
+
 - Check matching brackets, parentheses, and braces.
 - Enforce citations before punctuation.
 - Enforce LaTeX commands for ellipses in normal text and math mode.
@@ -42,8 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ChkTeX is now opt-in instead of running by default.
 - MAT001 now checks for more LaTeX commands.
-
-### Removed
 
 ## [0.2.0] - 2026-09-14
 
@@ -88,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial release.
 
-[unreleased]: https://github.com/Theodor-Lindberg/texact/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/Theodor-Lindberg/texact/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.2.0
 [0.1.2]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.2
 [0.1.1]: https://github.com/Theodor-Lindberg/texact/releases/tag/v0.1.1
