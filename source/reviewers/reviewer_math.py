@@ -14,6 +14,7 @@ from .rules import (
     RULE_MAT006,
     RULE_MAT007,
     RULE_MAT009,
+    RULE_MAT010,
 )
 
 
@@ -37,6 +38,12 @@ class Reviewer_Math(Reviewer):
     )
     _PATTERN_UNBRACED_SCRIPT = re.compile(
         r"(?<!\\)(?P<operator>[\^_])(?P<argument>[A-Za-z0-9]{2,})"
+    )
+    _PATTERN_UNBRACED_SQRT = re.compile(
+        r"(?<!\\)\\sqrt(?![A-Za-z@])"
+        r"(?:(?P<index>\s*\[[^\]]*\])|(?!\s*\[))"
+        r"(?!\s*\{)\s*"
+        r"(?P<argument>\\[A-Za-z@]+|\S)"
     )
     _PATTERN_ELLIPSIS = re.compile(r"\.\.\.")
     _MATH_OPERATORS = (
@@ -198,6 +205,20 @@ class Reviewer_Math(Reviewer):
                 )
 
         for math_segment in math_segments:
+            for match in self._PATTERN_UNBRACED_SQRT.finditer(math_segment):
+                index = (match.group("index") or "").strip()
+                braced_sqrt = f"\\sqrt{index}{{...}}"
+                self.comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_MAT010,
+                        RULE_MAT010.render_message(
+                            braced_sqrt=self.printer.yellow(braced_sqrt),
+                            expression=self.printer.dark_red(match.group(0)),
+                        ),
+                    )
+                )
+
             for match in self._PATTERN_UNBRACED_SCRIPT.finditer(math_segment):
                 script = match.group(0)
                 operator = match.group("operator")
@@ -317,6 +338,9 @@ class Reviewer_Math(Reviewer):
         symbol_command_count = sum(
             comment.code == RULE_MAT001.code for comment in self.comments
         )
+        unbraced_sqrt_count = sum(
+            comment.code == RULE_MAT010.code for comment in self.comments
+        )
         unbraced_script_count = sum(
             comment.code == RULE_MAT009.code for comment in self.comments
         )
@@ -339,6 +363,8 @@ class Reviewer_Math(Reviewer):
         summaries = []
         if symbol_command_count:
             summaries.append(f"Math symbol command issues: {symbol_command_count}")
+        if unbraced_sqrt_count:
+            summaries.append(f"Unbraced square roots: {unbraced_sqrt_count}")
         if unbraced_script_count:
             summaries.append(
                 f"Unbraced multi-character scripts: {unbraced_script_count}"

@@ -626,6 +626,30 @@ def test_multi_character_math_scripts_need_braces() -> None:
     assert reviewer.get_summary() == "Unbraced multi-character scripts: 2"
 
 
+def test_square_root_arguments_need_braces() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"Text \sqrt x is not math.",
+        r"$\sqrt x + \sqrt[3]y + \sqrt\alpha$",
+        r"\[\sqrt{x} + \sqrt[3]{y} + \sqrt {z}\]",
+        r"$\\sqrt x$",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT010"
+    ]
+
+    assert [comment.line_no for comment in comments] == [1, 1, 1]
+    assert f"{Printer.YELLOW}\\sqrt{{...}}{Printer.RESET}" in comments[0].message
+    assert f"{Printer.YELLOW}\\sqrt[3]{{...}}{Printer.RESET}" in comments[1].message
+    assert f"{Printer.DARK_RED}\\sqrt x{Printer.RESET}" in comments[0].message
+    assert all(comment.severity == Severity.WARNING for comment in comments)
+    assert reviewer.get_summary() == "Unbraced square roots: 3"
+
+
 def test_math_operators_use_latex_commands() -> None:
     reviewer = Reviewer_Math(Printer())
     lines = [
