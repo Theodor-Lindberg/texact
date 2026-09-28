@@ -38,6 +38,7 @@ them per their liking and, if supported, configure them.
 | MAT006 | [matching-delimiters](matching-delimiters.md) | Use matching brackets, parentheses, and braces. | error |
 | MAT007 | [ellipsis-notation](ellipsis-notation.md) | Use LaTeX ellipsis commands instead of three periods. | error |
 | MAT009 | [braced-math-scripts](braced-math-scripts.md) | Brace multi-character subscripts and superscripts. | warning |
+| MAT010 | [braced-square-root](braced-square-root.md) | Brace square-root arguments. | warning |
 
 ## Unsure (`UNS`)
 
@@ -114,6 +115,7 @@ ieee-math-environment
 matching-delimiters
 math-symbol-commands
 braced-math-scripts
+braced-square-root
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
