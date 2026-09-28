@@ -26,7 +26,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_DOUBLE_COMMA = re.compile(r"(?<![\\,/]),,(?![,/])(?=\s|$)")
     _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/}])")
     _PATTERN_PATH = re.compile(r"[^\s{}]*\/[^\s{}]*")
-    _PATTERN_ABBREVIATION = re.compile(r"\b(?:[A-Za-z]{1,3}\.){2,}")
+    _PATTERN_ABBREVIATION = re.compile(r"\b(?:Figs?\.|(?:[A-Za-z]{1,3}\.){2,})")
     _PATTERN_FILENAME = re.compile(
         r"\b[\w-]+\.(?:aux|bib|cfg|class|cls|css|csv|gif|html|jpg|jpeg|js|json|md|pdf|png|py|svg|tex|txt|webp|xml|yaml|yml)\b"
     )

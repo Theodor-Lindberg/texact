@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Ignore `Fig.` and `Figs.` abbreviations in missing-space checks.
+
 ### Changed
 
 - ChkTeX is now opt-in instead of running by default.

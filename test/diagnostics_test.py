@@ -253,6 +253,7 @@ def test_periods_require_following_spaces_except_in_paths_and_abbreviations() ->
     lines = [
         "This sentence has no space.Next sentence.",
         "The author is Ph.D. Smith.",
+        r"See Fig.~\ref{fig:example} and Figs.~\ref{fig:examples}.",
         r"\includegraphics{../assets/image.png} \input{source/main.tex}",
         "Version 1.2 and an ellipsis... are valid.",
     ]
