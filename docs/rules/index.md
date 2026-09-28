@@ -69,6 +69,7 @@ them per their liking and, if supported, configure them.
 | REF010 | [capitalize-reference-type](capitalize-reference-type.md) | Capitalize the first letter of reference types before `\ref`. | error |
 | REF011 | [space-before-citation](space-before-citation.md) | Use a hard space (`~`) before `\cite`. | error |
 | REF012 | [eqref-non-equation-label](eqref-non-equation-label.md) | Use `\ref` instead of `\eqref` for non-equation labels. | error |
+| REF013 | [footnote-before-punctuation](footnote-before-punctuation.md) | Place `\footnote{...}` before punctuation. | error |
 
 ## Figure (`FIG`)
 
@@ -134,6 +135,7 @@ parentheses-around-eqref
 capitalize-reference-type
 space-before-citation
 eqref-non-equation-label
+footnote-before-punctuation
 invalid-figure-position
 scaled-figure-image
 missing-figure-label

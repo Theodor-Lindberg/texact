@@ -1027,6 +1027,27 @@ def test_citations_precede_punctuation() -> None:
     assert all(r"\cite" in comment.message for comment in comments)
 
 
+def test_footnotes_precede_punctuation() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"This is correct\footnote{valid}.",
+        r"This is wrong.\footnote{period}.",
+        r"This has whitespace! \footnote[1]{marked}.",
+        r"This has a hard space?~\footnote{hard-space}.",
+        r"This is correct\footnote{valid}.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF013"
+    ]
+
+    assert [comment.line_no for comment in comments] == [1, 2, 3]
+    assert all(r"\footnote" in comment.message for comment in comments)
+
+
 def test_markboth_spanning_multiple_lines_is_ignored() -> None:
     reviewer = Reviewer_Unsure(Printer())
 

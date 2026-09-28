@@ -18,6 +18,7 @@ from .rules import (
     RULE_REF010,
     RULE_REF011,
     RULE_REF012,
+    RULE_REF013,
 )
 
 
@@ -40,6 +41,9 @@ class Reviewer_RefLabel(Reviewer):
     )
     _PATTERN_PARENTHESIZED_EQREF = re.compile(r"\(\s*\\eqref\{[^}]+\}\s*\)")
     _PATTERN_CITE_AFTER_PUNCTUATION = re.compile(r"[.,;:!?][ \t~]*\\cite\{[^}]+\}")
+    _PATTERN_FOOTNOTE_AFTER_PUNCTUATION = re.compile(
+        r"[.,;:!?][ \t~]*\\footnote(?:\[[^\]]*\])?\{"
+    )
     _PATTERN_TOKEN = re.compile(
         r"\\(?P<environment_command>begin|end)\s*\{(?P<environment>[^}]+)\}"
         r"|\\(?P<command>label|captionof|caption|item)\b"
@@ -82,6 +86,7 @@ class Reviewer_RefLabel(Reviewer):
         self.ref_space_comments: list[Diagnostic] = []
         self.cite_space_comments: list[Diagnostic] = []
         self.cite_period_comments: list[Diagnostic] = []
+        self.footnote_period_comments: list[Diagnostic] = []
         self.eqref_preference_comments: list[Diagnostic] = []
         self.eqref_parentheses_comments: list[Diagnostic] = []
         self.eqref_misuse_comments: list[Diagnostic] = []
@@ -151,6 +156,15 @@ class Reviewer_RefLabel(Reviewer):
                     line_no,
                     RULE_REF006,
                     RULE_REF006.render_message(),
+                )
+            )
+
+        for _ in self._PATTERN_FOOTNOTE_AFTER_PUNCTUATION.finditer(line):
+            self.footnote_period_comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_REF013,
+                    RULE_REF013.render_message(),
                 )
             )
 
@@ -347,6 +361,11 @@ class Reviewer_RefLabel(Reviewer):
                 f"Citations after periods: {len(self.cite_period_comments)}"
             )
 
+        if self.footnote_period_comments:
+            messages.append(
+                f"Footnotes after punctuation: {len(self.footnote_period_comments)}"
+            )
+
         if self.label_before_counter_comments:
             messages.append(
                 f"Labels before counters: {len(self.label_before_counter_comments)}"
@@ -368,6 +387,7 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.eqref_misuse_comments)
         comments.extend(self.reference_type_comments)
         comments.extend(self.cite_period_comments)
+        comments.extend(self.footnote_period_comments)
         comments.extend(self.label_before_counter_comments)
 
         for label in missing_labels:
@@ -404,6 +424,7 @@ class Reviewer_RefLabel(Reviewer):
             or self.eqref_misuse_comments
             or self.reference_type_comments
             or self.cite_period_comments
+            or self.footnote_period_comments
             or self.label_before_counter_comments
         ):
             return Status.FAILED

@@ -333,6 +333,12 @@ RULES = RuleRegistry(
             "Use \\ref instead of \\eqref for non-equation label {label}.",
         ),
         Rule(
+            "REF013",
+            "footnote-before-punctuation",
+            "Reviewer_RefLabel",
+            "Place \\footnote{{...}} before punctuation.",
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -441,6 +447,7 @@ RULE_REF009 = RULES.get("REF009")
 RULE_REF010 = RULES.get("REF010")
 RULE_REF011 = RULES.get("REF011")
 RULE_REF012 = RULES.get("REF012")
+RULE_REF013 = RULES.get("REF013")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")
