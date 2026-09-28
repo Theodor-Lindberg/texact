@@ -62,6 +62,8 @@ them per their liking and, if supported, configure them.
 | REF005 | [space-before-reference](space-before-reference.md) | Use a hard space (`~`) before `\ref`. | error |
 | REF006 | [citation-before-period](citation-before-period.md) | Place `\cite{...}` before the period. | error |
 | REF007 | [label-before-caption](label-before-caption.md) | Put labels after captions or first numbered items. | warning |
+| REF008 | [prefer-eqref](prefer-eqref.md) | Use `\eqref{...}` for equation references instead of `\ref`. | error |
+| REF009 | [parentheses-around-eqref](parentheses-around-eqref.md) | Remove parentheses around `\eqref`; it adds them automatically. | warning |
 
 ## Figure (`FIG`)
 
@@ -121,6 +123,8 @@ label-prefix
 space-before-reference
 citation-before-period
 label-before-caption
+prefer-eqref
+parentheses-around-eqref
 invalid-figure-position
 scaled-figure-image
 missing-figure-label

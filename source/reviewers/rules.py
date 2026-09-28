@@ -286,6 +286,20 @@ RULES = RuleRegistry(
             Severity.WARNING,
         ),
         Rule(
+            "REF008",
+            "prefer-eqref",
+            "Reviewer_RefLabel",
+            "Use \\eqref{{...}} for equation references instead of \\ref.",
+            enabled_by_default=False,
+        ),
+        Rule(
+            "REF009",
+            "parentheses-around-eqref",
+            "Reviewer_RefLabel",
+            "Remove parentheses around \\eqref; it adds them automatically.",
+            Severity.WARNING,
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -387,6 +401,8 @@ RULE_REF004 = RULES.get("REF004")
 RULE_REF005 = RULES.get("REF005")
 RULE_REF006 = RULES.get("REF006")
 RULE_REF007 = RULES.get("REF007")
+RULE_REF008 = RULES.get("REF008")
+RULE_REF009 = RULES.get("REF009")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")

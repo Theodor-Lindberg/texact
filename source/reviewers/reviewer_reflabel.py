@@ -13,6 +13,8 @@ from .rules import (
     RULE_REF005,
     RULE_REF006,
     RULE_REF007,
+    RULE_REF008,
+    RULE_REF009,
 )
 
 
@@ -27,8 +29,9 @@ class Reviewer_RefLabel(Reviewer):
     """Checks label names and references."""
 
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
-    _PATTERN_REF = re.compile(r"\\ref\{([^}]+)\}")
+    _PATTERN_REF = re.compile(r"\\(?P<command>eqref|ref)\{(?P<label>[^}]+)\}")
     _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
+    _PATTERN_PARENTHESIZED_EQREF = re.compile(r"\(\s*\\eqref\{[^}]+\}\s*\)")
     _PATTERN_CITE_AFTER_PERIOD = re.compile(r"\.\s*\\cite\{[^}]+\}")
     _PATTERN_TOKEN = re.compile(
         r"\\(?P<environment_command>begin|end)\s*\{(?P<environment>[^}]+)\}"
@@ -66,6 +69,8 @@ class Reviewer_RefLabel(Reviewer):
         self.prefix_comments: list[Diagnostic] = []
         self.ref_space_comments: list[Diagnostic] = []
         self.cite_period_comments: list[Diagnostic] = []
+        self.eqref_preference_comments: list[Diagnostic] = []
+        self.eqref_parentheses_comments: list[Diagnostic] = []
         self.label_before_counter_comments: list[Diagnostic] = []
         self.context_stack: list[str] = []
         self.pending_section_context = False
@@ -134,7 +139,18 @@ class Reviewer_RefLabel(Reviewer):
                 )
             )
 
+        for _ in self._PATTERN_PARENTHESIZED_EQREF.finditer(line):
+            self.eqref_parentheses_comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_REF009,
+                    RULE_REF009.render_message(),
+                )
+            )
+
         for ref_match in self._PATTERN_REF_WITHOUT_HARD_SPACE.finditer(line):
+            if line[: ref_match.start()].rstrip().endswith("("):
+                continue
             self.ref_space_comments.append(
                 Diagnostic(
                     line_no,
@@ -143,9 +159,16 @@ class Reviewer_RefLabel(Reviewer):
                 )
             )
 
-        ref_matches = self._PATTERN_REF.finditer(line)
-        for ref_match in ref_matches:
-            ref_name = ref_match.group(1)
+        for ref_match in self._PATTERN_REF.finditer(line):
+            ref_name = ref_match.group("label")
+            if ref_match.group("command") == "ref" and ref_name.startswith("eq:"):
+                self.eqref_preference_comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_REF008,
+                        RULE_REF008.render_message(),
+                    )
+                )
             if ref_name not in self.referenced_labels:
                 self.referenced_labels.add(ref_name)
                 self.ref_line_map[ref_name] = line_no
@@ -243,6 +266,17 @@ class Reviewer_RefLabel(Reviewer):
                 f"References without hard spaces: {len(self.ref_space_comments)}"
             )
 
+        if self.eqref_preference_comments:
+            messages.append(
+                "Equation references not using \\eqref: "
+                f"{len(self.eqref_preference_comments)}"
+            )
+
+        if self.eqref_parentheses_comments:
+            messages.append(
+                f"Parentheses around \\eqref: {len(self.eqref_parentheses_comments)}"
+            )
+
         if self.cite_period_comments:
             messages.append(
                 f"Citations after periods: {len(self.cite_period_comments)}"
@@ -263,6 +297,8 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.underscore_comments)
         comments.extend(self.prefix_comments)
         comments.extend(self.ref_space_comments)
+        comments.extend(self.eqref_preference_comments)
+        comments.extend(self.eqref_parentheses_comments)
         comments.extend(self.cite_period_comments)
         comments.extend(self.label_before_counter_comments)
 

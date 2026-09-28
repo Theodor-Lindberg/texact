@@ -22,10 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support selecting rules from the command line.
 - Check for consecutive commas.
 - More casing checks.
+- Optionally prefer `\eqref` for equation references.
+- Warn about redundant parentheses around `\eqref`.
 
 ### Fixed
 
 - Ignore `Fig.` and `Figs.` abbreviations in missing-space checks.
+- Do not require a hard space before a parenthesized `\ref`.
 
 ### Changed
 
