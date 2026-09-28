@@ -203,6 +203,25 @@ def test_spaces_before_punctuation_are_reported() -> None:
     assert f"{Printer.DARK_RED}wrong ,{Printer.RESET}" in comments[2].message
 
 
+def test_spaces_before_punctuation_are_ignored_in_math() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        r"Inline math $x , y$ and prose with an error .",
+        r"\begin{equation}",
+        "x , y",
+        r"\end{equation}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = reviewer.get_comments()
+    assert len(comments) == 1
+    assert comments[0].code == "UNS004"
+    assert comments[0].line_no == 0
+    assert "error ." in comments[0].message
+
+
 def test_period_before_closing_brace_does_not_need_a_space() -> None:
     reviewer = Reviewer_Unsure(Printer())
 

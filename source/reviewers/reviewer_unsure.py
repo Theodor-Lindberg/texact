@@ -158,7 +158,11 @@ class Reviewer_Unsure(Reviewer):
             )
             self.author_possessive_count += len(author_possessive_matches)
 
-        space_before_punctuation_matches = self.find_space_before_punctuation(line)
+        masked_line = self._mask_dash_exclusions(line)
+        space_before_punctuation_matches = self.find_space_before_punctuation(
+            line,
+            searchable_line=masked_line,
+        )
         if space_before_punctuation_matches:
             self.comments.append(
                 Diagnostic(
@@ -206,7 +210,11 @@ class Reviewer_Unsure(Reviewer):
             )
             self.period_without_space_count += len(period_without_space_matches)
 
-        dash_matches = self.find_dash_length_issues(line_no, line)
+        dash_matches = self.find_dash_length_issues(
+            line_no,
+            line,
+            masked_line=masked_line,
+        )
         self.comments.extend(dash_matches)
         self.dash_length_count += len(dash_matches)
 
@@ -283,9 +291,15 @@ class Reviewer_Unsure(Reviewer):
     def find_author_possessive(self, line: str) -> list[str]:
         return self._PATTERN_AUTHOR_POSSESSIVE.findall(line)
 
-    def find_space_before_punctuation(self, line: str) -> list[str]:
+    def find_space_before_punctuation(
+        self,
+        line: str,
+        searchable_line: str | None = None,
+    ) -> list[str]:
         contexts: list[str] = []
-        for match in self._PATTERN_SPACE_BEFORE_PUNCTUATION.finditer(line):
+        if searchable_line is None:
+            searchable_line = line
+        for match in self._PATTERN_SPACE_BEFORE_PUNCTUATION.finditer(searchable_line):
             before = re.search(r"\w+$", line[: match.start()])
             context = match.group(0)
             if before is not None:
@@ -323,8 +337,15 @@ class Reviewer_Unsure(Reviewer):
             contexts.append(self.printer.dark_red(context))
         return contexts
 
-    def find_dash_length_issues(self, line_no: int, line: str) -> list[Diagnostic]:
-        masked_line = self._mask_dash_exclusions(line)
+    def find_dash_length_issues(
+        self,
+        line_no: int,
+        line: str,
+        *,
+        masked_line: str | None = None,
+    ) -> list[Diagnostic]:
+        if masked_line is None:
+            masked_line = self._mask_dash_exclusions(line)
         comments: list[Diagnostic] = []
         for match in self._PATTERN_DASH_WORD.finditer(masked_line):
             left = match.group("left")
