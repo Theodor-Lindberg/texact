@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ignore `Fig.` and `Figs.` abbreviations in missing-space checks.
 - Do not require a hard space before a parenthesized `\ref`.
+- Detect consecutive periods before punctuation, including in `etc..,`.
 
 ### Changed
 

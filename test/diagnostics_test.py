@@ -264,16 +264,17 @@ def test_double_periods_are_reported_but_relative_paths_are_ignored() -> None:
         r"\includegraphics{../assets/image.png}",
         r"\input{../../shared.tex}",
         "This uses an ellipsis... correctly.",
+        "The list includes apples, etc.., and pears.",
     ]
 
     for line_no, line in enumerate(lines):
         reviewer.process_line(line_no, line)
 
     comments = reviewer.get_comments()
-    assert len(comments) == 1
-    assert comments[0].code == "UNS005"
-    assert "two periods" in comments[0].message
-    assert reviewer.get_summary() == "Double periods: 1"
+    assert len(comments) == 2
+    assert all(comment.code == "UNS005" for comment in comments)
+    assert [comment.line_no for comment in comments] == [0, 4]
+    assert reviewer.get_summary() == "Double periods: 2"
 
 
 def test_double_commas_are_reported_but_latex_spacing_is_ignored() -> None:

@@ -229,7 +229,7 @@ RULES = RuleRegistry(
             "UNS005",
             "double-period-sentence",
             "Reviewer_Unsure",
-            "Avoid ending a sentence with two periods.",
+            "Avoid consecutive periods.",
         ),
         Rule(
             "UNS006",

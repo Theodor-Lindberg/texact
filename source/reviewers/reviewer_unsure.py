@@ -23,7 +23,7 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_WE = re.compile(r"\bwe\b", re.IGNORECASE)
     _PATTERN_AUTHOR_POSSESSIVE = re.compile(r"\bauthor's\b", re.IGNORECASE)
     _PATTERN_SPACE_BEFORE_PUNCTUATION = re.compile(r"[ \t]+[.,;:!?]")
-    _PATTERN_DOUBLE_PERIOD = re.compile(r"(?<![./])\.\.(?![./])(?=\s|$)")
+    _PATTERN_DOUBLE_PERIOD = re.compile(r"(?<![./])\.\.(?![./])")
     _PATTERN_DOUBLE_COMMA = re.compile(r"(?<![\\,/]),,(?![,/])(?=\s|$)")
     _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/}])")
     _PATTERN_ABBREVIATION_PUNCTUATION = re.compile(

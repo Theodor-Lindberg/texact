@@ -2,15 +2,18 @@
 
 ## What it does
 
-Checks that sentences do not end with two periods.
+Checks for consecutive periods in prose, excluding ellipses and relative paths.
 
 ## Why is this bad?
 
-A sentence should end with one period.
+Two consecutive periods can accidentally leave a sentence or abbreviation with
+incorrect punctuation.
 
 ## Example
 
 ```latex
-This sentence ends with two periods.
+This sentence ends with two periods..
+The list includes apples, etc.., and pears.
 \includegraphics{../assets/image.png}
+This uses an ellipsis... correctly.
 ```
