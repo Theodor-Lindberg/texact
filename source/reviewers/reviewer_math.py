@@ -29,6 +29,7 @@ class Reviewer_Math(Reviewer):
         ">>": r"\gg",
         "->": r"\rightarrow",
         "<-": r"\leftarrow",
+        "::=": r"\Coloneqq",
         ":=": r"\coloneqq",
     }
     _PATTERN_MATH_SYMBOL = re.compile(

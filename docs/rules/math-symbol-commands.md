@@ -16,6 +16,7 @@ sequences of text characters.
 | Instead of | Use |
 | --- | --- |
 | `+-` or `-+` | `\pm` |
+| `::=` | `\Coloneqq` |
 | `:=` | `\coloneqq` |
 | `>=` | `\geq` |
 | `<=` | `\leq` |

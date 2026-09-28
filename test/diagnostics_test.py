@@ -573,7 +573,7 @@ def test_math_symbol_operators_use_latex_commands() -> None:
     reviewer = Reviewer_Math(Printer())
     lines = [
         "The expression a >= b is prose.",
-        r"$x := a >= b <= c << d >> e -> f <- g <=> h$",
+        r"$x ::= a; y := b >= c <= d << e >> f -> g <- h <=> i$",
         r"\[x \coloneqq a \geq b \leq c \ll d \gg e \rightarrow f \leftarrow g \Leftrightarrow h\]",
     ]
 
@@ -584,6 +584,7 @@ def test_math_symbol_operators_use_latex_commands() -> None:
         comment for comment in reviewer.get_comments() if comment.code == "MAT001"
     ]
     expected = [
+        ("::=", r"\Coloneqq"),
         (":=", r"\coloneqq"),
         (">=", r"\geq"),
         ("<=", r"\leq"),
@@ -596,7 +597,7 @@ def test_math_symbol_operators_use_latex_commands() -> None:
 
     assert len(comments) == len(expected)
     assert all(comment.line_no == 1 for comment in comments)
-    assert reviewer.get_summary() == "Math symbol command issues: 8"
+    assert reviewer.get_summary() == "Math symbol command issues: 9"
     for comment, (operator, command) in zip(comments, expected):
         assert f"{Printer.DARK_RED}{operator}{Printer.RESET}" in comment.message
         assert f"{Printer.YELLOW}{command}{Printer.RESET}" in comment.message
