@@ -315,6 +315,28 @@ def test_periods_require_following_spaces_except_in_paths_and_abbreviations() ->
     assert reviewer.get_summary() == "Periods without following spaces: 1"
 
 
+def test_periods_in_math_are_not_checked() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        r"$x.Next$",
+        r"\[x.Next\]",
+        r"\begin{equation}",
+        "x.Next",
+        r"\end{equation}",
+        "Prose still needs a space.Next",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS006"
+    ]
+
+    assert [comment.line_no for comment in comments] == [5]
+    assert "space.Next" in comments[0].message
+
+
 def test_dash_length_reports_number_ranges_and_word_en_dashes() -> None:
     reviewer = Reviewer_Unsure(Printer())
     lines = [

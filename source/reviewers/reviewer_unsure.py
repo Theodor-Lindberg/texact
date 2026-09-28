@@ -197,7 +197,10 @@ class Reviewer_Unsure(Reviewer):
             )
             self.double_comma_count += len(double_comma_matches)
 
-        period_without_space_matches = self.find_periods_without_space(line)
+        period_without_space_matches = self.find_periods_without_space(
+            line,
+            searchable_line=masked_line,
+        )
         if period_without_space_matches:
             self.comments.append(
                 Diagnostic(
@@ -319,14 +322,20 @@ class Reviewer_Unsure(Reviewer):
     def find_double_commas(self, line: str) -> list[str]:
         return self._PATTERN_DOUBLE_COMMA.findall(line)
 
-    def find_periods_without_space(self, line: str) -> list[str]:
-        masked_line = list(line)
+    def find_periods_without_space(
+        self,
+        line: str,
+        searchable_line: str | None = None,
+    ) -> list[str]:
+        if searchable_line is None:
+            searchable_line = line
+        masked_line = list(searchable_line)
         for pattern in (
             self._PATTERN_PATH,
             self._PATTERN_ABBREVIATION,
             self._PATTERN_FILENAME,
         ):
-            for match in pattern.finditer(line):
+            for match in pattern.finditer(searchable_line):
                 for index in range(match.start(), match.end()):
                     masked_line[index] = " "
 
