@@ -300,6 +300,12 @@ RULES = RuleRegistry(
             Severity.WARNING,
         ),
         Rule(
+            "REF010",
+            "capitalize-reference-type",
+            "Reviewer_RefLabel",
+            "Capitalize the first letter: {reference}",
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -403,6 +409,7 @@ RULE_REF006 = RULES.get("REF006")
 RULE_REF007 = RULES.get("REF007")
 RULE_REF008 = RULES.get("REF008")
 RULE_REF009 = RULES.get("REF009")
+RULE_REF010 = RULES.get("REF010")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")

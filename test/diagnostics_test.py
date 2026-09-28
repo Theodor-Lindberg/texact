@@ -706,6 +706,50 @@ def test_eqref_parentheses_are_redundant() -> None:
     assert all(comment.severity.value == "warning" for comment in comments)
 
 
+def test_reference_types_are_capitalized_before_ref() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"See table~\ref{tab:one}.",
+        r"See section~\ref{sec:one}.",
+        r"See figure~\ref{fig:one}.",
+        r"See fig.~\ref{fig:one}.",
+        r"See figs.~\ref{fig:one}.",
+        r"See tables~\ref{tab:one}.",
+        r"See listing~\ref{lst:one}.",
+        r"See Table~\ref{tab:one}.",
+        r"See Section~\ref{sec:one}.",
+        r"See Figure~\ref{fig:one}.",
+        r"See Fig.~\ref{fig:one}.",
+        r"See Figs.~\ref{fig:one}.",
+        r"See Tables~\ref{tab:one}.",
+        r"See Listing~\ref{lst:one}.",
+        r"The table is informative.",
+        r"See table~\eqref{eq:one}.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF010"
+    ]
+
+    assert [comment.line_no for comment in comments] == list(range(7))
+    expected_references = [
+        r"table~\ref{tab:one}",
+        r"section~\ref{sec:one}",
+        r"figure~\ref{fig:one}",
+        r"fig.~\ref{fig:one}",
+        r"figs.~\ref{fig:one}",
+        r"tables~\ref{tab:one}",
+        r"listing~\ref{lst:one}",
+    ]
+    assert [comment.message for comment in comments] == [
+        "Capitalize the first letter: " + reviewer.printer.dark_red(reference)
+        for reference in expected_references
+    ]
+
+
 def test_labels_follow_numbering_statements() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [

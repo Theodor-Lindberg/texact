@@ -64,6 +64,7 @@ them per their liking and, if supported, configure them.
 | REF007 | [label-before-caption](label-before-caption.md) | Put labels after captions or first numbered items. | warning |
 | REF008 | [prefer-eqref](prefer-eqref.md) | Use `\eqref{...}` for equation references instead of `\ref`. | error |
 | REF009 | [parentheses-around-eqref](parentheses-around-eqref.md) | Remove parentheses around `\eqref`; it adds them automatically. | warning |
+| REF010 | [capitalize-reference-type](capitalize-reference-type.md) | Capitalize the first letter of reference types before `\ref`. | error |
 
 ## Figure (`FIG`)
 
@@ -125,6 +126,7 @@ citation-before-period
 label-before-caption
 prefer-eqref
 parentheses-around-eqref
+capitalize-reference-type
 invalid-figure-position
 scaled-figure-image
 missing-figure-label

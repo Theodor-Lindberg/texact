@@ -15,6 +15,7 @@ from .rules import (
     RULE_REF007,
     RULE_REF008,
     RULE_REF009,
+    RULE_REF010,
 )
 
 
@@ -31,6 +32,9 @@ class Reviewer_RefLabel(Reviewer):
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
     _PATTERN_REF = re.compile(r"\\(?P<command>eqref|ref)\{(?P<label>[^}]+)\}")
     _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
+    _PATTERN_LOWERCASE_REFERENCE_TYPE = re.compile(
+        r"(?<![A-Za-z])(?P<reference>(?:tables|table|section|figure|figs?\.|listing)~\\ref\{[^}]+\})"
+    )
     _PATTERN_PARENTHESIZED_EQREF = re.compile(r"\(\s*\\eqref\{[^}]+\}\s*\)")
     _PATTERN_CITE_AFTER_PERIOD = re.compile(r"\.\s*\\cite\{[^}]+\}")
     _PATTERN_TOKEN = re.compile(
@@ -71,6 +75,7 @@ class Reviewer_RefLabel(Reviewer):
         self.cite_period_comments: list[Diagnostic] = []
         self.eqref_preference_comments: list[Diagnostic] = []
         self.eqref_parentheses_comments: list[Diagnostic] = []
+        self.reference_type_comments: list[Diagnostic] = []
         self.label_before_counter_comments: list[Diagnostic] = []
         self.context_stack: list[str] = []
         self.pending_section_context = False
@@ -145,6 +150,19 @@ class Reviewer_RefLabel(Reviewer):
                     line_no,
                     RULE_REF009,
                     RULE_REF009.render_message(),
+                )
+            )
+
+        for reference_match in self._PATTERN_LOWERCASE_REFERENCE_TYPE.finditer(line):
+            self.reference_type_comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_REF010,
+                    RULE_REF010.render_message(
+                        reference=self.printer.dark_red(
+                            reference_match.group("reference")
+                        ),
+                    ),
                 )
             )
 
@@ -277,6 +295,11 @@ class Reviewer_RefLabel(Reviewer):
                 f"Parentheses around \\eqref: {len(self.eqref_parentheses_comments)}"
             )
 
+        if self.reference_type_comments:
+            messages.append(
+                f"Lowercase reference types: {len(self.reference_type_comments)}"
+            )
+
         if self.cite_period_comments:
             messages.append(
                 f"Citations after periods: {len(self.cite_period_comments)}"
@@ -299,6 +322,7 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.ref_space_comments)
         comments.extend(self.eqref_preference_comments)
         comments.extend(self.eqref_parentheses_comments)
+        comments.extend(self.reference_type_comments)
         comments.extend(self.cite_period_comments)
         comments.extend(self.label_before_counter_comments)
 
@@ -332,6 +356,7 @@ class Reviewer_RefLabel(Reviewer):
             or self.underscore_comments
             or self.prefix_comments
             or self.ref_space_comments
+            or self.reference_type_comments
             or self.cite_period_comments
             or self.label_before_counter_comments
         ):
