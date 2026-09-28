@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - ChkTeX is now opt-in instead of running by default.
+- MAT001 now checks for more LaTeX commands.
 
 ### Removed
 

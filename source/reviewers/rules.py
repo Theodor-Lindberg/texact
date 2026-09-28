@@ -152,9 +152,9 @@ RULES = RuleRegistry(
         ),
         Rule(
             "MAT001",
-            "plus-minus-notation",
+            "math-symbol-commands",
             "Reviewer_Math",
-            "Use \\pm instead of {notation}.",
+            "Use {command} instead of {operator}.",
         ),
         Rule(
             "MAT002",

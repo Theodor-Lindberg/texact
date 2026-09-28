@@ -20,6 +20,19 @@ class Reviewer_Math(Reviewer):
     """Checks mathematical notation."""
 
     _PATTERN_PLUS_MINUS = re.compile(r"\+\-|\-\+")
+    _MATH_SYMBOL_COMMANDS: ClassVar[dict[str, str]] = {
+        "<=>": r"\Leftrightarrow",
+        ">=": r"\geq",
+        "<=": r"\leq",
+        "<<": r"\ll",
+        ">>": r"\gg",
+        "->": r"\rightarrow",
+        "<-": r"\leftarrow",
+        ":=": r"\coloneqq",
+    }
+    _PATTERN_MATH_SYMBOL = re.compile(
+        "|".join(re.escape(symbol) for symbol in _MATH_SYMBOL_COMMANDS)
+    )
     _PATTERN_ELLIPSIS = re.compile(r"\.\.\.")
     _MATH_OPERATORS = (
         "arccos",
@@ -136,15 +149,7 @@ class Reviewer_Math(Reviewer):
                 )
 
         for match in self._PATTERN_PLUS_MINUS.finditer(line):
-            self.comments.append(
-                Diagnostic(
-                    line_no,
-                    RULE_MAT001,
-                    RULE_MAT001.render_message(
-                        notation=self.printer.dark_red(match.group(0)),
-                    ),
-                )
-            )
+            self._add_symbol_command_comment(line_no, match.group(0), r"\pm")
 
         text_segments: list[str] = []
         math_segments: list[str] = []
@@ -188,6 +193,14 @@ class Reviewer_Math(Reviewer):
                 )
 
         for math_segment in math_segments:
+            for match in self._PATTERN_MATH_SYMBOL.finditer(math_segment):
+                operator = match.group(0)
+                self._add_symbol_command_comment(
+                    line_no,
+                    operator,
+                    self._MATH_SYMBOL_COMMANDS[operator],
+                )
+
             for _match in self._PATTERN_ELLIPSIS.finditer(math_segment):
                 baseline_ellipsis = self.printer.yellow(r"\ldots")
                 centered_ellipsis = self.printer.yellow(r"\cdots")
@@ -244,6 +257,23 @@ class Reviewer_Math(Reviewer):
                     )
                 )
 
+    def _add_symbol_command_comment(
+        self,
+        line_no: int,
+        operator: str,
+        command: str,
+    ) -> None:
+        self.comments.append(
+            Diagnostic(
+                line_no,
+                RULE_MAT001,
+                RULE_MAT001.render_message(
+                    command=self.printer.yellow(command),
+                    operator=self.printer.dark_red(operator),
+                ),
+            )
+        )
+
     def get_comments(self) -> list[Diagnostic]:
         if not self._unclosed_delimiters_added:
             for delimiter, opening_line in self._delimiter_stack:
@@ -263,7 +293,7 @@ class Reviewer_Math(Reviewer):
     def get_summary(self) -> str:
         if not self.comments:
             return ""
-        plus_minus_count = sum(
+        symbol_command_count = sum(
             comment.code == RULE_MAT001.code for comment in self.comments
         )
         operator_count = sum(
@@ -283,8 +313,8 @@ class Reviewer_Math(Reviewer):
             comment.code == RULE_MAT007.code for comment in self.comments
         )
         summaries = []
-        if plus_minus_count:
-            summaries.append(f"Plus-minus notation: {plus_minus_count}")
+        if symbol_command_count:
+            summaries.append(f"Math symbol command issues: {symbol_command_count}")
         if operator_count:
             summaries.append(f"Unescaped math operators: {operator_count}")
         if mu_count:

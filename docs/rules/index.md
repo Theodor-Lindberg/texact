@@ -30,7 +30,7 @@ them per their liking and, if supported, configure them.
 
 | Code | Name | Message | Severity |
 | --- | --- | --- | --- |
-| MAT001 | [plus-minus-notation](plus-minus-notation.md) | Use `\pm` instead of `+-` or `-+`. | error |
+| MAT001 | [math-symbol-commands](math-symbol-commands.md) | Use LaTeX commands for plus-minus, assignment, comparison, and arrow symbols. | error |
 | MAT002 | [math-operator-command](math-operator-command.md) | Use LaTeX commands for common math operators. | error |
 | MAT003 | [textmu-command](textmu-command.md) | Use `\textmu` instead of `\mu`. | error |
 | MAT004 | [scaled-parentheses](scaled-parentheses.md) | Use `\left` and `\right` for math parentheses. | error |
@@ -104,13 +104,12 @@ abstract-first-line-this-work
 incorrect-casing
 title-casing
 heading-order
-plus-minus-notation
 math-operator-command
 textmu-command
 scaled-parentheses
 ieee-math-environment
 matching-delimiters
-ellipsis-notation
+math-symbol-commands
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive

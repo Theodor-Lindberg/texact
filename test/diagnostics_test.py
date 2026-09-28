@@ -557,7 +557,43 @@ def test_plus_minus_notation_is_reported() -> None:
     comments = reviewer.get_comments()
     assert len(comments) == 2
     assert [comment.code for comment in comments] == ["MAT001", "MAT001"]
-    assert all(r"\pm" in comment.message for comment in comments)
+    assert reviewer.get_summary() == "Math symbol command issues: 2"
+    for comment, operator in zip(comments, ("+-", "-+")):
+        assert f"{Printer.DARK_RED}{operator}{Printer.RESET}" in comment.message
+        assert f"{Printer.YELLOW}\\pm{Printer.RESET}" in comment.message
+
+
+def test_math_symbol_operators_use_latex_commands() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        "The expression a >= b is prose.",
+        r"$x := a >= b <= c << d >> e -> f <- g <=> h$",
+        r"\[x \coloneqq a \geq b \leq c \ll d \gg e \rightarrow f \leftarrow g \Leftrightarrow h\]",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT001"
+    ]
+    expected = [
+        (":=", r"\coloneqq"),
+        (">=", r"\geq"),
+        ("<=", r"\leq"),
+        ("<<", r"\ll"),
+        (">>", r"\gg"),
+        ("->", r"\rightarrow"),
+        ("<-", r"\leftarrow"),
+        ("<=>", r"\Leftrightarrow"),
+    ]
+
+    assert len(comments) == len(expected)
+    assert all(comment.line_no == 1 for comment in comments)
+    assert reviewer.get_summary() == "Math symbol command issues: 8"
+    for comment, (operator, command) in zip(comments, expected):
+        assert f"{Printer.DARK_RED}{operator}{Printer.RESET}" in comment.message
+        assert f"{Printer.YELLOW}{command}{Printer.RESET}" in comment.message
 
 
 def test_math_operators_use_latex_commands() -> None:
