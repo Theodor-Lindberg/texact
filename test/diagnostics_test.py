@@ -196,6 +196,11 @@ def test_spaces_before_punctuation_are_reported() -> None:
     assert comments[0].code == "UNS004"
     assert comments[1].code == "UNS004"
     assert comments[2].code == "UNS004"
+    assert comments[0].message == (
+        f"Remove spaces before punctuation: {Printer.DARK_RED}wrong .{Printer.RESET}"
+    )
+    assert f"{Printer.DARK_RED}wrong ,{Printer.RESET}" in comments[1].message
+    assert f"{Printer.DARK_RED}wrong ,{Printer.RESET}" in comments[2].message
 
 
 def test_period_before_closing_brace_does_not_need_a_space() -> None:

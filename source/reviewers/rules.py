@@ -215,7 +215,7 @@ RULES = RuleRegistry(
             "UNS004",
             "space-before-punctuation",
             "Reviewer_Unsure",
-            "Avoid spaces before punctuation.",
+            "Remove spaces before punctuation: {context}",
         ),
         Rule(
             "UNS005",

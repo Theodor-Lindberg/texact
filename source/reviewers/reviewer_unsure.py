@@ -164,7 +164,9 @@ class Reviewer_Unsure(Reviewer):
                 Diagnostic(
                     line_no,
                     RULE_UNS004,
-                    RULE_UNS004.render_message(),
+                    RULE_UNS004.render_message(
+                        context=", ".join(space_before_punctuation_matches),
+                    ),
                 )
             )
             self.space_before_punctuation_count += len(space_before_punctuation_matches)
@@ -282,7 +284,14 @@ class Reviewer_Unsure(Reviewer):
         return self._PATTERN_AUTHOR_POSSESSIVE.findall(line)
 
     def find_space_before_punctuation(self, line: str) -> list[str]:
-        return self._PATTERN_SPACE_BEFORE_PUNCTUATION.findall(line)
+        contexts: list[str] = []
+        for match in self._PATTERN_SPACE_BEFORE_PUNCTUATION.finditer(line):
+            before = re.search(r"\w+$", line[: match.start()])
+            context = match.group(0)
+            if before is not None:
+                context = before.group(0) + context
+            contexts.append(self.printer.dark_red(context))
+        return contexts
 
     def find_double_periods(self, line: str) -> list[str]:
         return self._PATTERN_DOUBLE_PERIOD.findall(line)
