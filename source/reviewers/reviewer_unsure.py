@@ -197,7 +197,9 @@ class Reviewer_Unsure(Reviewer):
                 Diagnostic(
                     line_no,
                     RULE_UNS006,
-                    RULE_UNS006.render_message(),
+                    RULE_UNS006.render_message(
+                        context=", ".join(period_without_space_matches),
+                    ),
                 )
             )
             self.period_without_space_count += len(period_without_space_matches)
@@ -298,7 +300,19 @@ class Reviewer_Unsure(Reviewer):
             for match in pattern.finditer(line):
                 for index in range(match.start(), match.end()):
                     masked_line[index] = " "
-        return self._PATTERN_PERIOD_WITHOUT_SPACE.findall("".join(masked_line))
+
+        contexts: list[str] = []
+        masked_text = "".join(masked_line)
+        for match in self._PATTERN_PERIOD_WITHOUT_SPACE.finditer(masked_text):
+            before = re.search(r"\w+$", line[: match.start()])
+            after = re.match(r"\w+", line[match.end() :])
+            context = match.group(0)
+            if before is not None:
+                context = before.group(0) + context
+            if after is not None:
+                context += after.group(0)
+            contexts.append(self.printer.dark_red(context))
+        return contexts
 
     def find_dash_length_issues(self, line_no: int, line: str) -> list[Diagnostic]:
         masked_line = self._mask_dash_exclusions(line)

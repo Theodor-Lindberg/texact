@@ -258,7 +258,9 @@ def test_periods_require_following_spaces_except_in_paths_and_abbreviations() ->
     comments = reviewer.get_comments()
     assert len(comments) == 1
     assert comments[0].code == "UNS006"
-    assert "space after periods" in comments[0].message
+    assert comments[0].message == (
+        f"Add a space after periods: {Printer.DARK_RED}space.Next{Printer.RESET}"
+    )
     assert reviewer.get_summary() == "Periods without following spaces: 1"
 
 

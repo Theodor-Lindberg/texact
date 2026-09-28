@@ -227,7 +227,7 @@ RULES = RuleRegistry(
             "UNS006",
             "space-after-period",
             "Reviewer_Unsure",
-            "Add a space after periods.",
+            "Add a space after periods: {context}",
         ),
         Rule(
             "UNS007",
