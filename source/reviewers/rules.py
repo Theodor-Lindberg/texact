@@ -306,6 +306,13 @@ RULES = RuleRegistry(
             "Capitalize the first letter: {reference}",
         ),
         Rule(
+            "REF011",
+            "space-before-citation",
+            "Reviewer_RefLabel",
+            "Use a hard space (~) before \\cite.",
+            enabled_by_default=False,
+        ),
+        Rule(
             "FIG001",
             "invalid-figure-position",
             "Reviewer_Figure",
@@ -410,6 +417,7 @@ RULE_REF007 = RULES.get("REF007")
 RULE_REF008 = RULES.get("REF008")
 RULE_REF009 = RULES.get("REF009")
 RULE_REF010 = RULES.get("REF010")
+RULE_REF011 = RULES.get("REF011")
 RULE_FIG001 = RULES.get("FIG001")
 RULE_FIG002 = RULES.get("FIG002")
 RULE_FIG003 = RULES.get("FIG003")

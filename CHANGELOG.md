@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optionally prefer `\eqref` for equation references.
 - Warn about redundant parentheses around `\eqref`.
 - Require capitalization for table, section, figure, and listing references.
+- Optionally require a hard space before `\cite`.
 
 ### Fixed
 

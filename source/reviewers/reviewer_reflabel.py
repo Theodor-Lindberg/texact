@@ -16,6 +16,7 @@ from .rules import (
     RULE_REF008,
     RULE_REF009,
     RULE_REF010,
+    RULE_REF011,
 )
 
 
@@ -32,6 +33,7 @@ class Reviewer_RefLabel(Reviewer):
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
     _PATTERN_REF = re.compile(r"\\(?P<command>eqref|ref)\{(?P<label>[^}]+)\}")
     _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
+    _PATTERN_CITE_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\cite\{[^}]+\}")
     _PATTERN_LOWERCASE_REFERENCE_TYPE = re.compile(
         r"(?<![A-Za-z])(?P<reference>(?:tables|table|section|figure|figs?\.|listing)~\\ref\{[^}]+\})"
     )
@@ -72,6 +74,7 @@ class Reviewer_RefLabel(Reviewer):
         self.underscore_comments: list[Diagnostic] = []
         self.prefix_comments: list[Diagnostic] = []
         self.ref_space_comments: list[Diagnostic] = []
+        self.cite_space_comments: list[Diagnostic] = []
         self.cite_period_comments: list[Diagnostic] = []
         self.eqref_preference_comments: list[Diagnostic] = []
         self.eqref_parentheses_comments: list[Diagnostic] = []
@@ -141,6 +144,15 @@ class Reviewer_RefLabel(Reviewer):
                     line_no,
                     RULE_REF006,
                     RULE_REF006.render_message(),
+                )
+            )
+
+        for _ in self._PATTERN_CITE_WITHOUT_HARD_SPACE.finditer(line):
+            self.cite_space_comments.append(
+                Diagnostic(
+                    line_no,
+                    RULE_REF011,
+                    RULE_REF011.render_message(),
                 )
             )
 
@@ -284,6 +296,11 @@ class Reviewer_RefLabel(Reviewer):
                 f"References without hard spaces: {len(self.ref_space_comments)}"
             )
 
+        if self.cite_space_comments:
+            messages.append(
+                f"Citations without hard spaces: {len(self.cite_space_comments)}"
+            )
+
         if self.eqref_preference_comments:
             messages.append(
                 "Equation references not using \\eqref: "
@@ -320,6 +337,7 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.underscore_comments)
         comments.extend(self.prefix_comments)
         comments.extend(self.ref_space_comments)
+        comments.extend(self.cite_space_comments)
         comments.extend(self.eqref_preference_comments)
         comments.extend(self.eqref_parentheses_comments)
         comments.extend(self.reference_type_comments)
@@ -356,6 +374,7 @@ class Reviewer_RefLabel(Reviewer):
             or self.underscore_comments
             or self.prefix_comments
             or self.ref_space_comments
+            or self.cite_space_comments
             or self.reference_type_comments
             or self.cite_period_comments
             or self.label_before_counter_comments

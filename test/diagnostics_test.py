@@ -29,10 +29,11 @@ def test_rule_codes_and_reviewer_numbers_are_unique() -> None:
     assert len(RULES.prefixes) == len(set(RULES.prefixes.values()))
 
 
-def test_only_mat004_and_prefer_eqref_are_disabled_by_default() -> None:
+def test_only_opt_in_rules_are_disabled_by_default() -> None:
     assert [rule.code for rule in RULES if not rule.enabled_by_default] == [
         "MAT004",
         "REF008",
+        "REF011",
     ]
 
 
@@ -464,6 +465,38 @@ def test_prefer_eqref_is_disabled_until_selected(tmp_path: Path) -> None:
     assert "REF008" in enabled.stdout
 
 
+def test_cite_hard_space_rule_is_disabled_until_selected(tmp_path: Path) -> None:
+    tex_file = tmp_path / "citation.tex"
+    tex_file.write_text("See \\cite{source}.\n", encoding="utf-8")
+
+    command = [
+        sys.executable,
+        str(TEST_DIR.parent / "source" / "texact.py"),
+        "--no-chktex",
+        "-q",
+        str(tex_file),
+    ]
+    disabled = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert disabled.returncode == 0
+    assert "REF011" not in disabled.stdout
+
+    enabled = subprocess.run(
+        [*command[:-1], "--select", "REF011", str(tex_file)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert enabled.returncode == 1
+    assert "REF011" in enabled.stdout
+
+
 def test_plus_minus_notation_is_reported() -> None:
     reviewer = Reviewer_Math(Printer())
 
@@ -663,6 +696,25 @@ def test_references_require_hard_spaces() -> None:
     ]
 
     assert len(comments) == 2
+    assert [comment.line_no for comment in comments] == [1, 2]
+    assert all("hard space" in comment.message for comment in comments)
+
+
+def test_citations_require_hard_spaces() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"See~\cite{valid}.",
+        r"See \cite{invalid}.",
+        r"\cite{at-start}.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF011"
+    ]
+
     assert [comment.line_no for comment in comments] == [1, 2]
     assert all("hard space" in comment.message for comment in comments)
 
