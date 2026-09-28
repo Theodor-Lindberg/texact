@@ -62,7 +62,7 @@ them per their liking and, if supported, configure them.
 | REF003 | [unreferenced-label](unreferenced-label.md) | Unreferenced label. | error |
 | REF004 | [label-prefix](label-prefix.md) | Use the matching prefix for the label context. | error |
 | REF005 | [space-before-reference](space-before-reference.md) | Use a hard space (`~`) before `\ref`. | error |
-| REF006 | [citation-before-period](citation-before-period.md) | Place `\cite{...}` before the period. | error |
+| REF006 | [citation-before-punctuation](citation-before-punctuation.md) | Place `\cite{...}` before punctuation. | error |
 | REF007 | [label-before-caption](label-before-caption.md) | Put labels after captions or first numbered items. | warning |
 | REF008 | [prefer-eqref](prefer-eqref.md) | Use `\eqref{...}` for equation references instead of `\ref`. | error |
 | REF009 | [parentheses-around-eqref](parentheses-around-eqref.md) | Remove parentheses around `\eqref`; it adds them automatically. | warning |
@@ -126,7 +126,7 @@ undefined-label-reference
 unreferenced-label
 label-prefix
 space-before-reference
-citation-before-period
+citation-before-punctuation
 label-before-caption
 prefer-eqref
 parentheses-around-eqref

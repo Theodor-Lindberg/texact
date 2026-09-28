@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 7.4.7 and Furo 2025.12.19 -->
-        <title>citation-before-period (REF006) - TeXact documentation</title>
+        <title>citation-before-punctuation (REF006) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -209,7 +209,7 @@
   <label for="sidebar-version-select">Version</label>
   <select id="sidebar-version-select" aria-label="Documentation version" onchange="window.location.href = this.value">
     
-    <option value="citation-before-period.html" selected>main</option>
+    <option value="citation-before-punctuation.html" selected>main</option>
     
     <option value="../../v0.2.0/index.html">v0.2.0</option>
     
@@ -249,7 +249,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/rules/citation-before-period.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/rules/citation-before-punctuation.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -267,20 +267,21 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="citation-before-period-ref006">
-<h1>citation-before-period (REF006)<a class="headerlink" href="#citation-before-period-ref006" title="Link to this heading">¶</a></h1>
+          <section id="citation-before-punctuation-ref006">
+<h1>citation-before-punctuation (REF006)<a class="headerlink" href="#citation-before-punctuation-ref006" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks that a <code class="docutils literal notranslate"><span class="pre">\cite{...}</span></code> tag comes before the period that ends a sentence.</p>
+<p>Checks that <code class="docutils literal notranslate"><span class="pre">\cite{...}</span></code> comes before sentence punctuation, including when
+spaces or a hard space (<code class="docutils literal notranslate"><span class="pre">~</span></code>) separate the punctuation from the citation.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>Putting the citation after the period makes it appear detached from the
-sentence it documents.</p>
+<p>Putting the citation after punctuation makes it appear detached from the text
+it documents.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>This is a sentence.<span class="k">\cite</span><span class="nb">{</span>reference<span class="nb">}</span>
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>This is a sentence.~<span class="k">\cite</span><span class="nb">{</span>reference<span class="nb">}</span>
 This is a sentence<span class="k">\cite</span><span class="nb">{</span>reference<span class="nb">}</span>.
 </pre></div>
 </div>
@@ -342,7 +343,7 @@ This is a sentence<span class="k">\cite</span><span class="nb">{</span>reference
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">citation-before-period (REF006)</a><ul>
+<li><a class="reference internal" href="#">citation-before-punctuation (REF006)</a><ul>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
