@@ -4,7 +4,7 @@ from typing import ClassVar
 from printer import Printer
 from template_check import Template
 
-from .reviewer import Diagnostic, Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status, mask_tikz_environment
 from .rules import (
     RULE_MAT001,
     RULE_MAT002,
@@ -114,10 +114,16 @@ class Reviewer_Math(Reviewer):
         self.template = template
         self.comments: list[Diagnostic] = []
         self._in_math_mode = False
+        self._in_tikz_environment = False
         self._delimiter_stack: list[tuple[str, int]] = []
         self._unclosed_delimiters_added = False
 
     def process_line(self, line_no: int, line: str) -> None:
+        symbol_line, self._in_tikz_environment = mask_tikz_environment(
+            line,
+            self._in_tikz_environment,
+        )
+
         for match in self._PATTERN_DELIMITER.finditer(line):
             delimiter = match.group("delimiter")
             if delimiter in self._DELIMITER_PAIRS:
@@ -160,15 +166,17 @@ class Reviewer_Math(Reviewer):
                     )
                 )
 
-        for match in self._PATTERN_PLUS_MINUS.finditer(line):
+        for match in self._PATTERN_PLUS_MINUS.finditer(symbol_line):
             self._add_symbol_command_comment(line_no, match.group(0), r"\pm")
 
         text_segments: list[str] = []
         math_segments: list[str] = []
+        symbol_math_segments: list[str] = []
         cursor = 0
         for token_match in self._PATTERN_MATH_TOKEN.finditer(line):
             if self._in_math_mode:
                 math_segments.append(line[cursor : token_match.start()])
+                symbol_math_segments.append(symbol_line[cursor : token_match.start()])
             else:
                 text_segments.append(line[cursor : token_match.start()])
 
@@ -188,6 +196,7 @@ class Reviewer_Math(Reviewer):
 
         if self._in_math_mode:
             math_segments.append(line[cursor:])
+            symbol_math_segments.append(symbol_line[cursor:])
         else:
             text_segments.append(line[cursor:])
 
@@ -202,6 +211,15 @@ class Reviewer_Math(Reviewer):
                             context=" in normal text",
                         ),
                     )
+                )
+
+        for symbol_math_segment in symbol_math_segments:
+            for match in self._PATTERN_MATH_SYMBOL.finditer(symbol_math_segment):
+                operator = match.group(0)
+                self._add_symbol_command_comment(
+                    line_no,
+                    operator,
+                    self._MATH_SYMBOL_COMMANDS[operator],
                 )
 
         for math_segment in math_segments:
@@ -233,14 +251,6 @@ class Reviewer_Math(Reviewer):
                             braced_script=self.printer.yellow(braced_script),
                         ),
                     )
-                )
-
-            for match in self._PATTERN_MATH_SYMBOL.finditer(math_segment):
-                operator = match.group(0)
-                self._add_symbol_command_comment(
-                    line_no,
-                    operator,
-                    self._MATH_SYMBOL_COMMANDS[operator],
                 )
 
             for _match in self._PATTERN_ELLIPSIS.finditer(math_segment):

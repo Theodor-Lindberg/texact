@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Skip math-symbol and punctuation checks in TikZ figures.
+
 ### Changed
 
 ### Removed

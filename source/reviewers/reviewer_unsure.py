@@ -2,7 +2,7 @@ import re
 
 from printer import Printer
 
-from .reviewer import Diagnostic, Reviewer, Status
+from .reviewer import Diagnostic, Reviewer, Status, mask_tikz_environment
 from .rules import (
     RULE_UNS001,
     RULE_UNS002,
@@ -84,6 +84,7 @@ class Reviewer_Unsure(Reviewer):
         self._markboth_depth = 0
         self._markboth_groups_remaining = 0
         self._in_dash_math_mode = False
+        self._in_tikz_environment = False
         self._verbatim_environment: str | None = None
 
     def _mask_markboth(self, line: str) -> str:
@@ -132,6 +133,10 @@ class Reviewer_Unsure(Reviewer):
         # Ignore the boilerplate running header set via \markboth{...}{...},
         # which may span multiple lines.
         line = self._mask_markboth(line)
+        tikz_masked_line, self._in_tikz_environment = mask_tikz_environment(
+            line,
+            self._in_tikz_environment,
+        )
 
         we_matches = self.find_we(line)
         if we_matches:
@@ -164,7 +169,7 @@ class Reviewer_Unsure(Reviewer):
             )
             self.author_possessive_count += len(author_possessive_matches)
 
-        masked_line = self._mask_dash_exclusions(line)
+        masked_line = self._mask_dash_exclusions(tikz_masked_line)
         for match in self._PATTERN_ABBREVIATION_PUNCTUATION.finditer(masked_line):
             actual = match.group("abbreviation")
             normalized = actual.casefold()
@@ -205,7 +210,7 @@ class Reviewer_Unsure(Reviewer):
             )
             self.space_before_punctuation_count += len(space_before_punctuation_matches)
 
-        double_period_matches = self.find_double_periods(line)
+        double_period_matches = self.find_double_periods(tikz_masked_line)
         if double_period_matches:
             self.comments.append(
                 Diagnostic(
@@ -216,7 +221,7 @@ class Reviewer_Unsure(Reviewer):
             )
             self.double_period_count += len(double_period_matches)
 
-        double_comma_matches = self.find_double_commas(line)
+        double_comma_matches = self.find_double_commas(tikz_masked_line)
         if double_comma_matches:
             self.comments.append(
                 Diagnostic(

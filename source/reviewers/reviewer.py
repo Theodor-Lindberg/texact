@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, replace
 from enum import Enum, auto
@@ -6,6 +7,34 @@ from pathlib import Path
 from printer import Printer
 
 from .rules import Rule, Severity
+
+_TIKZ_ENVIRONMENT_PATTERN = re.compile(r"\\(?P<kind>begin|end)\s*\{tikzpicture\*?\}")
+
+
+def mask_tikz_environment(
+    line: str,
+    in_tikz_environment: bool,
+) -> tuple[str, bool]:
+    """Blank TikZ picture contents while preserving positions and state."""
+    characters = list(line)
+    cursor = 0
+    for match in _TIKZ_ENVIRONMENT_PATTERN.finditer(line):
+        if match.group("kind") == "begin":
+            start = cursor if in_tikz_environment else match.start()
+            for index in range(start, match.end()):
+                characters[index] = " "
+            in_tikz_environment = True
+        elif in_tikz_environment:
+            for index in range(cursor, match.end()):
+                characters[index] = " "
+            in_tikz_environment = False
+        cursor = match.end()
+
+    if in_tikz_environment:
+        for index in range(cursor, len(characters)):
+            characters[index] = " "
+
+    return "".join(characters), in_tikz_environment
 
 
 class Status(Enum):

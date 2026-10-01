@@ -249,6 +249,29 @@ def test_spaces_before_punctuation_ignore_hidden_text_before_punctuation() -> No
     assert "error ." in comments[1].message
 
 
+def test_punctuation_checks_ignore_tikz_environments() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        r"\begin{tikzpicture}",
+        r"\node {word , double.. x.Next, a,, b, ie};",
+        r"\end{tikzpicture}",
+        "Prose has space , double.. x.Next, a,, b, and ie.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    punctuation_codes = {"UNS004", "UNS005", "UNS006", "UNS008", "UNS009"}
+    comments = [
+        comment
+        for comment in reviewer.get_comments()
+        if comment.code in punctuation_codes
+    ]
+
+    assert {comment.code for comment in comments} == punctuation_codes
+    assert all(comment.line_no == 3 for comment in comments)
+
+
 def test_period_before_closing_brace_does_not_need_a_space() -> None:
     reviewer = Reviewer_Unsure(Printer())
 
@@ -601,6 +624,27 @@ def test_math_symbol_operators_use_latex_commands() -> None:
     for comment, (operator, command) in zip(comments, expected):
         assert f"{Printer.DARK_RED}{operator}{Printer.RESET}" in comment.message
         assert f"{Printer.YELLOW}{command}{Printer.RESET}" in comment.message
+
+
+def test_math_symbol_commands_ignore_tikz_environments() -> None:
+    reviewer = Reviewer_Math(Printer())
+    lines = [
+        r"\begin{tikzpicture}",
+        r"\draw[->] node {$x -> y +- z$};",
+        r"\end{tikzpicture}",
+        r"$x -> y$",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT001"
+    ]
+
+    assert len(comments) == 1
+    assert comments[0].line_no == 3
+    assert "\\rightarrow" in comments[0].message
 
 
 def test_multi_character_math_scripts_need_braces() -> None:
