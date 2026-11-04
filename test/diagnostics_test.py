@@ -34,7 +34,6 @@ def test_only_opt_in_rules_are_disabled_by_default() -> None:
         "MAT004",
         "MAT009",
         "REF008",
-        "REF011",
     ]
 
 
@@ -546,7 +545,7 @@ def test_prefer_eqref_is_disabled_until_selected(tmp_path: Path) -> None:
     assert "REF008" in enabled.stdout
 
 
-def test_cite_hard_space_rule_is_disabled_until_selected(tmp_path: Path) -> None:
+def test_cite_package_nobreak_rule_is_enabled_by_default(tmp_path: Path) -> None:
     tex_file = tmp_path / "citation.tex"
     tex_file.write_text("See \\cite{source}.\n", encoding="utf-8")
 
@@ -557,25 +556,29 @@ def test_cite_hard_space_rule_is_disabled_until_selected(tmp_path: Path) -> None
         "-q",
         str(tex_file),
     ]
-    disabled = subprocess.run(
+    missing_package = subprocess.run(
         command,
         capture_output=True,
         text=True,
         check=False,
     )
 
-    assert disabled.returncode == 0
-    assert "REF011" not in disabled.stdout
+    assert missing_package.returncode == 1
+    assert "REF011" in missing_package.stdout
 
-    enabled = subprocess.run(
-        [*command[:-1], "--select", "REF011", str(tex_file)],
+    tex_file.write_text(
+        "\\usepackage[nobreak]{cite}\nSee \\cite{source}.\n",
+        encoding="utf-8",
+    )
+    configured = subprocess.run(
+        command,
         capture_output=True,
         text=True,
         check=False,
     )
 
-    assert enabled.returncode == 1
-    assert "REF011" in enabled.stdout
+    assert configured.returncode == 0
+    assert "REF011" not in configured.stdout
 
 
 def test_plus_minus_notation_is_reported() -> None:
@@ -886,12 +889,12 @@ def test_references_require_hard_spaces() -> None:
     assert all("hard space" in comment.message for comment in comments)
 
 
-def test_citations_require_hard_spaces() -> None:
+def test_citations_require_cite_package_with_nobreak() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
-        r"See~\cite{valid}.",
-        r"See \cite{invalid}.",
-        r"\cite{at-start}.",
+        r"\usepackage{cite}",
+        r"See~\cite{missing-option}.",
+        r"\cite{also-missing}.",
     ]
 
     for line_no, line in enumerate(lines):
@@ -901,8 +904,24 @@ def test_citations_require_hard_spaces() -> None:
         comment for comment in reviewer.get_comments() if comment.code == "REF011"
     ]
 
-    assert [comment.line_no for comment in comments] == [1, 2]
-    assert all("hard space" in comment.message for comment in comments)
+    assert [comment.line_no for comment in comments] == [0]
+    assert all("nobreak" in comment.message for comment in comments)
+    assert (
+        "Citations without cite package nobreak option:" not in reviewer.get_summary()
+    )
+
+    configured_reviewer = Reviewer_RefLabel(Printer())
+    configured_lines = [
+        r"\usepackage[sort,nobreak]{cite}",
+        r"See \cite{valid}.",
+    ]
+
+    for line_no, line in enumerate(configured_lines):
+        configured_reviewer.process_line(line_no, line)
+
+    assert not any(
+        comment.code == "REF011" for comment in configured_reviewer.get_comments()
+    )
 
 
 def test_equation_references_can_prefer_eqref() -> None:

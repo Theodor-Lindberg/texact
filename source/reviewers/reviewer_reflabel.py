@@ -35,7 +35,12 @@ class Reviewer_RefLabel(Reviewer):
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
     _PATTERN_REF = re.compile(r"\\(?P<command>eqref|ref)\{(?P<label>[^}]+)\}")
     _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
-    _PATTERN_CITE_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\cite\{[^}]+\}")
+    _PATTERN_CITE = re.compile(r"\\cite\s*\{[^}]+\}")
+    _PATTERN_CITE_PACKAGE = re.compile(
+        r"\\(?:usepackage|RequirePackage)\s*"
+        r"(?:\[(?P<options>[^\]]*)\])?\s*"
+        r"\{(?P<packages>[^}]+)\}"
+    )
     _PATTERN_LOWERCASE_REFERENCE_TYPE = re.compile(
         r"(?<![A-Za-z])(?P<reference>(?:tables|table|section|figure|figs?\.|listing)~\\ref\{[^}]+\})"
     )
@@ -84,7 +89,9 @@ class Reviewer_RefLabel(Reviewer):
         self.underscore_comments: list[Diagnostic] = []
         self.prefix_comments: list[Diagnostic] = []
         self.ref_space_comments: list[Diagnostic] = []
-        self.cite_space_comments: list[Diagnostic] = []
+        self.cite_lines: list[int] = []
+        self.cite_package_lines: list[int] = []
+        self.cite_package_nobreak = False
         self.cite_period_comments: list[Diagnostic] = []
         self.footnote_period_comments: list[Diagnostic] = []
         self.eqref_preference_comments: list[Diagnostic] = []
@@ -101,6 +108,21 @@ class Reviewer_RefLabel(Reviewer):
         # Remove comments (everything after %)
         if "%" in line:
             line = line[: line.index("%")]
+
+        for package_match in self._PATTERN_CITE_PACKAGE.finditer(line):
+            packages = {
+                package.strip()
+                for package in package_match.group("packages").split(",")
+            }
+            options = {
+                option.strip()
+                for option in (package_match.group("options") or "").split(",")
+            }
+            if "cite" in packages:
+                if "nobreak" in options:
+                    self.cite_package_nobreak = True
+                else:
+                    self.cite_package_lines.append(line_no)
 
         for begin_match in self._PATTERN_BEGIN_CONTEXT.finditer(line):
             self.context_stack.append(begin_match.group("context"))
@@ -168,14 +190,8 @@ class Reviewer_RefLabel(Reviewer):
                 )
             )
 
-        for _ in self._PATTERN_CITE_WITHOUT_HARD_SPACE.finditer(line):
-            self.cite_space_comments.append(
-                Diagnostic(
-                    line_no,
-                    RULE_REF011,
-                    RULE_REF011.render_message(),
-                )
-            )
+        for _ in self._PATTERN_CITE.finditer(line):
+            self.cite_lines.append(line_no)
 
         for _ in self._PATTERN_PARENTHESIZED_EQREF.finditer(line):
             self.eqref_parentheses_comments.append(
@@ -305,6 +321,22 @@ class Reviewer_RefLabel(Reviewer):
             return "first enumerate item"
         return None
 
+    def _get_cite_comments(self) -> list[Diagnostic]:
+        if self.cite_package_nobreak or not self.cite_lines:
+            return []
+        line_no = (
+            self.cite_package_lines[0]
+            if self.cite_package_lines
+            else self.cite_lines[0]
+        )
+        return [
+            Diagnostic(
+                line_no,
+                RULE_REF011,
+                RULE_REF011.render_message(),
+            )
+        ]
+
     def get_summary(self) -> str:
         missing_labels = self.referenced_labels - self.defined_labels
         orphaned_labels = self.defined_labels - self.referenced_labels
@@ -328,11 +360,6 @@ class Reviewer_RefLabel(Reviewer):
         if self.ref_space_comments:
             messages.append(
                 f"References without hard spaces: {len(self.ref_space_comments)}"
-            )
-
-        if self.cite_space_comments:
-            messages.append(
-                f"Citations without hard spaces: {len(self.cite_space_comments)}"
             )
 
         if self.eqref_preference_comments:
@@ -376,12 +403,13 @@ class Reviewer_RefLabel(Reviewer):
     def get_comments(self) -> list[Diagnostic]:
         missing_labels = self.referenced_labels - self.defined_labels
         orphaned_labels = self.defined_labels - self.referenced_labels
+        cite_comments = self._get_cite_comments()
 
         comments: list[Diagnostic] = []
         comments.extend(self.underscore_comments)
         comments.extend(self.prefix_comments)
         comments.extend(self.ref_space_comments)
-        comments.extend(self.cite_space_comments)
+        comments.extend(cite_comments)
         comments.extend(self.eqref_preference_comments)
         comments.extend(self.eqref_parentheses_comments)
         comments.extend(self.eqref_misuse_comments)
@@ -413,6 +441,7 @@ class Reviewer_RefLabel(Reviewer):
     def get_status(self) -> Status:
         missing_labels = self.referenced_labels - self.defined_labels
         orphaned_labels = self.defined_labels - self.referenced_labels
+        cite_comments = self._get_cite_comments()
 
         if (
             missing_labels
@@ -420,7 +449,7 @@ class Reviewer_RefLabel(Reviewer):
             or self.underscore_comments
             or self.prefix_comments
             or self.ref_space_comments
-            or self.cite_space_comments
+            or cite_comments
             or self.eqref_misuse_comments
             or self.reference_type_comments
             or self.cite_period_comments

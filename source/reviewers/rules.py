@@ -330,8 +330,7 @@ RULES = RuleRegistry(
             "REF011",
             "space-before-citation",
             "Reviewer_RefLabel",
-            "Use a hard space (~) before \\cite.",
-            enabled_by_default=False,
+            "Use the cite package with the nobreak option when using \\cite.",
         ),
         Rule(
             "REF012",
