@@ -68,7 +68,7 @@ them per their liking and, if supported, configure them.
 | REF008 | [prefer-eqref](prefer-eqref.md) | Use `\eqref{...}` for equation references instead of `\ref`. | error |
 | REF009 | [parentheses-around-eqref](parentheses-around-eqref.md) | Remove parentheses around `\eqref`; it adds them automatically. | warning |
 | REF010 | [capitalize-reference-type](capitalize-reference-type.md) | Capitalize the first letter of reference types before `\ref`. | error |
-| REF011 | [space-before-citation](space-before-citation.md) | Use a hard space (`~`) before `\cite`. | error |
+| REF011 | [space-before-citation](space-before-citation.md) | Use the `cite` package with the `nobreak` option when using `\cite`. | error |
 | REF012 | [eqref-non-equation-label](eqref-non-equation-label.md) | Use `\ref` instead of `\eqref` for non-equation labels. | error |
 | REF013 | [footnote-before-punctuation](footnote-before-punctuation.md) | Place `\footnote{...}` before punctuation. | error |
 

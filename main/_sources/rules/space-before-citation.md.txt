@@ -2,18 +2,21 @@
 
 ## What it does
 
-Checks that a hard space (`~`) precedes each `\cite` command. This rule is
-disabled by default. Enable it with `--select REF011` or add `REF011` to
-`lint.select` in the TeXact configuration.
+Checks that documents using `\cite` load the `cite` package with the
+`nobreak` option.
 
 ## Why is this bad?
 
 A hard space keeps the citation attached to the preceding word and prevents a
-line break before the citation.
+The `nobreak` option prevents a line break before a citation without requiring
+each citation to use a hard space.
 
 ## Example
 
 ```latex
-See \cite{source}.
+\usepackage{cite}
 See~\cite{source}.
+
+\usepackage[nobreak]{cite}
+See\cite{source}.
 ```

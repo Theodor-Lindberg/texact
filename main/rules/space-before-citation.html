@@ -273,19 +273,22 @@
 <h1>space-before-citation (REF011)<a class="headerlink" href="#space-before-citation-ref011" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks that a hard space (<code class="docutils literal notranslate"><span class="pre">~</span></code>) precedes each <code class="docutils literal notranslate"><span class="pre">\cite</span></code> command. This rule is
-disabled by default. Enable it with <code class="docutils literal notranslate"><span class="pre">--select</span> <span class="pre">REF011</span></code> or add <code class="docutils literal notranslate"><span class="pre">REF011</span></code> to
-<code class="docutils literal notranslate"><span class="pre">lint.select</span></code> in the TeXact configuration.</p>
+<p>Checks that documents using <code class="docutils literal notranslate"><span class="pre">\cite</span></code> load the <code class="docutils literal notranslate"><span class="pre">cite</span></code> package with the
+<code class="docutils literal notranslate"><span class="pre">nobreak</span></code> option.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
 <p>A hard space keeps the citation attached to the preceding word and prevents a
-line break before the citation.</p>
+The <code class="docutils literal notranslate"><span class="pre">nobreak</span></code> option prevents a line break before a citation without requiring
+each citation to use a hard space.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
-<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>See <span class="k">\cite</span><span class="nb">{</span>source<span class="nb">}</span>.
+<div class="highlight-latex notranslate"><div class="highlight"><pre><span></span><span class="k">\usepackage</span><span class="nb">{</span>cite<span class="nb">}</span>
 See~<span class="k">\cite</span><span class="nb">{</span>source<span class="nb">}</span>.
+
+<span class="k">\usepackage</span><span class="na">[nobreak]</span><span class="nb">{</span>cite<span class="nb">}</span>
+See<span class="k">\cite</span><span class="nb">{</span>source<span class="nb">}</span>.
 </pre></div>
 </div>
 </section>
