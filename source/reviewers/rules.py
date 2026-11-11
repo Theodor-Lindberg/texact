@@ -142,7 +142,7 @@ RULES = RuleRegistry(
             "CAS002",
             "title-casing",
             "Reviewer_Casing",
-            "Incorrect title casing: {actual} should be {expected}",
+            "Potentially incorrect title casing: {actual} should be {expected}",
         ),
         Rule(
             "SEC001",

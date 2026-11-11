@@ -106,6 +106,7 @@ def test_title_casing_reports_incorrect_minor_word_casing() -> None:
     assert len(comments) == 1
     assert comments[0].code == "CAS002"
     assert comments[0].line == 8
+    assert comments[0].message.startswith("Potentially incorrect title casing:")
     assert "A Study of Digital Systems" in comments[0].message
     assert reviewer.get_summary() == "Title casing errors: 1"
     assert reviewer.get_status().name == "FAILED"
