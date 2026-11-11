@@ -1,0 +1,131 @@
+.try-it {
+  margin: 2rem 0;
+}
+
+.try-it-main-note {
+  color: var(--color-foreground-muted);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem;
+}
+
+.try-it-toolbar {
+  align-items: center;
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-foreground-border);
+  border-bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0.8rem;
+}
+
+.try-it-toolbar label {
+  font-family: var(--font-stack--monospace);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.try-it-version {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-foreground-border);
+  border-radius: 0.25rem;
+  color: var(--color-foreground-muted);
+  font-family: var(--font-stack--monospace);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.45rem;
+}
+
+#try-it-run {
+  background: var(--color-brand-primary);
+  border: 0;
+  border-radius: 0.25rem;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5rem 0.85rem;
+}
+
+#try-it-run:hover {
+  background: var(--color-brand-content);
+}
+
+#try-it-run:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.try-it .CodeMirror {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-foreground-border);
+  color: var(--color-foreground-primary);
+  font-size: 0.9rem;
+  height: auto;
+  min-height: 15rem;
+}
+
+.try-it .CodeMirror-gutters {
+  background: var(--color-background-secondary);
+  border-right: 1px solid var(--color-foreground-border);
+}
+
+.try-it .CodeMirror-linenumber {
+  color: var(--color-foreground-muted);
+}
+
+.try-it .CodeMirror-cursor {
+  border-left-color: var(--color-foreground-primary);
+}
+
+.try-it .CodeMirror-selected {
+  background: color-mix(in srgb, var(--color-brand-primary) 25%, transparent);
+}
+
+html[data-theme="dark"] .try-it .cm-s-default .cm-comment,
+html[data-theme="dark"] .try-it .cm-s-default .cm-meta {
+  color: #9aa6b2;
+}
+
+html[data-theme="dark"] .try-it .cm-s-default .cm-keyword,
+html[data-theme="dark"] .try-it .cm-s-default .cm-builtin {
+  color: #ff9f80;
+}
+
+html[data-theme="dark"] .try-it .cm-s-default .cm-atom,
+html[data-theme="dark"] .try-it .cm-s-default .cm-number {
+  color: #d6a8ff;
+}
+
+html[data-theme="dark"] .try-it .cm-s-default .cm-string {
+  color: #a8d5a2;
+}
+
+.try-it-status {
+  border-left: 1px solid var(--color-foreground-border);
+  border-right: 1px solid var(--color-foreground-border);
+  color: var(--color-foreground-muted);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.8rem;
+}
+
+.try-it-output {
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-foreground-border);
+  color: var(--color-foreground-primary);
+  font-family: var(--font-stack--monospace);
+  margin: 0;
+  min-height: 8rem;
+  overflow-x: auto;
+  padding: 0.8rem;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 40rem) {
+  .try-it-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  #try-it-run {
+    width: 100%;
+  }
+}
