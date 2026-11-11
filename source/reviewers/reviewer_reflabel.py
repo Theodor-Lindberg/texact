@@ -19,6 +19,7 @@ from .rules import (
     RULE_REF011,
     RULE_REF012,
     RULE_REF013,
+    RULE_REF014,
 )
 
 
@@ -34,6 +35,13 @@ class Reviewer_RefLabel(Reviewer):
 
     _PATTERN_LABEL = re.compile(r"\\label\{([^}]+)\}")
     _PATTERN_REF = re.compile(r"\\(?P<command>eqref|ref)\{(?P<label>[^}]+)\}")
+    _PATTERN_REFERENCE_LIST_SEPARATOR = re.compile(
+        r"[\s~]*(?:,[\s~]*(?:(?:and|or)[\s~]+)?|(?:and|or)[\s~]+)"
+    )
+    _PATTERN_REFERENCE_LIST_PREFIX = re.compile(
+        r"[\s~]*(?:,[\s~]*(?:a(?:n(?:d)?)?|o(?:r)?)?[\s~]*"
+        r"|(?:a(?:n(?:d)?)?|o(?:r)?)[\s~]*)?"
+    )
     _PATTERN_REF_WITHOUT_HARD_SPACE = re.compile(r"(?<!~)\\ref\{[^}]+\}")
     _PATTERN_CITE = re.compile(r"\\cite\s*\{[^}]+\}")
     _PATTERN_CITE_PACKAGE = re.compile(
@@ -86,6 +94,10 @@ class Reviewer_RefLabel(Reviewer):
         self.referenced_labels = set()
         self.label_line_map = {}  # Maps label name to first line number it was defined
         self.ref_line_map = {}  # Maps reference name to first line number it was referenced
+        self.label_order: dict[str, tuple[str, int, int]] = {}
+        self.reference_pairs: list[tuple[str, str, int]] = []
+        self.previous_reference: str | None = None
+        self.reference_gap = ""
         self.underscore_comments: list[Diagnostic] = []
         self.prefix_comments: list[Diagnostic] = []
         self.ref_space_comments: list[Diagnostic] = []
@@ -168,6 +180,12 @@ class Reviewer_RefLabel(Reviewer):
             if label_name not in self.defined_labels:
                 self.defined_labels.add(label_name)
                 self.label_line_map[label_name] = line_no
+                if label_context is not None:
+                    self.label_order[label_name] = (
+                        self._CONTEXT_PREFIXES[label_context][1],
+                        line_no,
+                        label_match.start(),
+                    )
 
         self._check_label_counter_order(line_no, line)
 
@@ -226,8 +244,19 @@ class Reviewer_RefLabel(Reviewer):
                 )
             )
 
+        reference_cursor = 0
         for ref_match in self._PATTERN_REF.finditer(line):
             ref_name = ref_match.group("label")
+            gap = self.reference_gap + line[reference_cursor : ref_match.start()]
+            if self.previous_reference is not None and (
+                self._PATTERN_REFERENCE_LIST_SEPARATOR.fullmatch(gap)
+            ):
+                self.reference_pairs.append(
+                    (self.previous_reference, ref_name, line_no)
+                )
+            self.previous_reference = ref_name
+            self.reference_gap = ""
+            reference_cursor = ref_match.end()
             command = ref_match.group("command")
             if command == "eqref" and ref_name.startswith(
                 self._NON_EQUATION_LABEL_PREFIXES
@@ -252,6 +281,12 @@ class Reviewer_RefLabel(Reviewer):
             if ref_name not in self.referenced_labels:
                 self.referenced_labels.add(ref_name)
                 self.ref_line_map[ref_name] = line_no
+
+        if self.previous_reference is not None:
+            self.reference_gap += line[reference_cursor:] + "\n"
+            if not self._PATTERN_REFERENCE_LIST_PREFIX.fullmatch(self.reference_gap):
+                self.previous_reference = None
+                self.reference_gap = ""
 
         for end_match in self._PATTERN_END_CONTEXT.finditer(line):
             context = end_match.group("context")
@@ -320,6 +355,29 @@ class Reviewer_RefLabel(Reviewer):
         if environment == "enumerate":
             return "first enumerate item"
         return None
+
+    def _get_reference_order_comments(self) -> list[Diagnostic]:
+        comments = []
+        for previous_label, label, line_no in self.reference_pairs:
+            previous_order = self.label_order.get(previous_label)
+            order = self.label_order.get(label)
+            if (
+                previous_order is not None
+                and order is not None
+                and previous_order[0] == order[0]
+                and order[1:] < previous_order[1:]
+            ):
+                comments.append(
+                    Diagnostic(
+                        line_no,
+                        RULE_REF014,
+                        RULE_REF014.render_message(
+                            label=self.printer.dark_red(label),
+                            previous_label=self.printer.dark_red(previous_label),
+                        ),
+                    )
+                )
+        return comments
 
     def _get_cite_comments(self) -> list[Diagnostic]:
         if self.cite_package_nobreak or not self.cite_lines:
@@ -417,6 +475,7 @@ class Reviewer_RefLabel(Reviewer):
         comments.extend(self.cite_period_comments)
         comments.extend(self.footnote_period_comments)
         comments.extend(self.label_before_counter_comments)
+        comments.extend(self._get_reference_order_comments())
 
         for label in missing_labels:
             comments.append(
@@ -457,6 +516,8 @@ class Reviewer_RefLabel(Reviewer):
             or self.label_before_counter_comments
         ):
             return Status.FAILED
+        if self._get_reference_order_comments():
+            return Status.WARNING
         return Status.PASSED
 
     def get_name(self) -> str:

@@ -867,6 +867,74 @@ def test_label_prefixes_match_latex_context() -> None:
     assert "tab:" in comments[2].message
 
 
+def test_reference_order_in_lists() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"Tables~\ref{tab:first}, \ref{tab:third}, and",
+        r"~\ref{tab:second} show results.",
+        r"Tables~\ref{tab:first}, \ref{tab:second}, and~\ref{tab:third}.",
+        r"See~\ref{tab:third}. Later see~\ref{tab:first}.",
+        r"See~\ref{tab:third} and~\ref{fig:first}.",
+        r"See~\ref{tab:third} and~\ref{tab:missing}.",
+        r"See~\ref{tab:third} and~\ref{tab:third}.",
+        r"\begin{table}\label{tab:first}\end{table}",
+        r"\begin{table}\label{tab:second}\end{table}",
+        r"\begin{table}\label{tab:third}\end{table}",
+        r"\begin{figure}\label{fig:first}\end{figure}",
+    ]
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF014"
+    ]
+    assert [comment.line_no for comment in comments] == [1]
+    assert "tab:second" in comments[0].message
+    assert "tab:third" in comments[0].message
+    assert comments[0].severity == Severity.WARNING
+
+
+def test_reference_order_uses_column_order_and_preserves_warning_status() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        r"\begin{table}\caption{First}\label{tab:first}\end{table}"
+        r"\begin{table}\caption{Second}\label{tab:second}\end{table}",
+        r"Tables~\ref{tab:second} and~\ref{tab:first}.",
+    ]
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF014"
+    ]
+    assert [comment.line_no for comment in comments] == [1]
+    assert reviewer.get_status().name == "WARNING"
+
+
+def test_reference_order_warning_is_enabled_by_default(tmp_path: Path) -> None:
+    tex_file = tmp_path / "references.tex"
+    tex_file.write_text(
+        "\\begin{table}\\caption{First}\\label{tab:first}\\end{table}\n"
+        "\\begin{table}\\caption{Second}\\label{tab:second}\\end{table}\n"
+        "Tables~\\ref{tab:second} and~\\ref{tab:first}.\n",
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "-q",
+            str(tex_file),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "REF014" in result.stdout
+
+
 def test_references_require_hard_spaces() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [

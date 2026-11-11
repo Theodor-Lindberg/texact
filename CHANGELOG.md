@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Warn when references in a list are out of definition order.
+
 ### Fixed
 
 - Skip math-symbol and punctuation checks in TikZ figures.
