@@ -936,8 +936,7 @@ def test_reference_order_in_lists() -> None:
 def test_reference_order_uses_column_order_and_preserves_warning_status() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
-        r"\begin{table}\caption{First}\label{tab:first}\end{table}"
-        r"\begin{table}\caption{Second}\label{tab:second}\end{table}",
+        r"\begin{table}\caption{First}\label{tab:first}\end{table}\begin{table}\caption{Second}\label{tab:second}\end{table}",
         r"Tables~\ref{tab:second} and~\ref{tab:first}.",
     ]
     for line_no, line in enumerate(lines):
