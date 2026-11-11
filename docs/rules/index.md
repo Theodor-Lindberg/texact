@@ -70,7 +70,7 @@ them per their liking and, if supported, configure them.
 | REF010 | [capitalize-reference-type](capitalize-reference-type.md) | Capitalize the first letter of reference types before `\ref`. | error |
 | REF011 | [space-before-citation](space-before-citation.md) | Use the `cite` package with the `nobreak` option when using `\cite`. | error |
 | REF012 | [eqref-non-equation-label](eqref-non-equation-label.md) | Use `\ref` instead of `\eqref` for non-equation labels. | error |
-| REF013 | [footnote-before-punctuation](footnote-before-punctuation.md) | Place `\footnote{...}` before punctuation. | error |
+| REF013 | [footnote-before-punctuation](footnote-before-punctuation.md) | Place `\footnote{...}` after punctuation without a preceding space. | error |
 | REF014 | [reference-order](reference-order.md) | List references in definition order. | warning |
 
 ## Figure (`FIG`)

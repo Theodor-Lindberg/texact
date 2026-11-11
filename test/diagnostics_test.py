@@ -1221,14 +1221,20 @@ def test_citations_precede_punctuation() -> None:
     assert all(r"\cite" in comment.message for comment in comments)
 
 
-def test_footnotes_precede_punctuation() -> None:
+def test_footnotes_follow_punctuation_without_preceding_space() -> None:
     reviewer = Reviewer_RefLabel(Printer())
     lines = [
-        r"This is correct\footnote{valid}.",
-        r"This is wrong.\footnote{period}.",
-        r"This has whitespace! \footnote[1]{marked}.",
-        r"This has a hard space?~\footnote{hard-space}.",
-        r"This is correct\footnote{valid}.",
+        r"This is correct.\footnote{valid}",
+        r"This is wrong\footnote{note}.",
+        r"This has whitespace! \footnote[1]{marked}",
+        r"This has a hard space?~\footnote{hard-space}",
+        r"This has nested text\footnote{A \textbf{nested} note}!",
+        r"This has an escaped brace\footnote{A \} note}?",
+        r"This has a footnote\footnote{in the middle} of a sentence.",
+        r"This has both problems \footnote{note}.",
+        r"This continues\footnote{a",
+        r"multiline note}",
+        r"; and this is wrong.",
     ]
 
     for line_no, line in enumerate(lines):
@@ -1238,8 +1244,26 @@ def test_footnotes_precede_punctuation() -> None:
         comment for comment in reviewer.get_comments() if comment.code == "REF013"
     ]
 
-    assert [comment.line_no for comment in comments] == [1, 2, 3]
-    assert all(r"\footnote" in comment.message for comment in comments)
+    assert [comment.line_no for comment in comments] == [1, 2, 3, 4, 5, 7, 8]
+    assert all("after punctuation" in comment.message for comment in comments)
+    assert all("without a preceding space" in comment.message for comment in comments)
+
+
+def test_footnote_preceding_line_break_counts_as_space() -> None:
+    reviewer = Reviewer_RefLabel(Printer())
+    lines = [
+        "This is wrong.\n",
+        "\\footnote{note}\n",
+        "This is correct.% comment\n",
+        "\\footnote{note}\n",
+    ]
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "REF013"
+    ]
+    assert [comment.line_no for comment in comments] == [1]
 
 
 def test_markboth_spanning_multiple_lines_is_ignored() -> None:

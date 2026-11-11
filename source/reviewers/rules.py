@@ -342,7 +342,7 @@ RULES = RuleRegistry(
             "REF013",
             "footnote-before-punctuation",
             "Reviewer_RefLabel",
-            "Place \\footnote{{...}} before punctuation.",
+            "Place \\footnote{{...}} after punctuation without a preceding space.",
         ),
         Rule(
             "REF014",

@@ -54,9 +54,8 @@ class Reviewer_RefLabel(Reviewer):
     )
     _PATTERN_PARENTHESIZED_EQREF = re.compile(r"\(\s*\\eqref\{[^}]+\}\s*\)")
     _PATTERN_CITE_AFTER_PUNCTUATION = re.compile(r"[.,;:!?][ \t~]*\\cite\{[^}]+\}")
-    _PATTERN_FOOTNOTE_AFTER_PUNCTUATION = re.compile(
-        r"[.,;:!?][ \t~]*\\footnote(?:\[[^\]]*\])?\{"
-    )
+    _PATTERN_FOOTNOTE_START = re.compile(r"\\footnote\s*(?:\[[^\]]*\]\s*)?\{")
+    _PATTERN_FOOTNOTE_BRACE = re.compile(r"\\[{}\\]|[{}]")
     _PATTERN_TOKEN = re.compile(
         r"\\(?P<environment_command>begin|end)\s*\{(?P<environment>[^}]+)\}"
         r"|\\(?P<command>label|captionof|caption|item)\b"
@@ -106,6 +105,11 @@ class Reviewer_RefLabel(Reviewer):
         self.cite_package_nobreak = False
         self.cite_period_comments: list[Diagnostic] = []
         self.footnote_period_comments: list[Diagnostic] = []
+        self.footnote_depth = 0
+        self.footnote_line: int | None = None
+        self.footnote_awaiting_punctuation = False
+        self.footnote_reported = False
+        self.previous_line_ends_with_space = False
         self.eqref_preference_comments: list[Diagnostic] = []
         self.eqref_parentheses_comments: list[Diagnostic] = []
         self.eqref_misuse_comments: list[Diagnostic] = []
@@ -199,14 +203,10 @@ class Reviewer_RefLabel(Reviewer):
                 )
             )
 
-        for _ in self._PATTERN_FOOTNOTE_AFTER_PUNCTUATION.finditer(line):
-            self.footnote_period_comments.append(
-                Diagnostic(
-                    line_no,
-                    RULE_REF013,
-                    RULE_REF013.render_message(),
-                )
-            )
+        self._check_footnote_punctuation(line_no, line)
+        self.previous_line_ends_with_space = bool(line) and (
+            line[-1].isspace() or line[-1] == "~"
+        )
 
         for _ in self._PATTERN_CITE.finditer(line):
             self.cite_lines.append(line_no)
@@ -294,6 +294,58 @@ class Reviewer_RefLabel(Reviewer):
                 if self.context_stack[index] == context:
                     del self.context_stack[index:]
                     break
+
+    def _check_footnote_punctuation(self, line_no: int, line: str) -> None:
+        position = 0
+        while position < len(line):
+            if self.footnote_awaiting_punctuation:
+                next_character = re.search(r"[^\s~]", line[position:])
+                if next_character is None:
+                    return
+                position += next_character.start()
+                if line[position] in ".,;:!?" and not self.footnote_reported:
+                    assert self.footnote_line is not None
+                    self.footnote_period_comments.append(
+                        Diagnostic(
+                            self.footnote_line,
+                            RULE_REF013,
+                            RULE_REF013.render_message(),
+                        )
+                    )
+                self.footnote_awaiting_punctuation = False
+                self.footnote_line = None
+
+            if self.footnote_depth == 0:
+                start = self._PATTERN_FOOTNOTE_START.search(line, position)
+                if start is None:
+                    return
+                self.footnote_line = line_no
+                self.footnote_depth = 1
+                self.footnote_reported = (
+                    start.start() > 0
+                    and (
+                        line[start.start() - 1].isspace()
+                        or line[start.start() - 1] == "~"
+                    )
+                    or start.start() == 0
+                    and self.previous_line_ends_with_space
+                )
+                if self.footnote_reported:
+                    self.footnote_period_comments.append(
+                        Diagnostic(line_no, RULE_REF013, RULE_REF013.render_message())
+                    )
+                position = start.end()
+
+            brace = self._PATTERN_FOOTNOTE_BRACE.search(line, position)
+            if brace is None:
+                return
+            if brace.group() == "{":
+                self.footnote_depth += 1
+            elif brace.group() == "}":
+                self.footnote_depth -= 1
+                if self.footnote_depth == 0:
+                    self.footnote_awaiting_punctuation = True
+            position = brace.end()
 
     def _check_label_counter_order(self, line_no: int, line: str) -> None:
         for token_match in self._PATTERN_TOKEN.finditer(line):
@@ -448,7 +500,7 @@ class Reviewer_RefLabel(Reviewer):
 
         if self.footnote_period_comments:
             messages.append(
-                f"Footnotes after punctuation: {len(self.footnote_period_comments)}"
+                f"Footnote placement issues: {len(self.footnote_period_comments)}"
             )
 
         if self.label_before_counter_comments:

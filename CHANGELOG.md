@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Require footnotes to follow punctuation without a preceding space.
 - Do not report missing spaces after periods before closing optional arguments.
 - Ignore periods in email addresses when checking for missing spaces.
 - Skip math-symbol and punctuation checks in TikZ figures.
