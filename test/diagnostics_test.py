@@ -340,6 +340,45 @@ def test_periods_require_following_spaces_except_in_paths_and_abbreviations() ->
     assert reviewer.get_summary() == "Periods without following spaces: 1"
 
 
+def test_periods_in_email_addresses_are_not_checked() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        "Contact theodor.lindberg@liu.se.",
+        r"\texttt{first.last+paper@dept.example.org}, second.person@example.com.",
+        "Contact first.last@example.org for details.No space here.",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS006"
+    ]
+    assert [comment.line_no for comment in comments] == [2]
+    assert "details.No" in comments[0].message
+    assert "example.org" not in comments[0].message
+    assert reviewer.period_without_space_count == 1
+
+
+def test_periods_at_end_of_optional_arguments_are_not_reported() -> None:
+    reviewer = Reviewer_Unsure(Printer())
+    lines = [
+        r"\subfloat[The E5M2 format.]{",
+        r"\subfloat[First sentence.Next sentence.]{",
+        r"\caption{The E5M2 format.}",
+    ]
+
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line)
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "UNS006"
+    ]
+    assert [comment.line_no for comment in comments] == [1]
+    assert "sentence.Next" in comments[0].message
+    assert reviewer.period_without_space_count == 1
+
+
 def test_periods_in_math_are_not_checked() -> None:
     reviewer = Reviewer_Unsure(Printer())
     lines = [

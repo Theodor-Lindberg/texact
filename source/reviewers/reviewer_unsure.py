@@ -25,13 +25,19 @@ class Reviewer_Unsure(Reviewer):
     _PATTERN_SPACE_BEFORE_PUNCTUATION = re.compile(r"[ \t]+[.,;:!?]")
     _PATTERN_DOUBLE_PERIOD = re.compile(r"(?<![./])\.\.(?![./])")
     _PATTERN_DOUBLE_COMMA = re.compile(r"(?<![\\,/]),,(?![,/])(?=\s|$)")
-    _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/}])")
+    _PATTERN_PERIOD_WITHOUT_SPACE = re.compile(r"(?<![.\d/])\.(?=\S)(?![.\d/}\]])")
     _PATTERN_ABBREVIATION_PUNCTUATION = re.compile(
         r"(?<![A-Za-z])(?P<abbreviation>i\.{0,2}e\.{0,2}|e\.{0,2}g\.{0,2}|et\.{0,2}\s+al\.{0,2})(?![A-Za-z])",
         re.IGNORECASE,
     )
     _PATTERN_PATH = re.compile(r"[^\s{}]*\/[^\s{}]*")
     _PATTERN_ABBREVIATION = re.compile(r"\b(?:Figs?\.|(?:[A-Za-z]{1,3}\.){2,})")
+    _PATTERN_EMAIL = re.compile(
+        r"[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+"
+        r"(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+        r"(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+"
+        r"[A-Za-z]{2,}\b"
+    )
     _PATTERN_FILENAME = re.compile(
         r"\b[\w-]+\.(?:aux|bib|cfg|class|cls|css|csv|gif|html|jpg|jpeg|js|json|md|pdf|png|py|svg|tex|txt|webp|xml|yaml|yml)\b"
     )
@@ -373,6 +379,7 @@ class Reviewer_Unsure(Reviewer):
         for pattern in (
             self._PATTERN_PATH,
             self._PATTERN_ABBREVIATION,
+            self._PATTERN_EMAIL,
             self._PATTERN_FILENAME,
         ):
             for match in pattern.finditer(searchable_line):

@@ -3,7 +3,7 @@
 ## What it does
 
 Checks that periods are followed by a space when they continue into another
-sentence.
+sentence. Periods in email addresses are ignored.
 
 ## Why is this bad?
 
