@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/texactlogo.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/texact.ico"><!-- Generated with Sphinx 7.4.7 and Furo 2025.12.19 -->
-        <title>footnote-before-punctuation (REF013) - TeXact documentation</title>
+        <title>Footnote placement (REF013) - TeXact documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -269,21 +269,22 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="footnote-before-punctuation-ref013">
-<h1>footnote-before-punctuation (REF013)<a class="headerlink" href="#footnote-before-punctuation-ref013" title="Link to this heading">¶</a></h1>
+          <section id="footnote-placement-ref013">
+<h1>Footnote placement (REF013)<a class="headerlink" href="#footnote-placement-ref013" title="Link to this heading">¶</a></h1>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
-<p>Checks that <code class="docutils literal notranslate"><span class="pre">\footnote{...}</span></code> appears before punctuation, including when the
-command has an optional mark argument.</p>
+<p>Checks that <code class="docutils literal notranslate"><span class="pre">\footnote{...}</span></code> appears after punctuation and without a preceding
+space, line break, or <code class="docutils literal notranslate"><span class="pre">~</span></code>, including when the command has an optional mark argument.
+Footnotes within a sentence do not need punctuation.</p>
 </section>
 <section id="why-is-this-bad">
 <h2>Why is this bad?<a class="headerlink" href="#why-is-this-bad" title="Link to this heading">¶</a></h2>
-<p>Placing the footnote after sentence punctuation can make the marker look
-detached from the text it annotates.</p>
+<p>Footnote markers are conventionally placed immediately after punctuation.</p>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
 <div class="highlight-latex notranslate"><div class="highlight"><pre><span></span>This is a sentence<span class="k">\footnote</span><span class="nb">{</span>Note<span class="nb">}</span>.
+This is a sentence. <span class="k">\footnote</span><span class="nb">{</span>Note<span class="nb">}</span>
 This is a sentence.<span class="k">\footnote</span><span class="nb">{</span>Note<span class="nb">}</span>
 </pre></div>
 </div>
@@ -345,7 +346,7 @@ This is a sentence.<span class="k">\footnote</span><span class="nb">{</span>Note
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">footnote-before-punctuation (REF013)</a><ul>
+<li><a class="reference internal" href="#">Footnote placement (REF013)</a><ul>
 <li><a class="reference internal" href="#what-it-does">What it does</a></li>
 <li><a class="reference internal" href="#why-is-this-bad">Why is this bad?</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
