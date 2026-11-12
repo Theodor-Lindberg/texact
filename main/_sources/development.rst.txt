@@ -1,6 +1,34 @@
 Development
 ===========
 
+Installation
+------------
+
+The latest development version can be installed using pip,
+either directly from Git or after cloning the repository.
+
+.. admonition:: Install TeXact from Git
+
+    .. code-block:: console
+
+        $ pip install "git+ssh://git@github.com/Theodor-Lindberg/texact.git"
+
+.. admonition:: Install TeXact after cloning the repository
+
+    .. code-block:: console
+
+        $ pip install .
+
+If TeXact has already been installed from Git via pip, chances are a cached
+version will be used instead of the latest. To be sure the latest is installed,
+do the following:
+
+.. admonition:: Install TeXact from git, avoiding caches
+
+    .. code-block:: console
+
+        $ pip install --force-reinstall --no-cache-dir "git+ssh://git@github.com/Theodor-Lindberg/texact.git"
+
 Code structure
 --------------
 
