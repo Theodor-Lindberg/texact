@@ -5,7 +5,7 @@ tocdepth: 2
 # TeXact Rules
 
 Some of these rules can seem like nitpicking, but users are free to disable
-them per their liking and, if supported, configure them.
+them per their liking or configure them.
 
 ## Inthis (`INT`)
 

@@ -5,9 +5,7 @@ Welcome to TeXact's documentation!
 
 TeXact is a tool for finding miscellaneous mistakes in LaTeX code and article writing.
 It does not edit your files, so you can run it fearlessly.
-Note that it is not intended to replace existing tools, such as `ChkTeX <https://www.nongnu.org/chktex/>`_ and
-`lacheck <https://linux.die.net/man/1/lacheck>`_, but rather to
-complement and incorporate them.
+
 
 
 A live demo of TeXact can be found in the `Try it here <try-it.html>`_ section.
