@@ -29,6 +29,8 @@ it will check for common mistakes in article writing.
 
     In this work we should improve the asic design.
     See Section~\ref{sec:intro} for details.
+    The output is $sin(x) + \sqrt xy$.
+    The result is $y = x^23 +- 1$.
 
     \label{sec:design}
     \end{document}
