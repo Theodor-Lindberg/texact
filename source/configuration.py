@@ -28,7 +28,7 @@ class FormatConfig:
 
     html_style: bool = False
     vscode_style: bool = False
-    quiet: int = 0
+    quiet: int = 1
 
 
 @dataclass(frozen=True)
@@ -150,7 +150,7 @@ def _parse_config(data: Mapping[str, object], path: Path) -> TexactConfig:
     if not isinstance(vscode_style, bool):
         raise ConfigurationError(f"{path}: format.vscode-style must be a boolean")
 
-    quiet = format_data.get("quiet", 0)
+    quiet = format_data.get("quiet", 1)
     if isinstance(quiet, bool) or not isinstance(quiet, int) or quiet not in {0, 1, 2}:
         raise ConfigurationError(f"{path}: format.quiet must be 0, 1, or 2")
 

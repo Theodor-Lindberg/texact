@@ -13,6 +13,7 @@ def test_no_configuration_returns_defaults(tmp_path: Path) -> None:
 
     assert config == TexactConfig()
     assert config.source_path is None
+    assert config.format.quiet == 1
 
 
 def test_discovery_precedence(tmp_path: Path) -> None:
@@ -36,6 +37,7 @@ def test_pyproject_configuration_is_used(tmp_path: Path) -> None:
     config = load_config(directory=tmp_path)
 
     assert config.lint.ignore == frozenset({"FIG002"})
+    assert config.format.quiet == 1
 
 
 def test_supported_settings_are_parsed(tmp_path: Path) -> None:
@@ -132,7 +134,7 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
             "UNS007",
             "--no-html-style",
             "--vscode-style",
-            "-qq",
+            "-q",
             "file.tex",
         ],
     )
@@ -143,7 +145,7 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
     assert args.select == ["MAT004", "UNS007"]
     assert args.html_style is False
     assert args.vscode_style is True
-    assert args.quiet == 2
+    assert args.quiet == 1
     assert args.chktex is False
 
 

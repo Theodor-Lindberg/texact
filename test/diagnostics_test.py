@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
 from printer import Printer
 from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
@@ -1352,24 +1353,141 @@ def test_output_controls_can_be_set_from_cli_or_config(tmp_path: Path) -> None:
         return result.stdout
 
     normal_output = run_texact()
-    assert "=== Reviewing" in normal_output
-    assert "=== Summary" in normal_output
+    assert normal_output == "All passed\n"
 
-    quiet_output = run_texact("-q")
-    assert "=== Reviewing" in quiet_output
-    assert "=== Summary" not in quiet_output
+    verbose_output = run_texact("--verbose")
+    assert "=== Reviewing" in verbose_output
+    assert "=== Summary" in verbose_output
+    assert verbose_output.endswith("All passed\n")
 
-    very_quiet_output = run_texact("-qq")
-    assert "=== Reviewing" not in very_quiet_output
-    assert "=== Summary" not in very_quiet_output
+    assert run_texact("-q") == ""
+    assert run_texact("--quiet") == ""
 
+    (tmp_path / ".texact.toml").write_text(
+        "[format]\nquiet = 0\n",
+        encoding="utf-8",
+    )
+    configured_output = run_texact()
+    assert configured_output == verbose_output.replace(
+        "Configuration file: none (built-in defaults)",
+        f"Configuration file: {(tmp_path / '.texact.toml').resolve()}",
+    )
+    assert run_texact("-q") == ""
+    assert run_texact("--quiet") == ""
+    (tmp_path / ".texact.toml").write_text(
+        "[format]\nquiet = 1\n",
+        encoding="utf-8",
+    )
+    assert run_texact() == normal_output
+    assert run_texact("-q") == ""
     (tmp_path / ".texact.toml").write_text(
         "[format]\nquiet = 2\n",
         encoding="utf-8",
     )
-    configured_output = run_texact()
-    assert "=== Reviewing" not in configured_output
-    assert "=== Summary" not in configured_output
+    assert run_texact() == ""
+    assert "=== Summary" in run_texact("--verbose")
+
+
+def test_success_message_requires_no_errors_across_files(tmp_path: Path) -> None:
+    clean_file = tmp_path / "clean.tex"
+    clean_file.write_text("\\documentclass{article}\n", encoding="utf-8")
+    warning_file = tmp_path / "warning.tex"
+    warning_file.write_text(r"$\sqrt x$" + "\n", encoding="utf-8")
+    error_file = tmp_path / "error.tex"
+    error_file.write_text("asic\n", encoding="utf-8")
+
+    def run_texact(*arguments: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [
+                sys.executable,
+                str(TEST_DIR.parent / "source" / "texact.py"),
+                *arguments,
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=tmp_path,
+        )
+
+    result = run_texact(str(clean_file), str(warning_file))
+    assert result.returncode == 0
+    assert "[MAT010]" in result.stdout
+    assert result.stdout.count("All passed\n") == 1
+
+    result = run_texact("-q", str(clean_file), str(warning_file))
+    assert result.returncode == 0
+    assert "[MAT010]" in result.stdout
+    assert "All passed" not in result.stdout
+
+    result = run_texact(str(clean_file), str(error_file))
+    assert result.returncode == 1
+    assert "[CAS001]" in result.stdout
+    assert "All passed" not in result.stdout
+
+    result = run_texact("-q", str(error_file))
+    assert result.returncode == 1
+    assert "[CAS001]" in result.stdout
+
+    (tmp_path / ".texact.toml").write_text("[format]\nquiet = 2\n", encoding="utf-8")
+    result = run_texact(str(warning_file))
+    assert result.returncode == 0
+    assert "[MAT010]" in result.stdout
+    assert "All passed" not in result.stdout
+    result = run_texact(str(error_file))
+    assert result.returncode == 1
+    assert "[CAS001]" in result.stdout
+    assert "All passed" not in result.stdout
+
+    (tmp_path / ".texact.toml").write_text(
+        "[lint]\nignore = ['CAS001']\n", encoding="utf-8"
+    )
+    result = run_texact(str(error_file))
+    assert result.returncode == 0
+    assert result.stdout == "All passed\n"
+
+    result = run_texact("--html-style", str(clean_file))
+    assert result.returncode == 0
+    assert result.stdout == "All passed<br>\n"
+
+    result = run_texact(str(clean_file), str(tmp_path / "missing.tex"))
+    assert result.returncode != 0
+    assert "All passed" not in result.stdout
+
+
+def test_verbose_and_quiet_cannot_be_combined(tmp_path: Path) -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--verbose",
+            "-q",
+            "file.tex",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert result.returncode != 0
+    assert "not allowed with argument" in result.stderr
+
+
+@pytest.mark.parametrize("arguments", [("-qq",), ("-q", "-q"), ("--quiet", "--quiet")])
+def test_quiet_cannot_be_repeated(tmp_path: Path, arguments: tuple[str, ...]) -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            *arguments,
+            "file.tex",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert result.returncode == 2
+    assert "cannot be repeated" in result.stderr
 
 
 def test_vscode_style_formats_diagnostics_from_cli_or_config(tmp_path: Path) -> None:

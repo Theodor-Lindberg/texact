@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Default to diagnostic-only output and print `All passed` when no errors are
+  found; use `--verbose` for per-file titles and reviewer summaries.
+- Make `-q` suppress titles, summaries, and the success message; remove the
+  `-qq` level.
+- Align `format.quiet` with verbose (`0`), normal (`1`), and quiet (`2`)
+  output.
 - Phrase title-casing diagnostics as potentially incorrect.
 
 ### Removed

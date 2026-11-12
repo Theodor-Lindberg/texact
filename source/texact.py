@@ -98,14 +98,23 @@ def set_up_arg_parser() -> argparse.Namespace:
         action=argparse.BooleanOptionalAction,
         help="Output diagnostics in a format that VS Code can navigate",
     )
-    parser.add_argument(
+    verbosity = parser.add_mutually_exclusive_group()
+    verbosity.add_argument(
         "-q",
         "--quiet",
         default=None,
         action="count",
-        help="Suppress summaries; repeat to also suppress titles",
+        help="Suppress titles, summaries, and the success message",
     )
-    return parser.parse_args()
+    verbosity.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Show per-file titles and reviewer summaries",
+    )
+    args = parser.parse_args()
+    if args.quiet is not None and args.quiet > 1:
+        parser.error("-q/--quiet cannot be repeated")
+    return args
 
 
 def process_file(
@@ -242,7 +251,7 @@ def main():
     vscode_style = (
         config.format.vscode_style if args.vscode_style is None else args.vscode_style
     )
-    quiet = config.format.quiet if args.quiet is None else args.quiet
+    quiet = 0 if args.verbose else (config.format.quiet if args.quiet is None else 2)
     printer = Printer(html_style=html_style, vscode_style=vscode_style)
 
     if not args.files:
@@ -252,7 +261,7 @@ def main():
 
     for file_name in args.files:
         name, extension = file_name[:-4], file_name[-3:]
-        if quiet < 2:
+        if quiet == 0:
             printer.print(f"=== Reviewing {name}(.){extension} ===")
         file_path = Path(file_name)
 
@@ -294,6 +303,8 @@ def main():
         )
         max_ret_code = max(max_ret_code, ret_code)
 
+    if max_ret_code == 0 and quiet < 2:
+        printer.print("All passed")
     sys.exit(max_ret_code)
 
 
