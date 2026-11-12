@@ -33,7 +33,6 @@ def test_rule_codes_and_reviewer_numbers_are_unique() -> None:
 def test_only_opt_in_rules_are_disabled_by_default() -> None:
     assert [rule.code for rule in RULES if not rule.enabled_by_default] == [
         "MAT004",
-        "MAT009",
         "REF008",
     ]
 
@@ -503,7 +502,7 @@ def test_dash_length_ignores_coordinates_dates_specs_math_and_verbatim() -> None
 
 def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     tex_file = tmp_path / "math.tex"
-    tex_file.write_text("$ (x) $\n$x^23$\nSee pages 5-10.\n", encoding="utf-8")
+    tex_file.write_text("$ (x) $\nSee pages 5-10.\n", encoding="utf-8")
 
     command = [
         sys.executable,
@@ -519,15 +518,12 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
         check=False,
     )
     assert "MAT004" not in disabled.stdout
-    assert "MAT009" not in disabled.stdout
     assert "UNS007" in disabled.stdout
 
     selected_command = [
         *command[:-1],
         "--select",
         "MAT004",
-        "--select",
-        "MAT009",
         "--select",
         "UNS007",
         str(tex_file),
@@ -545,8 +541,34 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     )
     assert enabled.returncode == 1
     assert "MAT004" in enabled.stdout
-    assert "MAT009" in enabled.stdout
     assert "UNS007" in enabled.stdout
+
+
+def test_multi_character_script_warning_enabled_by_default(tmp_path: Path) -> None:
+    tex_file = tmp_path / "math.tex"
+    tex_file.write_text("$x^23$\n$x^{23}$\n$x^45$ % texact MAT009\n", encoding="utf-8")
+    command = [
+        sys.executable,
+        str(TEST_DIR.parent / "source" / "texact.py"),
+        "--no-chktex",
+        "--html-style",
+        str(tex_file),
+    ]
+    result = subprocess.run(
+        command, capture_output=True, text=True, check=False, cwd=tmp_path
+    )
+    assert result.returncode == 0
+    assert result.stdout.count("[MAT009]") == 1
+    assert "All passed" in result.stdout
+
+    (tmp_path / ".texact.toml").write_text(
+        "[lint]\nignore = ['MAT009']\n", encoding="utf-8"
+    )
+    result = subprocess.run(
+        command, capture_output=True, text=True, check=False, cwd=tmp_path
+    )
+    assert result.returncode == 0
+    assert "[MAT009]" not in result.stdout
 
 
 def test_prefer_eqref_is_disabled_until_selected(tmp_path: Path) -> None:

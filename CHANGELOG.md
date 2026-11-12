@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `-qq` level.
 - Align `format.quiet` with verbose (`0`), normal (`1`), and quiet (`2`)
   output.
+- Enable the MAT009 warning for unbraced multi-character math scripts by
+  default.
 - Phrase title-casing diagnostics as potentially incorrect.
 
 ### Removed

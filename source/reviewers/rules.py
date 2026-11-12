@@ -199,7 +199,6 @@ RULES = RuleRegistry(
             "Reviewer_Math",
             "Use {braced_script} instead of {script} in math mode.",
             Severity.WARNING,
-            enabled_by_default=False,
         ),
         Rule(
             "MAT010",
