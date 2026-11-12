@@ -289,10 +289,15 @@ repeated <code class="docutils literal notranslate"><span class="pre">texact</sp
 </pre></div>
 </div>
 </section>
-<section id="quiet-output">
-<h2>Quiet output<a class="headerlink" href="#quiet-output" title="Link to this heading">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">-q</span></code> or <code class="docutils literal notranslate"><span class="pre">--quiet</span></code> to remove per-file summaries. Repeat the short
-option as <code class="docutils literal notranslate"><span class="pre">-qq</span></code> to remove both summaries and title lines.</p>
+<section id="output-verbosity">
+<h2>Output verbosity<a class="headerlink" href="#output-verbosity" title="Link to this heading">¶</a></h2>
+<p>By default, TeXact prints diagnostics without per-file titles or summaries.
+If no errors are found across all files, it also prints <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">passed</span></code>;
+warnings do not prevent this message.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> to show per-file titles and reviewer summaries. Use <code class="docutils literal notranslate"><span class="pre">-q</span></code>
+or <code class="docutils literal notranslate"><span class="pre">--quiet</span></code> to suppress both and the <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">passed</span></code> message, while still
+showing diagnostics. These options override <code class="docutils literal notranslate"><span class="pre">format.quiet</span></code> and cannot be
+combined. <code class="docutils literal notranslate"><span class="pre">-q</span></code> cannot be repeated. <code class="docutils literal notranslate"><span class="pre">-v</span></code> prints the version.</p>
 </section>
 <section id="rule-selection">
 <h2>Rule selection<a class="headerlink" href="#rule-selection" title="Link to this heading">¶</a></h2>
@@ -334,11 +339,12 @@ precedence over values loaded from TOML.</p>
 spellings to the built-in casing list. <code class="docutils literal notranslate"><span class="pre">lint.select</span></code> enables rules that are
 disabled by default. <code class="docutils literal notranslate"><span class="pre">lint.we_count</span></code> changes the maximum allowed number of
 <code class="docutils literal notranslate"><span class="pre">we</span></code> occurrences. <code class="docutils literal notranslate"><span class="pre">format.html-style</span></code> enables HTML
-output by default. <code class="docutils literal notranslate"><span class="pre">format.quiet</span></code> controls non-diagnostic output: <code class="docutils literal notranslate"><span class="pre">0</span></code>
-prints titles and summaries, <code class="docutils literal notranslate"><span class="pre">1</span></code> removes summaries, and <code class="docutils literal notranslate"><span class="pre">2</span></code> removes both
-titles and summaries. <code class="docutils literal notranslate"><span class="pre">format.vscode-style</span></code> enables VS Code-compatible
-diagnostic output. <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a ChkTeX executable or
-directory.</p>
+output by default. <code class="docutils literal notranslate"><span class="pre">format.quiet</span></code> selects one of three output levels:
+<code class="docutils literal notranslate"><span class="pre">0</span></code> is verbose, with titles and summaries; <code class="docutils literal notranslate"><span class="pre">1</span></code> (the default) is normal,
+with no titles or summaries and an <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">passed</span></code> message if there are no
+errors; and <code class="docutils literal notranslate"><span class="pre">2</span></code> is quiet, showing diagnostics only. <code class="docutils literal notranslate"><span class="pre">format.vscode-style</span></code>
+enables VS Code-compatible diagnostic output. <code class="docutils literal notranslate"><span class="pre">tools.chktex_path</span></code> points to a
+ChkTeX executable or directory.</p>
 <p>When no configuration file exists, TeXact uses its normal built-in defaults.</p>
 </section>
 </section>
@@ -400,7 +406,7 @@ directory.</p>
             <ul>
 <li><a class="reference internal" href="#">Options</a><ul>
 <li><a class="reference internal" href="#inline-suppressions">Inline suppressions</a></li>
-<li><a class="reference internal" href="#quiet-output">Quiet output</a></li>
+<li><a class="reference internal" href="#output-verbosity">Output verbosity</a></li>
 <li><a class="reference internal" href="#rule-selection">Rule selection</a></li>
 <li><a class="reference internal" href="#configuration-file">Configuration file</a></li>
 </ul>

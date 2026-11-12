@@ -287,6 +287,12 @@ and this project adheres to <a class="reference external" href="https://semver.o
 <section id="changed">
 <h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">¶</a></h3>
 <ul class="simple">
+<li><p>Default to diagnostic-only output and print <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">passed</span></code> when no errors are
+found; use <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> for per-file titles and reviewer summaries.</p></li>
+<li><p>Make <code class="docutils literal notranslate"><span class="pre">-q</span></code> suppress titles, summaries, and the success message; remove the
+<code class="docutils literal notranslate"><span class="pre">-qq</span></code> level.</p></li>
+<li><p>Align <code class="docutils literal notranslate"><span class="pre">format.quiet</span></code> with verbose (<code class="docutils literal notranslate"><span class="pre">0</span></code>), normal (<code class="docutils literal notranslate"><span class="pre">1</span></code>), and quiet (<code class="docutils literal notranslate"><span class="pre">2</span></code>)
+output.</p></li>
 <li><p>Phrase title-casing diagnostics as potentially incorrect.</p></li>
 </ul>
 </section>

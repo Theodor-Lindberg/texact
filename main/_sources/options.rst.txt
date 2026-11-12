@@ -27,11 +27,17 @@ The ignore the rest of the file, use:
     % texact-file ##
 
 
-Quiet output
-------------
+Output verbosity
+----------------
 
-Use ``-q`` or ``--quiet`` to remove per-file summaries. Repeat the short
-option as ``-qq`` to remove both summaries and title lines.
+By default, TeXact prints diagnostics without per-file titles or summaries.
+If no errors are found across all files, it also prints ``All passed``;
+warnings do not prevent this message.
+
+Use ``--verbose`` to show per-file titles and reviewer summaries. Use ``-q``
+or ``--quiet`` to suppress both and the ``All passed`` message, while still
+showing diagnostics. These options override ``format.quiet`` and cannot be
+combined. ``-q`` cannot be repeated. ``-v`` prints the version.
 
 
 Rule selection
@@ -77,10 +83,11 @@ The supported structure is::
 spellings to the built-in casing list. ``lint.select`` enables rules that are
 disabled by default. ``lint.we_count`` changes the maximum allowed number of
 ``we`` occurrences. ``format.html-style`` enables HTML
-output by default. ``format.quiet`` controls non-diagnostic output: ``0``
-prints titles and summaries, ``1`` removes summaries, and ``2`` removes both
-titles and summaries. ``format.vscode-style`` enables VS Code-compatible
-diagnostic output. ``tools.chktex_path`` points to a ChkTeX executable or
-directory.
+output by default. ``format.quiet`` selects one of three output levels:
+``0`` is verbose, with titles and summaries; ``1`` (the default) is normal,
+with no titles or summaries and an ``All passed`` message if there are no
+errors; and ``2`` is quiet, showing diagnostics only. ``format.vscode-style``
+enables VS Code-compatible diagnostic output. ``tools.chktex_path`` points to a
+ChkTeX executable or directory.
 
 When no configuration file exists, TeXact uses its normal built-in defaults.
