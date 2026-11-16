@@ -341,6 +341,11 @@ repository root:</p>
 </div>
 <p>The hook runs the configured checks on staged files when committing. Some
 checks may modify files; review and stage those changes before committing again.</p>
+<p>CI also tests TeXact’s published hook from the checked-out Git commit. To run
+that integration test locally, commit the hook changes first, then run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-q<span class="w"> </span>test/pre_commit_hook.py
+</pre></div>
+</div>
 </section>
 <section id="code-structure">
 <h2>Code structure<a class="headerlink" href="#code-structure" title="Link to this heading">¶</a></h2>

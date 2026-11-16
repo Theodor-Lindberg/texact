@@ -84,6 +84,13 @@ repository root:
 The hook runs the configured checks on staged files when committing. Some
 checks may modify files; review and stage those changes before committing again.
 
+CI also tests TeXact's published hook from the checked-out Git commit. To run
+that integration test locally, commit the hook changes first, then run:
+
+.. code-block:: console
+
+    $ python -m pytest -q test/pre_commit_hook.py
+
 Code structure
 --------------
 
