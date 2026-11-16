@@ -34,6 +34,11 @@ docs = [
   "m2r2>=1.1,<2",
     "docutils<=0.20",
     "sphinx-multiversion==0.2.4",
+    "pre-commit",
+]
+dev = [
+    "pytest",
+    "pre-commit",
 ]
 
   [tool.pytest.ini_options]
