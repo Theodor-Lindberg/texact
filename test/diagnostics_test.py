@@ -9,6 +9,7 @@ from printer import Printer
 from reviewers.reviewer import Diagnostic, Severity
 from reviewers.reviewer_casing import Reviewer_Casing
 from reviewers.reviewer_chktex import Reviewer_ChkTeX
+from reviewers.reviewer_inthis import Reviewer_Inthis
 from reviewers.reviewer_math import Reviewer_Math
 from reviewers.reviewer_reflabel import Reviewer_RefLabel
 from reviewers.reviewer_section import Reviewer_Section
@@ -58,6 +59,24 @@ def test_diagnostic_has_one_based_location() -> None:
     assert diagnostic.code == "CAS001"
     assert diagnostic.line == 5
     assert diagnostic.filename == "sample.tex"
+
+
+@pytest.mark.parametrize(
+    ("abstract_line", "expected_status", "expected_comments"),
+    [
+        ("A first sentence. In this work, we continue.", "PASSED", 0),
+        ("In this work, we propose a method. Further results follow.", "FAILED", 1),
+    ],
+)
+def test_abstract_wording_checks_only_first_sentence(
+    abstract_line: str, expected_status: str, expected_comments: int
+) -> None:
+    reviewer = Reviewer_Inthis(Printer())
+    reviewer.process_line(0, r"\begin{abstract}")
+    reviewer.process_line(1, abstract_line)
+
+    assert reviewer.get_status().name == expected_status
+    assert len(reviewer.get_comments()) == expected_comments
 
 
 def test_strip_latex_comment_preserves_escaped_percent() -> None:

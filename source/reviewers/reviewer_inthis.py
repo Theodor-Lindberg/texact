@@ -10,6 +10,7 @@ class Reviewer_Inthis(Reviewer):
     """Checks the opening wording of an abstract."""
 
     _PATTERN_ABSTRACT_START = re.compile(r"\\begin\{abstract\}")
+    _PATTERN_SENTENCE_END = re.compile(r"[.!?](?:[\"')\]]*)\s+")
     _PATTERN_THIS_WORK = re.compile(
         r"\bthis\s+(?:\w+\s+)*(work|brief|paper|manuscript)s?\b",
         re.IGNORECASE,
@@ -32,7 +33,9 @@ class Reviewer_Inthis(Reviewer):
 
         if self.check_abstract_first_line and line and line[0] != "%":
             self.check_abstract_first_line = False
-            match = self._PATTERN_THIS_WORK.search(line)
+            sentence_end = self._PATTERN_SENTENCE_END.search(line)
+            first_sentence = line[: sentence_end.start()] if sentence_end else line
+            match = self._PATTERN_THIS_WORK.search(first_sentence)
             if match:
                 self.abstract_check = Status.FAILED
                 self.comments.append(
