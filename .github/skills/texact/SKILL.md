@@ -118,6 +118,10 @@ already-correct commands. Keep opening and closing token handling consistent.
 
 ## Validation Workflow
 
+Prefix supported shell commands with `rtk` (for example, `rtk pytest ...`) to
+keep command output concise. Use the native command when RTK has no equivalent
+or when unfiltered output is needed.
+
 Read `pyproject.toml` and the CI workflow to find the current test, lint, and
 documentation commands. Run the narrowest relevant test first, then broaden
 validation to the full suite when the change warrants it. For source-tree CLI
