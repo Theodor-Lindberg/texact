@@ -1662,15 +1662,20 @@ def test_missing_chktex_is_warning_unless_explicitly_enabled() -> None:
 
 def test_chktex_lookup_expands_tilde_in_path(
     tmp_path: Path,
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     chktex_directory = tmp_path / "bin"
     chktex_directory.mkdir()
-    chktex_executable = chktex_directory / "chktex"
+    chktex_executable = chktex_directory / (
+        "chktex.EXE" if sys.platform == "win32" else "chktex"
+    )
     chktex_executable.write_text("#!/bin/sh\n", encoding="utf-8")
     chktex_executable.chmod(0o755)
     monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    monkeypatch.setenv("PATHEXT", ".EXE")
     monkeypatch.setenv("PATH", "~/bin")
+    monkeypatch.chdir(tmp_path)
 
     reviewer = Reviewer_ChkTeX(
         Printer(),
@@ -1678,7 +1683,9 @@ def test_chktex_lookup_expands_tilde_in_path(
         Template.UNKNOWN,
     )
 
-    assert reviewer._resolve_chktex_command() == str(chktex_executable)
+    command = reviewer._resolve_chktex_command()
+    assert command is not None
+    assert Path(command) == chktex_executable
 
 
 def test_cli_prints_warning_number() -> None:

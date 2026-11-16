@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Keep version output consistent across Python versions and invocation methods.
+
 ### Changed
 
 - Default to diagnostic-only output and print `All passed` when no errors are

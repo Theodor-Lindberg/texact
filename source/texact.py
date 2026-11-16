@@ -61,7 +61,7 @@ def set_up_arg_parser() -> argparse.Namespace:
         "-v",
         "--version",
         action="version",
-        version=f"%(prog)s {get_version()}",
+        version=f"texact {get_version()}",
     )
     parser.add_argument(
         "files",

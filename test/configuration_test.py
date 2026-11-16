@@ -171,3 +171,19 @@ def test_version_option_prints_version(version_option: str) -> None:
 
     assert result.returncode == 0
     assert result.stdout.startswith("texact ")
+
+
+def test_version_option_uses_texact_name_when_run_as_script() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(Path(__file__).resolve().parent.parent / "source" / "texact.py"),
+            "--version",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert result.stdout.startswith("texact ")
