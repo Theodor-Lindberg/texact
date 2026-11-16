@@ -29,6 +29,61 @@ do the following:
 
         $ pip install --force-reinstall --no-cache-dir "git+ssh://git@github.com/Theodor-Lindberg/texact.git"
 
+Local development
+-----------------
+
+Install the project in editable mode, along with the tools used
+below:
+
+.. code-block:: console
+
+    $ python -m pip install -e ".[docs,dev]"
+
+Editable installation makes the ``texact`` command available for CLI tests
+while picking up source changes. The ``docs`` extra installs Sphinx, the
+documentation extensions and theme, and pre-commit. The ``dev`` extra installs
+pytest and pre-commit.
+
+Building the documentation
+--------------------------
+
+From the repository root, build the current working tree as HTML:
+
+.. code-block:: console
+
+    $ python -m sphinx -b html docs docs/_build/html
+
+Open ``docs/_build/html/index.html`` in a browser. Alternatively, run
+``make html`` from ``docs/``. Generated files under ``docs/_build/`` are not
+documentation sources and should not be committed.
+
+The documentation CI builds versioned documentation with ``make multiversion``
+from ``docs/``. It selects compatible Git tags and branches, so its output is
+based on Git refs rather than uncommitted changes. A full checkout with tags
+is needed to reproduce the versioned build.
+
+Running tests
+-------------
+
+From the repository root, run the regression suite as:
+
+.. code-block:: console
+
+    $ python -m pytest -q test
+
+Installing pre-commit checks
+----------------------------
+
+After installing the development dependencies, install the Git hook from the
+repository root:
+
+.. code-block:: console
+
+    $ python -m pre_commit install
+
+The hook runs the configured checks on staged files when committing. Some
+checks may modify files; review and stage those changes before committing again.
+
 Code structure
 --------------
 
