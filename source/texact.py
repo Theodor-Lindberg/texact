@@ -233,20 +233,14 @@ def main():
         raise SystemExit(f"Configuration error: {error}") from error
 
     select_codes = [
-        code.strip()
-        for value in args.select or ()
-        for code in value.split(",")
+        code.strip() for value in args.select or () for code in value.split(",")
     ]
     ignore_codes = [
-        code.strip()
-        for value in args.ignore or ()
-        for code in value.split(",")
+        code.strip() for value in args.ignore or () for code in value.split(",")
     ]
     for option, codes in (("--select", select_codes), ("--ignore", ignore_codes)):
         invalid_codes = [
-            code
-            for code in codes
-            if re.fullmatch(r"[A-Z]{2,3}\d{3,}", code) is None
+            code for code in codes if re.fullmatch(r"[A-Z]{2,3}\d{3,}", code) is None
         ]
         if invalid_codes:
             raise SystemExit(
