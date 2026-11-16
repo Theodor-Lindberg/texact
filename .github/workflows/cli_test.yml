@@ -4,9 +4,13 @@ on:
   push:
     paths:
       - 'source/**'
+      - 'test/**'
+      - 'pyproject.toml'
   pull_request:
     paths:
       - 'source/**'
+      - 'test/**'
+      - 'pyproject.toml'
 
 jobs:
   cli-tests:
@@ -37,3 +41,6 @@ jobs:
 
       - name: Run texact on each LaTeX file, making sure nothing crashes
         run: python -m pytest -q test/test.py
+
+      - name: Run regression tests
+        run: python -m pytest -q test
