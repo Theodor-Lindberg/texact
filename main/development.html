@@ -299,6 +299,49 @@ do the following:</p>
 </div>
 </div>
 </section>
+<section id="local-development">
+<h2>Local development<a class="headerlink" href="#local-development" title="Link to this heading">¶</a></h2>
+<p>Install the project in editable mode, along with the tools used
+below:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[docs,dev]"</span>
+</pre></div>
+</div>
+<p>Editable installation makes the <code class="docutils literal notranslate"><span class="pre">texact</span></code> command available for CLI tests
+while picking up source changes. The <code class="docutils literal notranslate"><span class="pre">docs</span></code> extra installs Sphinx, the
+documentation extensions and theme, and pre-commit. The <code class="docutils literal notranslate"><span class="pre">dev</span></code> extra installs
+pytest and pre-commit.</p>
+</section>
+<section id="building-the-documentation">
+<h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Link to this heading">¶</a></h2>
+<p>From the repository root, build the current working tree as HTML:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>sphinx<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>docs/_build/html
+</pre></div>
+</div>
+<p>Open <code class="docutils literal notranslate"><span class="pre">docs/_build/html/index.html</span></code> in a browser. Alternatively, run
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code> from <code class="docutils literal notranslate"><span class="pre">docs/</span></code>. Generated files under <code class="docutils literal notranslate"><span class="pre">docs/_build/</span></code> are not
+documentation sources and should not be committed.</p>
+<p>The documentation CI builds versioned documentation with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">multiversion</span></code>
+from <code class="docutils literal notranslate"><span class="pre">docs/</span></code>. It selects compatible Git tags and branches, so its output is
+based on Git refs rather than uncommitted changes. A full checkout with tags
+is needed to reproduce the versioned build.</p>
+</section>
+<section id="running-tests">
+<h2>Running tests<a class="headerlink" href="#running-tests" title="Link to this heading">¶</a></h2>
+<p>From the repository root, run the regression suite as:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-q<span class="w"> </span><span class="nb">test</span>
+</pre></div>
+</div>
+</section>
+<section id="installing-pre-commit-checks">
+<h2>Installing pre-commit checks<a class="headerlink" href="#installing-pre-commit-checks" title="Link to this heading">¶</a></h2>
+<p>After installing the development dependencies, install the Git hook from the
+repository root:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pre_commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>The hook runs the configured checks on staged files when committing. Some
+checks may modify files; review and stage those changes before committing again.</p>
+</section>
 <section id="code-structure">
 <h2>Code structure<a class="headerlink" href="#code-structure" title="Link to this heading">¶</a></h2>
 <p>The tool is implemented as a set of reviewers, each with its own
@@ -419,6 +462,10 @@ file can be added as well.</p>
             <ul>
 <li><a class="reference internal" href="#">Development</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#local-development">Local development</a></li>
+<li><a class="reference internal" href="#building-the-documentation">Building the documentation</a></li>
+<li><a class="reference internal" href="#running-tests">Running tests</a></li>
+<li><a class="reference internal" href="#installing-pre-commit-checks">Installing pre-commit checks</a></li>
 <li><a class="reference internal" href="#code-structure">Code structure</a></li>
 <li><a class="reference internal" href="#rule-identity">Rule identity</a></li>
 <li><a class="reference internal" href="#adding-features">Adding features</a></li>
