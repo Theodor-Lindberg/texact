@@ -129,13 +129,11 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
             "--config",
             "custom.toml",
             "--select",
-            "MAT004",
+            "MAT004,UNS007,MAT002",
             "--select",
-            "UNS007",
+            "REF008",
             "--ignore",
-            "MAT009",
-            "--ignore",
-            "CAS001",
+            "MAT009,CAS001",
             "--no-html-style",
             "--vscode-style",
             "-q",
@@ -146,8 +144,8 @@ def test_explicit_cli_values_are_distinguishable_from_defaults(
     args = set_up_arg_parser()
 
     assert args.config == Path("custom.toml")
-    assert args.select == ["MAT004", "UNS007"]
-    assert args.ignore == ["MAT009", "CAS001"]
+    assert args.select == ["MAT004,UNS007,MAT002", "REF008"]
+    assert args.ignore == ["MAT009,CAS001"]
     assert args.html_style is False
     assert args.vscode_style is True
     assert args.quiet == 1

@@ -43,14 +43,15 @@ combined. ``-q`` cannot be repeated. ``-v`` prints the version.
 Rule selection
 --------------
 
-Enable a disabled rule with ``--select``. Repeat the option to select multiple
-rules::
+Enable disabled rules with ``--select``. Separate multiple rule codes with
+commas; repeat the option if needed::
 
-    texact --select MAT004 --select UNS007 paper.tex
+    texact --select MAT004,UNS007 paper.tex
 
-Suppress rules with ``--ignore``. Repeat the option to ignore multiple rules::
+Suppress rules with ``--ignore``. Separate multiple rule codes with commas;
+repeat the option if needed::
 
-    texact --ignore MAT009 --ignore CAS001 paper.tex
+    texact --ignore MAT009,CAS001 paper.tex
 
 Command-line selections and ignores are added to those in the configuration.
 Ignoring a rule takes precedence over selecting it, including when they are

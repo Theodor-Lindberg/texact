@@ -523,9 +523,7 @@ def test_disabled_rule_can_be_selected(tmp_path: Path) -> None:
     selected_command = [
         *command[:-1],
         "--select",
-        "MAT004",
-        "--select",
-        "UNS007",
+        "MAT004,UNS007",
         str(tex_file),
     ]
     (tmp_path / ".texact.toml").write_text(
@@ -594,7 +592,7 @@ def test_cli_ignore_combines_with_configuration_and_select(tmp_path: Path) -> No
         assert f"[{code}]" in baseline.stdout
 
     ignored = subprocess.run(
-        [*command, "--ignore", "UNS001", "--ignore", "MAT009", "--ignore", "MAT004"],
+        [*command, "--ignore", "UNS001,MAT009,MAT004"],
         capture_output=True,
         text=True,
         check=False,
@@ -609,13 +607,7 @@ def test_cli_ignore_combines_with_configuration_and_select(tmp_path: Path) -> No
         [
             *command,
             "--ignore",
-            "UNS001",
-            "--ignore",
-            "MAT002",
-            "--ignore",
-            "MAT004",
-            "--ignore",
-            "MAT009",
+            "UNS001,MAT002,MAT004,MAT009",
         ],
         capture_output=True,
         text=True,

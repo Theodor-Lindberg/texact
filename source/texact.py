@@ -78,13 +78,13 @@ def set_up_arg_parser() -> argparse.Namespace:
         "--select",
         action="append",
         metavar="RULE",
-        help="Enable a disabled rule; repeat for multiple rules",
+        help="Enable disabled rules; separate multiple codes with commas",
     )
     parser.add_argument(
         "--ignore",
         action="append",
         metavar="RULE",
-        help="Ignore a rule; repeat for multiple rules",
+        help="Ignore rules; separate multiple codes with commas",
     )
     parser.add_argument(
         "--chktex",
@@ -232,10 +232,20 @@ def main():
     except ConfigurationError as error:
         raise SystemExit(f"Configuration error: {error}") from error
 
-    for option, codes in (("--select", args.select), ("--ignore", args.ignore)):
+    select_codes = [
+        code.strip()
+        for value in args.select or ()
+        for code in value.split(",")
+    ]
+    ignore_codes = [
+        code.strip()
+        for value in args.ignore or ()
+        for code in value.split(",")
+    ]
+    for option, codes in (("--select", select_codes), ("--ignore", ignore_codes)):
         invalid_codes = [
             code
-            for code in codes or ()
+            for code in codes
             if re.fullmatch(r"[A-Z]{2,3}\d{3,}", code) is None
         ]
         if invalid_codes:
@@ -243,13 +253,13 @@ def main():
                 f"Configuration error: {option} contains invalid rule code(s): "
                 + ", ".join(invalid_codes)
             )
-    if args.select or args.ignore:
+    if select_codes or ignore_codes:
         config = replace(
             config,
             lint=replace(
                 config.lint,
-                select=config.lint.select.union(args.select or ()),
-                ignore=config.lint.ignore.union(args.ignore or ()),
+                select=config.lint.select.union(select_codes),
+                ignore=config.lint.ignore.union(ignore_codes),
             ),
         )
 
