@@ -1,6 +1,8 @@
 import argparse
+import os
 import re
 import sys
+from collections.abc import Iterator
 from dataclasses import replace
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -66,7 +68,13 @@ def set_up_arg_parser() -> argparse.Namespace:
     parser.add_argument(
         "files",
         nargs="*",
-        help="Path(s) to LaTeX files",
+        help="Path(s) to LaTeX files or directories",
+    )
+    parser.add_argument(
+        "-r",
+        "--recursive",
+        action="store_true",
+        help="Include LaTeX files in subdirectories of directory inputs",
     )
     parser.add_argument(
         "--config",
@@ -121,6 +129,33 @@ def set_up_arg_parser() -> argparse.Namespace:
     if args.quiet is not None and args.quiet > 1:
         parser.error("-q/--quiet cannot be repeated")
     return args
+
+
+def _expand_file_inputs(paths: list[str], recursive: bool) -> Iterator[str]:
+    for path in paths:
+        if not Path(path).is_dir():
+            yield path
+            continue
+
+        pending = [path]
+        found: list[str] = []
+        while pending:
+            directory = pending.pop()
+            try:
+                with os.scandir(directory) as entries:
+                    for entry in entries:
+                        if entry.name.lower().endswith(".tex") and entry.is_file():
+                            found.append(entry.path)
+                        elif recursive and entry.is_dir(follow_symlinks=False):
+                            pending.append(entry.path)
+            except OSError as error:
+                raise SystemExit(
+                    f"Error: cannot scan directory '{directory}': {error}"
+                ) from error
+
+        if not found:
+            raise SystemExit(f"Error: no .tex files found in directory '{path}'.")
+        yield from sorted(found)
 
 
 def process_file(
@@ -267,11 +302,11 @@ def main():
     printer = Printer(html_style=html_style, vscode_style=vscode_style)
 
     if not args.files:
-        raise SystemExit("Error: provide at least one LaTeX file.")
+        raise SystemExit("Error: provide at least one LaTeX file or directory.")
 
     max_ret_code = 0
 
-    for file_name in args.files:
+    for file_name in _expand_file_inputs(args.files, args.recursive):
         name, extension = file_name[:-4], file_name[-3:]
         if quiet == 0:
             printer.print(f"=== Reviewing {name}(.){extension} ===")

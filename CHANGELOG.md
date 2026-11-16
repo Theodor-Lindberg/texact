@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `--ignore` to suppress rules from the command line.
 - Allow passing comma-separated rule codes to `--select` and `--ignore`.
+- Accept directories as input, with `--recursive` to search subdirectories.
 
 ### Fixed
 

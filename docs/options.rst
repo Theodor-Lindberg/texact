@@ -2,6 +2,25 @@ Options
 =======
 
 
+Files and directories
+---------------------
+
+Pass one or more files or directories. A directory is searched for ``.tex``
+files directly inside it; extensions are matched case-insensitively::
+
+    texact .
+    texact paper.tex chapters/
+
+Use ``-r`` or ``--recursive`` to also search subdirectories::
+
+    texact --recursive .
+
+Directory searches include hidden files and directories, but do not descend
+into symbolic links to directories. Symbolic links to files are included.
+Each input is processed independently, so overlapping inputs can be reviewed
+more than once. A directory with no matching files produces an error.
+
+
 Inline suppressions
 ---------------------
 

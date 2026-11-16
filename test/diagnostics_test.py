@@ -16,7 +16,7 @@ from reviewers.reviewer_section import Reviewer_Section
 from reviewers.reviewer_unsure import Reviewer_Unsure
 from reviewers.rules import RULES
 from template_check import Template
-from texact import _strip_latex_comment
+from texact import _expand_file_inputs, _strip_latex_comment
 
 TEST_DIR = Path(__file__).resolve().parent
 
@@ -1560,6 +1560,152 @@ def test_success_message_requires_no_errors_across_files(tmp_path: Path) -> None
     result = run_texact(str(clean_file), str(tmp_path / "missing.tex"))
     assert result.returncode != 0
     assert "All passed" not in result.stdout
+
+
+@pytest.mark.parametrize("recursive_flag", [None, "-r", "--recursive"])
+def test_directory_input_scans_tex_files(
+    tmp_path: Path, recursive_flag: str | None
+) -> None:
+    directory = tmp_path / "project"
+    nested = directory / "nested" / ".hidden"
+    nested.mkdir(parents=True)
+    top_level = directory / "main.tex"
+    nested_file = nested / "chapter.TEX"
+    ignored = directory / "notes.txt"
+    for path in (top_level, nested_file, ignored):
+        path.write_text("asic\n", encoding="utf-8")
+
+    command = [
+        sys.executable,
+        str(TEST_DIR.parent / "source" / "texact.py"),
+        "--no-chktex",
+        "--vscode-style",
+    ]
+    if recursive_flag is not None:
+        command.append(recursive_flag)
+    result = subprocess.run(
+        [*command, str(directory)],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+
+    assert result.returncode == 1
+    assert f"{top_level}:1: [CAS001]" in result.stdout
+    assert (f"{nested_file}:1: [CAS001]" in result.stdout) == (
+        recursive_flag is not None
+    )
+    assert str(ignored) not in result.stdout
+    assert "All passed" not in result.stdout
+
+
+def test_directory_inputs_can_be_mixed_with_files(tmp_path: Path) -> None:
+    directory = tmp_path / "project"
+    directory.mkdir()
+    first = directory / "a.tex"
+    second = directory / "b.tex"
+    external = tmp_path / "other.tex"
+    for path in (first, second, external):
+        path.write_text("asic\n", encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--no-chktex",
+            "--vscode-style",
+            str(directory),
+            str(external),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+
+    assert result.returncode == 1
+    assert result.stdout.index(str(first)) < result.stdout.index(str(second))
+    assert result.stdout.index(str(second)) < result.stdout.index(str(external))
+    assert result.stdout.count("[CAS001]") == 3
+
+
+def test_directory_without_tex_files_reports_error(tmp_path: Path) -> None:
+    (tmp_path / "notes.txt").write_text("asic\n", encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(TEST_DIR.parent / "source" / "texact.py"), str(tmp_path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode != 0
+    assert "no .tex files found" in result.stderr
+    assert "All passed" not in result.stdout
+
+
+def test_recursive_directory_can_find_files_only_in_subdirectories(
+    tmp_path: Path,
+) -> None:
+    nested = tmp_path / "nested"
+    nested.mkdir()
+    (nested / "clean.tex").write_text("\\documentclass{article}\n", encoding="utf-8")
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--no-chktex",
+            "--recursive",
+            ".",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+
+    assert result.returncode == 0
+    assert result.stdout == "All passed\n"
+
+
+def test_recursive_directory_does_not_follow_directory_symlinks(tmp_path: Path) -> None:
+    directory = tmp_path / "project"
+    directory.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "linked.tex").write_text("asic\n", encoding="utf-8")
+    try:
+        (directory / "linked-file.tex").symlink_to(outside / "linked.tex")
+        (directory / "linked-directory").symlink_to(outside, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"Cannot create symbolic links: {error}")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--no-chktex",
+            "--vscode-style",
+            "--recursive",
+            str(directory),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+
+    assert result.returncode == 1
+    assert f"{directory / 'linked-file.tex'}:1: [CAS001]" in result.stdout
+    assert result.stdout.count("[CAS001]") == 1
+
+
+def test_directory_scan_errors_are_reported(tmp_path: Path) -> None:
+    with (
+        patch("texact.os.scandir", side_effect=PermissionError("access denied")),
+        pytest.raises(SystemExit, match="cannot scan directory.*access denied"),
+    ):
+        list(_expand_file_inputs([str(tmp_path)], recursive=True))
 
 
 def test_verbose_and_quiet_cannot_be_combined(tmp_path: Path) -> None:
