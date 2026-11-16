@@ -48,6 +48,14 @@ rules::
 
     texact --select MAT004 --select UNS007 paper.tex
 
+Suppress rules with ``--ignore``. Repeat the option to ignore multiple rules::
+
+    texact --ignore MAT009 --ignore CAS001 paper.tex
+
+Command-line selections and ignores are added to those in the configuration.
+Ignoring a rule takes precedence over selecting it, including when they are
+specified in different places.
+
 
 Configuration file
 ------------------
@@ -60,8 +68,8 @@ directory in this order and stops at the first TeXact configuration it finds:
 3. ``pyproject.toml`` under ``[tool.texact]``
 
 Use ``--config PATH`` to select a configuration file explicitly. An explicit
-file takes precedence over automatic discovery. Command-line options take
-precedence over values loaded from TOML.
+file takes precedence over automatic discovery. Command-line formatting options
+take precedence over values loaded from TOML.
 
 The supported structure is::
 

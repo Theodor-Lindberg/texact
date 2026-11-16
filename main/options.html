@@ -306,6 +306,13 @@ rules:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">select</span> <span class="n">MAT004</span> <span class="o">--</span><span class="n">select</span> <span class="n">UNS007</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
 </pre></div>
 </div>
+<p>Suppress rules with <code class="docutils literal notranslate"><span class="pre">--ignore</span></code>. Repeat the option to ignore multiple rules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">ignore</span> <span class="n">MAT009</span> <span class="o">--</span><span class="n">ignore</span> <span class="n">CAS001</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
+</pre></div>
+</div>
+<p>Command-line selections and ignores are added to those in the configuration.
+Ignoring a rule takes precedence over selecting it, including when they are
+specified in different places.</p>
 </section>
 <section id="configuration-file">
 <h2>Configuration file<a class="headerlink" href="#configuration-file" title="Link to this heading">¶</a></h2>
@@ -317,8 +324,8 @@ directory in this order and stops at the first TeXact configuration it finds:</p
 <li><p><code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> under <code class="docutils literal notranslate"><span class="pre">[tool.texact]</span></code></p></li>
 </ol>
 <p>Use <code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">PATH</span></code> to select a configuration file explicitly. An explicit
-file takes precedence over automatic discovery. Command-line options take
-precedence over values loaded from TOML.</p>
+file takes precedence over automatic discovery. Command-line formatting options
+take precedence over values loaded from TOML.</p>
 <p>The supported structure is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">lint</span><span class="p">]</span>
 <span class="n">ignore</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"FIG002"</span><span class="p">,</span> <span class="s2">"UNS001"</span><span class="p">]</span>
