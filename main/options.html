@@ -301,13 +301,14 @@ combined. <code class="docutils literal notranslate"><span class="pre">-q</span>
 </section>
 <section id="rule-selection">
 <h2>Rule selection<a class="headerlink" href="#rule-selection" title="Link to this heading">¶</a></h2>
-<p>Enable a disabled rule with <code class="docutils literal notranslate"><span class="pre">--select</span></code>. Repeat the option to select multiple
-rules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">select</span> <span class="n">MAT004</span> <span class="o">--</span><span class="n">select</span> <span class="n">UNS007</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
+<p>Enable disabled rules with <code class="docutils literal notranslate"><span class="pre">--select</span></code>. Separate multiple rule codes with
+commas; repeat the option if needed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">select</span> <span class="n">MAT004</span><span class="p">,</span><span class="n">UNS007</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
 </pre></div>
 </div>
-<p>Suppress rules with <code class="docutils literal notranslate"><span class="pre">--ignore</span></code>. Repeat the option to ignore multiple rules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">ignore</span> <span class="n">MAT009</span> <span class="o">--</span><span class="n">ignore</span> <span class="n">CAS001</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
+<p>Suppress rules with <code class="docutils literal notranslate"><span class="pre">--ignore</span></code>. Separate multiple rule codes with commas;
+repeat the option if needed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">texact</span> <span class="o">--</span><span class="n">ignore</span> <span class="n">MAT009</span><span class="p">,</span><span class="n">CAS001</span> <span class="n">paper</span><span class="o">.</span><span class="n">tex</span>
 </pre></div>
 </div>
 <p>Command-line selections and ignores are added to those in the configuration.
