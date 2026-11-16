@@ -81,6 +81,12 @@ def set_up_arg_parser() -> argparse.Namespace:
         help="Enable a disabled rule; repeat for multiple rules",
     )
     parser.add_argument(
+        "--ignore",
+        action="append",
+        metavar="RULE",
+        help="Ignore a rule; repeat for multiple rules",
+    )
+    parser.add_argument(
         "--chktex",
         default=False,
         action=argparse.BooleanOptionalAction,
@@ -226,22 +232,24 @@ def main():
     except ConfigurationError as error:
         raise SystemExit(f"Configuration error: {error}") from error
 
-    if args.select:
+    for option, codes in (("--select", args.select), ("--ignore", args.ignore)):
         invalid_codes = [
             code
-            for code in args.select
+            for code in codes or ()
             if re.fullmatch(r"[A-Z]{2,3}\d{3,}", code) is None
         ]
         if invalid_codes:
             raise SystemExit(
-                "Configuration error: --select contains invalid rule code(s): "
+                f"Configuration error: {option} contains invalid rule code(s): "
                 + ", ".join(invalid_codes)
             )
+    if args.select or args.ignore:
         config = replace(
             config,
             lint=replace(
                 config.lint,
-                select=config.lint.select.union(args.select),
+                select=config.lint.select.union(args.select or ()),
+                ignore=config.lint.ignore.union(args.ignore or ()),
             ),
         )
 

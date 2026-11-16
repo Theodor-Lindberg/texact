@@ -571,6 +571,81 @@ def test_multi_character_script_warning_enabled_by_default(tmp_path: Path) -> No
     assert "[MAT009]" not in result.stdout
 
 
+def test_cli_ignore_combines_with_configuration_and_select(tmp_path: Path) -> None:
+    tex_file = tmp_path / "math.tex"
+    tex_file.write_text("asic should $sin(x) + x^23 + (x)$\n", encoding="utf-8")
+    (tmp_path / ".texact.toml").write_text(
+        "[lint]\nignore = ['CAS001']\nselect = ['MAT004']\n", encoding="utf-8"
+    )
+    command = [
+        sys.executable,
+        str(TEST_DIR.parent / "source" / "texact.py"),
+        "--no-chktex",
+        "--select",
+        "MAT004",
+        str(tex_file),
+    ]
+    baseline = subprocess.run(
+        command, capture_output=True, text=True, check=False, cwd=tmp_path
+    )
+    assert baseline.returncode == 1
+    assert "[CAS001]" not in baseline.stdout
+    for code in ("UNS001", "MAT002", "MAT004", "MAT009"):
+        assert f"[{code}]" in baseline.stdout
+
+    ignored = subprocess.run(
+        [*command, "--ignore", "UNS001", "--ignore", "MAT009", "--ignore", "MAT004"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert ignored.returncode == 1
+    for code in ("CAS001", "UNS001", "MAT004", "MAT009"):
+        assert f"[{code}]" not in ignored.stdout
+    assert "[MAT002]" in ignored.stdout
+
+    all_ignored = subprocess.run(
+        [
+            *command,
+            "--ignore",
+            "UNS001",
+            "--ignore",
+            "MAT002",
+            "--ignore",
+            "MAT004",
+            "--ignore",
+            "MAT009",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert all_ignored.returncode == 0
+    assert all_ignored.stdout == "All passed\n"
+
+
+def test_cli_ignore_rejects_invalid_rule_codes(tmp_path: Path) -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(TEST_DIR.parent / "source" / "texact.py"),
+            "--ignore",
+            "MAT009",
+            "--ignore",
+            "invalid",
+            "file.tex",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert result.returncode != 0
+    assert "--ignore contains invalid rule code(s): invalid" in result.stderr
+
+
 def test_prefer_eqref_is_disabled_until_selected(tmp_path: Path) -> None:
     tex_file = tmp_path / "references.tex"
     tex_file.write_text(
