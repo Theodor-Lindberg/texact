@@ -208,6 +208,13 @@ RULES = RuleRegistry(
             Severity.WARNING,
         ),
         Rule(
+            "MAT011",
+            "trailing-align-line-break",
+            "Reviewer_Math",
+            "Remove the trailing {line_break} at the end of the {environment} environment.",
+            Severity.WARNING,
+        ),
+        Rule(
             "UNS001",
             "modal-or-uncertain-word",
             "Reviewer_Unsure",
@@ -439,6 +446,7 @@ RULE_MAT006 = RULES.get("MAT006")
 RULE_MAT007 = RULES.get("MAT007")
 RULE_MAT009 = RULES.get("MAT009")
 RULE_MAT010 = RULES.get("MAT010")
+RULE_MAT011 = RULES.get("MAT011")
 RULE_UNS001 = RULES.get("UNS001")
 RULE_UNS002 = RULES.get("UNS002")
 RULE_UNS003 = RULES.get("UNS003")

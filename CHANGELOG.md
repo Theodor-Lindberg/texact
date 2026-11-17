@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Warn about a trailing line break at the end of an `align` environment.
 - Add `--ignore` to suppress rules from the command line.
 - Allow passing comma-separated rule codes to `--select` and `--ignore`.
 - Accept directories as input, with `--recursive` to search subdirectories.
@@ -24,8 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   found; use `--verbose` for per-file titles and reviewer summaries.
 - Make `-q` suppress titles, summaries, and the success message; remove the
   `-qq` level.
-- Align `format.quiet` with verbose (`0`), normal (`1`), and quiet (`2`)
-  output.
 - Enable the MAT009 warning for unbraced multi-character math scripts by
   default.
 - Phrase title-casing diagnostics as potentially incorrect.

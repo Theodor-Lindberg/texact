@@ -962,6 +962,92 @@ def test_ieee_math_uses_ieeeeqnarray() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("lines", "expected_lines"),
+    [
+        ([r"\begin{align}", r"a &= b \\", r"\end{align}"], [1]),
+        ([r"\begin{align*} a &= b \\* [1ex] \end{align*}"], [0]),
+        ([r"\begin{align}", r"a &= b \\[", "1ex]", r"\end{align}"], [1]),
+        ([r"\begin{align}", r"a &= b \\", r"c &= d", r"\end{align}"], []),
+        ([r"\begin{align}", r"a &= b \\", r"\label{eq:a}", r"\end{align}"], []),
+        ([r"\begin{align}", r"a &= b \\", r"\end{alignat}"], []),
+        ([r"\begin{alignat} a &= b \\ \end{alignat}"], []),
+        ([r"\begin{aligned} a &= b \\ \end{aligned}"], []),
+        ([r"\begin{align}", r"\text{a \\}", r"\end{align}"], []),
+        ([r"\verb|\begin{align} a \\ \end{align}|"], []),
+        (
+            [
+                r"\begin{verbatim}",
+                r"\begin{align} a \\ \end{align}",
+                r"\end{verbatim}",
+            ],
+            [],
+        ),
+        (
+            [
+                r"\begin{align}",
+                r"\begin{aligned} a &= b \\ \end{aligned}",
+                r"\end{align}",
+            ],
+            [],
+        ),
+        (
+            [
+                r"\begin{align} a &= b \\ \end{align}",
+                r"\begin{align*} c &= d \\ \end{align*}",
+            ],
+            [0, 1],
+        ),
+    ],
+)
+def test_trailing_align_line_break(lines: list[str], expected_lines: list[int]) -> None:
+    reviewer = Reviewer_Math(Printer())
+    for line_no, line in enumerate(lines):
+        reviewer.process_line(line_no, line + "\n")
+
+    comments = [
+        comment for comment in reviewer.get_comments() if comment.code == "MAT011"
+    ]
+    assert [comment.line_no for comment in comments] == expected_lines
+    assert all(comment.severity == Severity.WARNING for comment in comments)
+
+
+def test_trailing_align_line_break_cli_and_inline_ignore(tmp_path: Path) -> None:
+    tex_file = tmp_path / "math.tex"
+    tex_file.write_text(
+        "\\begin{align}\n"
+        "a &= b \\\\\n"
+        "% A comment between the row and its end.\n"
+        "\\end{align}\n"
+        "\\begin{align*}\n"
+        "c &= d \\\\ % texact MAT011\n"
+        "\\end{align*}\n",
+        encoding="utf-8",
+    )
+    command = [
+        sys.executable,
+        str(TEST_DIR.parent / "source" / "texact.py"),
+        str(tex_file),
+    ]
+    result = subprocess.run(
+        command, capture_output=True, text=True, check=False, cwd=tmp_path
+    )
+    assert result.returncode == 0
+    assert result.stdout.count("[MAT011]") == 1
+    assert "L2 [MAT011]" in result.stdout
+    assert "All passed" in result.stdout
+
+    result = subprocess.run(
+        [*command, "--ignore", "MAT011"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=tmp_path,
+    )
+    assert result.returncode == 0
+    assert "[MAT011]" not in result.stdout
+
+
 def test_delimiters_match_outside_and_inside_math() -> None:
     reviewer = Reviewer_Math(Printer())
     lines = [

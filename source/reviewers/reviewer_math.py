@@ -15,6 +15,7 @@ from .rules import (
     RULE_MAT007,
     RULE_MAT009,
     RULE_MAT010,
+    RULE_MAT011,
 )
 
 
@@ -104,6 +105,16 @@ class Reviewer_Math(Reviewer):
         r"|\\\(|\\\)|\\\[|\\\]|(?<!\\)\$\$?"
     )
     _PATTERN_LABEL = re.compile(r"\\label\{[^}]*\}")
+    _PATTERN_ALIGN_TOKEN = re.compile(
+        r"\\verb\*?(?![A-Za-z@])(?P<verb_delimiter>[^\w\s]).*?(?P=verb_delimiter)"
+        r"|\\(?P<action>begin|end)\s*\{(?P<environment>[A-Za-z@]+\*?)\}"
+        r"|\\[A-Za-z@]+|\\[^\n]|[{}]"
+    )
+    _VERBATIM_ENVIRONMENTS = frozenset(
+        {"verbatim", "verbatim*", "lstlisting", "minted", "comment"}
+    )
+    _PATTERN_ROW_BREAK_SUFFIX = re.compile(r"\s*\*?\s*(?:\[[^\]]*\]\s*)?")
+    _PATTERN_ROW_BREAK_SUFFIX_PREFIX = re.compile(r"\s*\*?\s*(?:\[[^\]]*(?:\]\s*)?)?")
 
     def __init__(
         self,
@@ -117,12 +128,16 @@ class Reviewer_Math(Reviewer):
         self._in_tikz_environment = False
         self._delimiter_stack: list[tuple[str, int]] = []
         self._unclosed_delimiters_added = False
+        self._environments: list[tuple[str, int]] = []
+        self._group_depth = 0
+        self._align_row_break: tuple[int, str] | None = None
 
     def process_line(self, line_no: int, line: str) -> None:
         symbol_line, self._in_tikz_environment = mask_tikz_environment(
             line,
             self._in_tikz_environment,
         )
+        self._check_align_row_breaks(line_no, symbol_line)
 
         for match in self._PATTERN_DELIMITER.finditer(line):
             delimiter = match.group("delimiter")
@@ -309,6 +324,71 @@ class Reviewer_Math(Reviewer):
                     )
                 )
 
+    def _check_align_row_breaks(self, line_no: int, line: str) -> None:
+        cursor = 0
+        for match in self._PATTERN_ALIGN_TOKEN.finditer(line):
+            self._append_align_row_break_suffix(line[cursor : match.start()])
+            token = match.group(0)
+            action = match.group("action")
+            environment = match.group("environment")
+            if self._environments and self._environments[-1][0] in (
+                self._VERBATIM_ENVIRONMENTS
+            ):
+                if action == "end" and environment == self._environments[-1][0]:
+                    self._environments.pop()
+                cursor = match.end()
+                continue
+            if action == "begin":
+                self._append_align_row_break_suffix(token)
+                self._environments.append((environment, self._group_depth))
+            elif action == "end":
+                if self._environments and self._environments[-1][0] == environment:
+                    if environment in ("align", "align*"):
+                        if self._align_row_break is not None:
+                            break_line, suffix = self._align_row_break
+                            if self._PATTERN_ROW_BREAK_SUFFIX.fullmatch(suffix):
+                                self.comments.append(
+                                    Diagnostic(
+                                        break_line,
+                                        RULE_MAT011,
+                                        RULE_MAT011.render_message(
+                                            line_break=self.printer.dark_red(r"\\"),
+                                            environment=environment,
+                                        ),
+                                    )
+                                )
+                        self._align_row_break = None
+                    else:
+                        self._append_align_row_break_suffix(token)
+                    self._environments.pop()
+                else:
+                    self._append_align_row_break_suffix(token)
+            elif (
+                token == r"\\"
+                and self._environments
+                and self._environments[-1][0] in ("align", "align*")
+                and self._group_depth == self._environments[-1][1]
+            ):
+                self._align_row_break = (line_no, "")
+            else:
+                self._append_align_row_break_suffix(token)
+                if token == "{":
+                    self._group_depth += 1
+                elif token == "}":
+                    self._group_depth -= 1
+            cursor = match.end()
+        self._append_align_row_break_suffix(line[cursor:])
+
+    def _append_align_row_break_suffix(self, text: str) -> None:
+        if self._align_row_break is None:
+            return
+        line_no, suffix = self._align_row_break
+        suffix += text
+        if self._PATTERN_ROW_BREAK_SUFFIX_PREFIX.fullmatch(suffix):
+            self._align_row_break = (line_no, suffix)
+        else:
+            self._align_row_break = None
+
     def _add_symbol_command_comment(
         self,
         line_no: int,
@@ -351,6 +431,9 @@ class Reviewer_Math(Reviewer):
         unbraced_sqrt_count = sum(
             comment.code == RULE_MAT010.code for comment in self.comments
         )
+        trailing_align_break_count = sum(
+            comment.code == RULE_MAT011.code for comment in self.comments
+        )
         unbraced_script_count = sum(
             comment.code == RULE_MAT009.code for comment in self.comments
         )
@@ -375,6 +458,10 @@ class Reviewer_Math(Reviewer):
             summaries.append(f"Math symbol command issues: {symbol_command_count}")
         if unbraced_sqrt_count:
             summaries.append(f"Unbraced square roots: {unbraced_sqrt_count}")
+        if trailing_align_break_count:
+            summaries.append(
+                f"Trailing align line breaks: {trailing_align_break_count}"
+            )
         if unbraced_script_count:
             summaries.append(
                 f"Unbraced multi-character scripts: {unbraced_script_count}"
