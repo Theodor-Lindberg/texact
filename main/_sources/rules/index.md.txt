@@ -39,6 +39,7 @@ them per their liking or configure them.
 | MAT007 | [ellipsis-notation](ellipsis-notation.md) | Use LaTeX ellipsis commands instead of three periods. | error |
 | MAT009 | [braced-math-scripts](braced-math-scripts.md) | Brace multi-character subscripts and superscripts. | warning |
 | MAT010 | [braced-square-root](braced-square-root.md) | Brace square-root arguments. | warning |
+| MAT011 | [trailing-align-line-break](trailing-align-line-break.md) | Remove a trailing line break from an `align` environment. | warning |
 
 ## Unsure (`UNS`)
 
@@ -117,6 +118,7 @@ matching-delimiters
 math-symbol-commands
 braced-math-scripts
 braced-square-root
+trailing-align-line-break
 modal-or-uncertain-word
 excessive-we-usage
 singular-author-possessive
