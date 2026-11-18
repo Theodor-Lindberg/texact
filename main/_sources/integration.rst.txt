@@ -6,6 +6,23 @@ To lower the barrier of entry, it is recommended to run
 Texact from the beginning of the writing process, and
 to run it often.
 
+TeXstudio
+---------
+
+TeXact can be invoked from TeXstudio and have it's output in the messages log.
+
+In Options->Configure TeXstudio...->Build, add a user command.
+Set the name to ``texact:texact`` and let it execute ``texact --no-chktex --html-style ?ame``.
+Press OK to save the settings.
+
+TeXact can now be invoked on the current file under Tools->User->texact.
+
+Visual Studio Code
+------------------
+
+Use ``--vscode-style`` to print diagnostics as ``path:line: [CODE] message``
+so VS Code can navigate to the reported line when the output is clicked.
+
 Pre-commit hook
 ---------------
 
@@ -27,7 +44,7 @@ Continuous integration
 ----------------------
 
 If you use pre-commit hooks, the best practice is to run the same configuration in CI.
-Create ``.github/workflows/texact.yml``:
+For GitHub, create ``.github/workflows/texact.yml`` as follows:
 
 .. code-block:: yaml
 
@@ -57,21 +74,3 @@ Create ``.github/workflows/texact.yml``:
 
                     - name: Run TeXact
                         run: pre-commit run texact --all-files
-
-
-TeXstudio
----------
-
-TeXact can be invoked from TeXstudio and have it's output in the messages log.
-
-In Options->Configure TeXstudio...->Build, add a user command.
-Set the name to ``texact:texact`` and let it execute ``texact --no-chktex --html-style ?ame``.
-Press OK to save the settings.
-
-TeXact can now be invoked on the current file under Tools->User->texact.
-
-Visual Studio Code
-------------------
-
-Use ``--vscode-style`` to print diagnostics as ``path:line: [CODE] message``
-so VS Code can navigate to the reported line when the output is clicked.
